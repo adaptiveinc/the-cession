@@ -642,7 +642,7 @@
 
 <div id="hud">
   <span class="brand">The <em>Cession</em></span>
-  <span class="where" id="whereLabel">Getting one reinsurance deal done, and accounted for, at Mutual &amp; Torres</span>
+  <span class="where" id="whereLabel">Getting one reinsurance deal done, and accounted for, at Clearbook Assurance</span>
   <button id="dirBtn" class="dirbtn" title="Case card: the paragraphs behind each meeting">ⓘ case card</button>
   <button id="themeBtn" class="dirbtn" title="Switch between light and dark mode">☀ light</button>
   <button id="restartBtn" class="dirbtn" title="Restart the case from the beginning">↺ restart</button>
@@ -668,15 +668,15 @@
    sit at the cession desk playing the quota share up and down until the
    board can live with the day-one number and the cost of cover.
 
-   ACT TWO · MUTUAL & TORRES. A book that was priced right gets hit by a
+   ACT TWO · CLEARBOOK ASSURANCE. A book that was priced right gets hit by a
    claims shock two years in. You argued for the treaty at renewal, back
    when the CFO called it a waste of margin, and now have to prove the
    recovery, post both entries, and run it off to zero.
 
    The cast:
      D. Meier    chief underwriting officer at Limmat. Owns the slipped tariff.
-     V. Torres   chief actuary at Mutual & Torres. Teaches by asking.
-     M. Brandt   CFO at Mutual & Torres. Asks the dangerous questions.
+     V. Torres   chief actuary at Clearbook Assurance. Teaches by asking.
+     M. Brandt   CFO at Clearbook Assurance. Asks the dangerous questions.
      K. Odermatt broker. Works both accounts, brings the term sheets.
      A. Keller   underwriter at Turicum Re, on the other side of both deals.
      the auditor arrives when the entries do. */
@@ -689,7 +689,7 @@ const GAME={
   where:'Two books, two companies, one standard: getting reinsurance to count',
   wherePrefix:'The Cession · ',
   /* which house a meeting belongs to, for the phone nameplate */
-  roomHouse:id=>ACT_A.includes(id)?'Limmat Assurance':'Mutual & Torres',
+  roomHouse:id=>ACT_A.includes(id)?'Limmat Assurance':'Clearbook Assurance',
   backLabel:'← The case files',
   restartCopy:'Both cases reset: every meeting, the books and the audit file. Your theme choice stays.',
   /* the books open the moment the first loss is on a file */
@@ -697,8 +697,8 @@ const GAME={
   booksCallout:'<b>Your books just opened.</b>The balances in this bar follow whichever case you are in, from the loss on the file to the treaty and back to zero. Click any of them to see all its movements.',
   masteryCallout:'<b>That answer just went in your file.</b>The mastery bar collects points across both cases: a question answered right on the first try banks 3, the year-five case at the end banks 10, and a full run is 100. A miss banks nothing but files a finding instead; clear the retake later and those points come back. Click the bar anytime to open your audit file.',
   drill:{
-    retakeIntro:'Every missed question answered right. Before the mastery comes back, one walk through the numbers of both cases: eight quick questions, from the day-one net at Limmat to the lifetime zero at Mutual & Torres. Wrong answers cost nothing here, you only have to finish.',
-    libLine:'eight quick questions on the numbers of both cases, from the day-one net at Limmat to the lifetime zero at Mutual & Torres. Practice only: nothing at stake.',
+    retakeIntro:'Every missed question answered right. Before the mastery comes back, one walk through the numbers of both cases: eight quick questions, from the day-one net at Limmat to the lifetime zero at Clearbook Assurance. Wrong answers cost nothing here, you only have to finish.',
+    libLine:'eight quick questions on the numbers of both cases, from the day-one net at Limmat to the lifetime zero at Clearbook Assurance. Practice only: nothing at stake.',
     pendingLine:'Your retake is cleared. Finish the numbers drill, eight quick questions with nothing at stake, and the mastery your findings carried comes back.',
     doneCopy:'All eight numbers walked through, from the day-one net of −6’000 to the lifetime sum of exactly zero.'},
   capstoneTitle:'Year five: the stop-loss on the renewal desk',
@@ -1121,7 +1121,7 @@ const CHIPS_A=[
   {k:'apnl', label:'Recovery P&L', cls:v=>v<0?'neg':''},
 ];
 const CHIPS_B=[
-  {k:'csm',   label:'M&T CSM', cls:'hot'},
+  {k:'csm',   label:'Clearbook CSM', cls:'hot'},
   {k:'lc',    label:'LC',        cls:'neg', hideZero:true},
   {k:'lorc',  label:'LoRC',      cls:'hot'},
   {k:'ccsm',  label:'Treaty CSM', hideZero:true},
@@ -1134,11 +1134,11 @@ const COMP_NAMES={
   alc:'Loss component of Limmat cohort PA-2026 (onerous at inception)',
   alorc:'Loss-recovery component on Limmat’s quota share (QS at 50%)',
   apnl:'Limmat’s recovery lines in P&L, booked to date',
-  csm:'CSM of the M&T underlying group',
-  lc:'Loss component of the M&T underlying group',
+  csm:'CSM of the Clearbook underlying group',
+  lc:'Loss component of the Clearbook underlying group',
   lorc:'Loss-recovery component (asset for remaining coverage)',
   ccsm:'CSM of the treaty held (QS50, Turicum Re)',
-  pnl:'The M&T recovery lines in P&L, booked to date'};
+  pnl:'The Clearbook recovery lines in P&L, booked to date'};
 const COMP_NOTES={
   alc:'Loss-making from the first day, not after a CSM ran out: premiums of '+fmt(NA.prem)+' against fulfilment cash flows of '+fmt(NA.fcf)+' (paragraph 47). No CSM ever existed on this cohort.',
   alorc:'The underlying loss scaled by the recovery share. The treaty covers the whole cohort, so the allocation is 1.00 and the share <em>is</em> the cession.',
@@ -1163,13 +1163,13 @@ const A_ROLLS=[
   {yr:2026,roll:'Released · cover year 1',line:'reversal',alc:-r2(NA.lc/2),alorc:-r2(A_LORC/2)},
   {yr:2027,roll:'Released · cover year 2',line:'reversal',alc:-r2(NA.lc/2),alorc:-r2(A_LORC/2)},
 ];
-/* the M&T renewal file is worked in three sittings */
+/* the Clearbook renewal file is worked in three sittings */
 const FILE_STEPS=[
   {csm:N.csm0,ccsm:N.cededCsm0},                       /* 1 · written and ceded */
   {csm:r2(N.csm0*(1+N.rate)*(1-N.release))},           /* 2 · 2026 interest then release */
   {csm:0,lc:FLIP_LC},                                  /* 3 · 2027 the reserve review */
 ];
-/* the M&T run-off closes the six rolls in two year-ends; index into ROLLS */
+/* the Clearbook run-off closes the six rolls in two year-ends; index into ROLLS */
 const LAPS=[[0,1,2,3],[4,5]]; /* year-end one opens with the 2027 recognition already booked */
 
 function ledgerFromState(){
@@ -1207,22 +1207,22 @@ function ledgerHistory(){
     add('Limmat · 2026','Reversal of loss recoveries · half the book',{alc:A_ROLLS[1].alc,alorc:A_ROLLS[1].alorc,apnl:A_ROLLS[1].alorc});
     add('Limmat · 2027','Reversal of loss recoveries · the rest',{alc:A_ROLLS[2].alc,alorc:A_ROLLS[2].alorc,apnl:A_ROLLS[2].alorc});}
   const fileStep=S.done.renewal?3:(p.renewal?(p.renewal.step||0):0);
-  if(fileStep>=1){add('M&T Renewal','Cohort Motor-2026 recognized: CSM at inception',{csm:N.csm0});
-                  add('M&T Renewal','Treaty QS50 placed with Turicum Re: its own CSM',{ccsm:N.cededCsm0});}
-  if(fileStep>=2){add('M&T Renewal','2026 interest at 10% on the group CSM',{csm:r2(N.csm0*N.rate)});
-                  add('M&T Renewal','2026 service given: half the balance released',{csm:-r2(N.csm0*(1+N.rate)*N.release)});}
-  if(fileStep>=3){add('M&T Renewal','2027 interest at 10%',{csm:r2(FILE_STEPS[1].csm*N.rate)});
-                  add('M&T Renewal','2027 reserve review, claims worse by '+N.det2027+': the CSM absorbs '+fmt(CSM_2027),{csm:-CSM_2027});
-                  add('M&T Renewal','The CSM is exhausted: the excess is a loss component',{lc:FLIP_LC});}
+  if(fileStep>=1){add('Clearbook Renewal','Cohort Motor-2026 recognized: CSM at inception',{csm:N.csm0});
+                  add('Clearbook Renewal','Treaty QS50 placed with Turicum Re: its own CSM',{ccsm:N.cededCsm0});}
+  if(fileStep>=2){add('Clearbook Renewal','2026 interest at 10% on the group CSM',{csm:r2(N.csm0*N.rate)});
+                  add('Clearbook Renewal','2026 service given: half the balance released',{csm:-r2(N.csm0*(1+N.rate)*N.release)});}
+  if(fileStep>=3){add('Clearbook Renewal','2027 interest at 10%',{csm:r2(FILE_STEPS[1].csm*N.rate)});
+                  add('Clearbook Renewal','2027 reserve review, claims worse by '+N.det2027+': the CSM absorbs '+fmt(CSM_2027),{csm:-CSM_2027});
+                  add('Clearbook Renewal','The CSM is exhausted: the excess is a loss component',{lc:FLIP_LC});}
   const stamped=S.done.posting||(p.posting&&p.posting.stamped&&S.done.renewal);
   if(stamped){
-    add('M&T Entries','Loss mirrored onto the treaty: '+fmt(FLIP_LC)+' × '+N.share,{lorc:RECOVERY,pnl:RECOVERY});
-    add('M&T Entries','Second entry: the treaty CSM gives up the same amount',{ccsm:-RECOVERY});}
+    add('Clearbook Entries','Loss mirrored onto the treaty: '+fmt(FLIP_LC)+' × '+N.share,{lorc:RECOVERY,pnl:RECOVERY});
+    add('Clearbook Entries','Second entry: the treaty CSM gives up the same amount',{ccsm:-RECOVERY});}
   const lap=S.done.runoff?2:((p.runoff&&S.done.posting)?(p.runoff.lap||0):0);
   for(let i=1;i<=lap;i++)for(const j of LAPS[i-1].filter(x=>x>0)){const r=ROLLS[j];
     const d={lc:r.lc,lorc:r.lorc,pnl:r.lorc};
     if(r.event)d.ccsm=-r.lorc;
-    add('M&T Close · '+r.yr,r.line+' '+r.roll,d);}
+    add('Clearbook Close · '+r.yr,r.line+' '+r.roll,d);}
   return H;
 }
 function teach(title,html,cites){
@@ -1277,7 +1277,7 @@ function showDirectory(){
      <strong>1 · The Pricing Slip</strong>: a group onerous at initial recognition takes its loss immediately (paragraph 47), and forms its own group so no profitable business can absorb it (paragraph 16, 22).<br>
      <strong>2 · The Cession Desk</strong>: the recovery ratio (B119D) with an allocation of 1.00, the cap that stops a cession erasing a loss (B119F), and the net cost of cover, spread over the coverage period in net expense from reinsurance held (paragraph 86).<br>
      <strong>3 · The Short Book</strong>: the mirror runs off with the loss it reflects, and the disclosure splits recoveries by how the loss came about: contracts sold at a loss-making price against contracts that turned loss-making later.</p>
-     <p><strong>ACT TWO · MUTUAL &amp; TORRES</strong><br>
+     <p><strong>ACT TWO · CLEARBOOK ASSURANCE</strong><br>
      <strong>4 · The Renewal</strong>: the group is the unit; a group turns onerous when its CSM is exhausted, and the excess is a loss recognized immediately with a loss component (paragraph 47–48), in the order interest, changes, release (paragraph 44–45).<br>
      <strong>5 · The Booking Check</strong>: income on reinsurance held when a loss is recognized on the underlying (paragraph 66A–66B), and the timing condition that the cover was entered into on or before the underlying was recognized (B119C).<br>
      <strong>6 · The Allocation</strong>: the recovery ratio (B119D) and the claims-proportional allocation share (B119E), and why one method serves both kinds of loss event.<br>
@@ -1290,7 +1290,7 @@ function showDirectory(){
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
      <p><strong>The P&amp;L lines these cases produce.</strong> Recovery of losses on onerous underlying contracts · changes in expected loss recoveries · reversal of loss recoveries · recovery of losses on contracts turning onerous · interest accretion on loss recovery · and, on the balance sheet inside the reinsurance CSM, the loss recovery adjustment.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
-     <p><strong>Assumptions of these cases.</strong> Act Two's numbers follow this module's standard worked example, restated in whole francs: one cohort of three fleet contracts, three annual periods at a flat 10%, half the remaining balance released each year. Act One is a companion case built to the same conventions: premiums <span class="num">100’000</span> against fulfilment cash flows of <span class="num">112’000</span>, two coverage years with half the service in each, discounting immaterial, and Turicum Re quoting any cession at expected claims plus 6 per hundred of cover. <strong>Proportional treaties only</strong>: the mirror multiplies every loss event by one recovery ratio, which is exact when recoveries track claims proportionally. The timing condition (B119C) is met in both acts because both treaties signed with, or before, their cohorts; cover is non-overlapping; and a recovery is only booked on cover bought for business the company wrote itself. The M&amp;T treaty's own CSM is held flat at <span class="num">${fmt(N.cededCsm0)}</span> apart from the paragraph 66(c)(ii) adjustments, so the drop is attributable; Limmat's treaty is summarized by its expected net cost. Out of scope: the premium allocation approach, transition, and the disclosure requirements themselves. The year-five offer is where the proportional assumption breaks.</p>`,
+     <p><strong>Assumptions of these cases.</strong> Act Two's numbers follow this module's standard worked example, restated in whole francs: one cohort of three fleet contracts, three annual periods at a flat 10%, half the remaining balance released each year. Act One is a companion case built to the same conventions: premiums <span class="num">100’000</span> against fulfilment cash flows of <span class="num">112’000</span>, two coverage years with half the service in each, discounting immaterial, and Turicum Re quoting any cession at expected claims plus 6 per hundred of cover. <strong>Proportional treaties only</strong>: the mirror multiplies every loss event by one recovery ratio, which is exact when recoveries track claims proportionally. The timing condition (B119C) is met in both acts because both treaties signed with, or before, their cohorts; cover is non-overlapping; and a recovery is only booked on cover bought for business the company wrote itself. The Clearbook treaty's own CSM is held flat at <span class="num">${fmt(N.cededCsm0)}</span> apart from the paragraph 66(c)(ii) adjustments, so the drop is attributable; Limmat's treaty is summarized by its expected net cost. Out of scope: the premium allocation approach, transition, and the disclosure requirements themselves. The year-five offer is where the proportional assumption breaks.</p>`,
     ['16','47','66A','66B','B119C','B119D','B119E','B119F','66(c)(ii)','86']);
 }
 /* ================= roll-forward: one component's whole story =================
@@ -1934,7 +1934,7 @@ function titleScreen(){
   const h=el('div','hero fadein');
   h.append(el('div','kicker','An IFRS 17 case · module 2'));
   h.append(el('h1','','Two books go bad.<br>Make the cover <em>count</em>.'));
-  h.append(el('p','','You are a consulting actuary, brought in from outside. This winter, two Zurich insurers call in the same month. Limmat priced its cover too low and loses money from day one. Mutual & Torres priced well, then took a claims shock. You advise both on the reinsurance cover to buy, then work through ten meetings showing them what it does to their financial statements.'));
+  h.append(el('p','','You are a consulting actuary, brought in from outside. This winter, two Zurich insurers call in the same month. Limmat priced its cover too low and loses money from day one. Clearbook Assurance priced well, then took a claims shock. You advise both on the reinsurance cover to buy, then work through ten meetings showing them what it does to their financial statements.'));
   const btns=el('div','btns');
   const done=Object.keys(S.done).length;
   const finished=!!(S.done.audit&&S.capstoneDone);
@@ -1955,7 +1955,7 @@ function titleScreen(){
 }
 /* ================= the case files: two companies on one desk =================
    Act One runs across the top row: Limmat Assurance, three meetings, a loss
-   loss-making at signing. Act Two fills the rows below: Mutual & Torres, seven
+   loss-making at signing. Act Two fills the rows below: Clearbook Assurance, seven
    meetings, a loss caused by a shock. One broker and one reinsurer sit across
    both tables. The case file is the game's avatar; rideTo slides it along the
    paper trail, and the amount on its label is whatever the case is carrying. */
@@ -2168,7 +2168,7 @@ function renderMap(){
       <ellipse cx="810" cy="20" rx="60" ry="10"/><circle cx="788" cy="11" r="11"/><circle cx="824" cy="9" r="13"/><circle cx="852" cy="15" r="9"/>
     </g>
     ${building(156,1060,66,TRAIL[0]+40,'LIMMAT ASSURANCE','ACT ONE · THE TARIFF SLIPPED, ONEROUS THE DAY IT SIGNS',44,true)}
-    ${building(8,1208,560,TRAIL[2]+40,'MUTUAL &amp; TORRES','ACT TWO · PRICED RIGHT, THEN THE CLAIMS SHOCK',62,false,true)}
+    ${building(8,1208,560,TRAIL[2]+40,'CLEARBOOK ASSURANCE','ACT TWO · PRICED RIGHT, THEN THE CLAIMS SHOCK',62,false,true)}
     <rect x="0" y="432" width="${LINE_W}" height="28" fill="#0d1420"/>
     <path d="M0,446 H${LINE_W}" stroke="#4a586b" stroke-width="2" stroke-dasharray="18 16"/>
     <g><rect x="250" y="424" width="170" height="30" rx="9" fill="#173340" stroke="#2c394a" stroke-width="2"/>
@@ -2578,7 +2578,7 @@ async function stationShortyear(){
   const maybeEnd=async()=>{ if(!(closed&&contrasted)||S.done.shortyear)return; completeRoom('shortyear');
     setObjective('Act One closed · Limmat’s books read zero');
     await actOneRecap();
-    doorOut(sc,'Cross town to Mutual & Torres →'); };
+    doorOut(sc,'Cross town to Clearbook Assurance →'); };
   bindHotspots(sc,{
     close:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2625,7 +2625,7 @@ async function stationShortyear(){
     if(closed)mk('close'); if(contrasted)mk('contrast');
     if(closed&&!contrasted)setObjective('Objective: <b>read THE TWO LINES</b> before you leave Limmat');
     else if(count2()&&count2()<2)setObjective('Objective: close the short book <b>'+count2()+'/2</b>');
-  } else doorOut(sc,'Cross town to Mutual & Torres →');
+  } else doorOut(sc,'Cross town to Clearbook Assurance →');
 }
 /* ================= MEETING 1: THE RENEWAL =================
    January 2026, your desk. The cohort is written and, in the same sitting, the
@@ -2725,7 +2725,7 @@ async function stationRenewal(){
       if(g.classList.contains('done'))return;
       if(step===0){
         await talk(sc,[
-          {w:'sys',t:'Mutual & Torres, across town, and the calendar back at the same grey January that Limmat signed its slip. The renewal file for cohort Motor-2026 is open on your desk: three motor fleets, written together, measured together.'},
+          {w:'sys',t:'Clearbook Assurance, across town, and the calendar back at the same grey January that Limmat signed its slip. The renewal file for cohort Motor-2026 is open on your desk: three motor fleets, written together, measured together.'},
           {w:'chief',n:'V. Torres',t:'“Claims we expect: <span class="num">'+fmt(N.claims.M1)+'</span> on M1, <span class="num">'+fmt(N.claims.M2)+'</span> on M2, <span class="num">'+fmt(N.claims.M3)+'</span> on M3. The cohort prices to a CSM of <span class="num">'+fmt(N.csm0)+'</span>. Unearned profit: interest at <span class="num">10%</span>, half of what remains released each year as we serve it.”'},
           {w:'bro',n:'K. Odermatt · broker',t:'“And the cover, as discussed: Turicum Re will take a <span class="num">50%</span> quota share of M1 and M2. They looked at M3’s loss history and passed. Best terms on the market this January.”'},
           {w:'cfo',n:'M. Brandt · CFO',t:'“Half the margin on our two best fleets, paid away in a year we expect to be good. Remind me why I am signing this.”'},
@@ -2802,9 +2802,9 @@ async function stationRenewal(){
   } else {sign();setTank(0);stampOnerous();setSteps(3);doorOut(sc,'Take the file to the booking check →');}
   /* the hand-over between the acts: new company, new cast, the clock rewound */
   if(fresh&&step===0&&!P.act2){
-    await teach('Act Two · Across town at Mutual & Torres',
+    await teach('Act Two · Across town at Clearbook Assurance',
       `<p><strong>Limmat’s case is closed.</strong> The tariff was too low, so those contracts lost money from the day they were signed. You put the loss on the books at once, booked back the half the treaty covers, kept the price of the cover on its own line, and ran both down to zero.</p>
-       <p><strong>Odermatt walks your card across town to Mutual &amp; Torres</strong>, a motor insurer that wants the same outside eye on its reinsurance accounting. The calendar rewinds to January 2026: both cases started the same winter, and this one is now told from its beginning. New chairs around you: <strong>V. Torres</strong>, the chief actuary, runs the room here, and <strong>M. Brandt</strong>, the CFO, pays for it. You hold the same role at both houses — the consultant who has to get the cover into the books. Odermatt brokers both accounts, and Turicum Re sits across both tables.</p>
+       <p><strong>Odermatt walks your card across town to Clearbook Assurance</strong>, a motor insurer that wants the same outside eye on its reinsurance accounting. The calendar rewinds to January 2026: both cases started the same winter, and this one is now told from its beginning. New chairs around you: <strong>V. Torres</strong>, the chief actuary, runs the room here, and <strong>M. Brandt</strong>, the CFO, pays for it. You hold the same role at both houses — the consultant who has to get the cover into the books. Odermatt brokers both accounts, and Turicum Re sits across both tables.</p>
        <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money — and two years from now a claims shock hits it anyway. Act Two answers the question Limmat never had to ask: what does a treaty do for a loss that was not a pricing mistake? That loss is reported on the neighbouring line, <strong>recovery of losses on contracts turning onerous</strong>.</p>
        <p class="fy">A practical note: both cases speak whole francs. This book carries a CSM of 100’000 at inception — the same order of magnitude as Limmat’s premiums, and a coincidence the two chief actuaries have joked about.</p>`,
       ['47–48','B119C']);
@@ -2822,7 +2822,7 @@ async function stationBooking(){
   const fresh=!S.done.booking;
   const {sc,mount}=sceneShell('booking', fresh?'Objective: clear the booking check <b>0/3</b>':'Done · read it again');
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
-    ${frame('MUTUAL & TORRES · THE BOOKING CHECK','#1e2a3e')}
+    ${frame('CLEARBOOK ASSURANCE · THE BOOKING CHECK','#1e2a3e')}
     ${plate(78,132,600,300,'#141d2e')}
     <g id="klaxon" style="opacity:0">
       <rect x="90" y="140" width="580" height="34" rx="5" fill="#241a1e" stroke="#e06a5e" stroke-width="1.5"/>
@@ -2943,7 +2943,7 @@ async function stationBooking(){
       if(g.classList.contains('done'))return;
       await quiz({kicker:'What this line will and will not process',pts:QUESTION_PTS,
         intro:'<div class="memo"><strong>What this desk handles:</strong> treaties never overlap, so each policy is covered by at most one treaty; and a loss recovery is only booked on cover bought for <b>business we wrote ourselves</b>.</div>',
-        q:'Mutual & Torres also earns money as a reinsurer for smaller insurers, and it passes part of that assumed book onward to Turicum Re. Does that outward cover create a loss recovery, the way QS50 does?',
+        q:'Clearbook Assurance also earns money as a reinsurer for smaller insurers, and it passes part of that assumed book onward to Turicum Re. Does that outward cover create a loss recovery, the way QS50 does?',
         options:[
           {t:'No. A loss recovery is only booked on cover for policies we wrote ourselves',ok:true,why:'The recovery mirrors a loss on <strong>our own onerous policies</strong>. Business assumed from another insurer sits one layer further out: their policyholders, their loss. Passing it onward and booking a recovery would mean mirroring a mirror, and the same underlying loss would end up counted twice. So the desk deliberately keeps assumed-and-passed-on business out of this calculation. That is a stated simplification of this desk, not a rule of the standard, and the case card says so.'},
           {t:'Yes. Any outward cover with a named coverage list earns a recovery',why:'A coverage list makes the number computable, not correct. Following the chain outward would mirror an already-mirrored loss.'},
@@ -2963,14 +2963,14 @@ async function stationBooking(){
 /* ================= MEETING 3: THE ALLOCATION =================
    One sheet of working paper between the loss and the recovery. The loss is
    shared out by claims weight: the part the treaty covers carries a recovery,
-   the rest is Mutual & Torres' own problem. The dials are the player's: work
+   the rest is Clearbook Assurance' own problem. The dials are the player's: work
    out the allocation share from the claims table (LOSS_ALLOCATION_SHARE, B119E). */
 async function stationWorkpaper(){
   const fresh=!S.done.workpaper;
   const {sc,mount}=sceneShell('workpaper', fresh?'Objective: work out the share <b>0/3</b>':'Done · read it again');
   const F=N.fixture;
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
-    ${frame('MUTUAL & TORRES · THE ALLOCATION WORKPAPER','#1e2a3e')}
+    ${frame('CLEARBOOK ASSURANCE · THE ALLOCATION WORKPAPER','#1e2a3e')}
     ${plate(90,140,580,290)}
     <rect x="90" y="140" width="580" height="34" rx="6" fill="#141d2e"/>
     <text x="110" y="162" font-family="var(--mono)" font-size="10" letter-spacing="1.8" fill="#8b98aa">ALLOCATION WORKPAPER · HOW MUCH THE TREATY COVERS</text>
@@ -3099,7 +3099,7 @@ async function stationMirror(){
   const fresh=!S.done.mirror;
   const {sc,mount}=sceneShell('mirror', fresh?'Objective: prove the number <b>0/3</b>':'Done · read it again');
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
-    ${frame('MUTUAL & TORRES · THE MIRROR RUN','#1e2a3e')}
+    ${frame('CLEARBOOK ASSURANCE · THE MIRROR RUN','#1e2a3e')}
     ${plate(80,148,600,286,'#141d2e')}
     <text x="${FR.FOCUS.cx}" y="164" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">WHAT GOES IN, AND WHAT THE MIRROR PRINTS BACK</text>
     ${plate(90,196,180,110)}
@@ -3577,7 +3577,7 @@ function endOverlay(){
   const grade=S.score>=100?'Full marks. The case is mastered.':S.score>=85?'A strong file, a few findings still open.':S.score>=60?'The shape is there; the audit file shows where to look.':'An honest first pass. The retake desk is open.';
   card.append(el('div','qk','Case closed · mastery '+S.score+'/100'));
   card.append(el('div','grade',grade));
-  card.append(el('p','','At Limmat you booked a loss the day you found it (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Mutual & Torres you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
+  card.append(el('p','','At Limmat you booked a loss the day you found it (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Clearbook Assurance you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
   const rules=el('div','rules');
   rules.innerHTML=['16','47–48','44','45','66A','66B','B119C','B119D','B119E','B119F','66(c)(ii)','86'].map(citeChip).join('');
   card.append(rules);
