@@ -1276,7 +1276,7 @@ function showDirectory(){
     `<p><strong>ACT ONE · LIMMAT ASSURANCE</strong><br>
      <strong>1 · The Pricing Slip</strong>: a group onerous at initial recognition takes its loss immediately (paragraph 47), and forms its own group so no profitable business can absorb it (paragraph 16, 22).<br>
      <strong>2 · The Cession Desk</strong>: the recovery ratio (B119D) with an allocation of 1.00, the cap that stops a cession erasing a loss (B119F), and the net cost of cover, spread over the coverage period in net expense from reinsurance held (paragraph 86).<br>
-     <strong>3 · The Short Book</strong>: the mirror runs off with the loss it reflects, and the disclosure splits recoveries by how the loss came about: contracts sold at a loss-making price against contracts that went bad later.</p>
+     <strong>3 · The Short Book</strong>: the mirror runs off with the loss it reflects, and the disclosure splits recoveries by how the loss came about: contracts sold at a loss-making price against contracts that turned loss-making later.</p>
      <p><strong>ACT TWO · MUTUAL &amp; TORRES</strong><br>
      <strong>4 · The Renewal</strong>: the group is the unit; a group turns onerous when its CSM is exhausted, and the excess is a loss recognized immediately with a loss component (paragraph 47–48), in the order interest, changes, release (paragraph 44–45).<br>
      <strong>5 · The Booking Check</strong>: income on reinsurance held when a loss is recognized on the underlying (paragraph 66A–66B), and the timing condition that the cover was entered into on or before the underlying was recognized (B119C).<br>
@@ -2610,7 +2610,7 @@ async function stationShortyear(){
         intro:'<div class="memo"><strong>Limmat’s recovery income went on the P&amp;L line “recovery of losses on onerous underlying contracts”.</strong> The chart of accounts has a second, almost identical line: “recovery of losses on contracts turning onerous”. Both mean “a reinsurer will pay back part of a loss we just booked”. One fact about the loss decides which line is used.</div>',
         q:'What decides which of the two recovery lines the income is reported on?',
         options:[
-          {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and went bad later',ok:true,why:'A reader of the accounts wants to know <em>which kind of problem</em> the reinsurer is paying for. <strong>Recovery of losses on onerous underlying contracts</strong> points at the pricing desk: the contracts were already loss-making the day they were signed — Meier’s frozen tariff. <strong>Recovery of losses on contracts turning onerous</strong> points at the world: a book that was priced well and carried real profit was overtaken by events later — a claims shock, a court ruling, inflation. The arithmetic behind both lines is identical; the management conversations are opposites. One ends in a repricing, the other in a reserve review. Limmat’s whole case lived on the first; across town, a motor book that was priced perfectly well is about to write the second.'},
+          {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and turned loss-making later',ok:true,why:'A reader of the accounts wants to know <em>which kind of problem</em> the reinsurer is paying for. <strong>Recovery of losses on onerous underlying contracts</strong> points at the pricing desk: the contracts were already loss-making the day they were signed — Meier’s frozen tariff. <strong>Recovery of losses on contracts turning onerous</strong> points at the world: a book that was priced well and carried real profit was overtaken by events later — a claims shock, a court ruling, inflation. The arithmetic behind both lines is identical; the management conversations are opposites. One ends in a repricing, the other in a reserve review. Limmat’s whole case lived on the first; across town, a motor book that was priced perfectly well is about to write the second.'},
           {t:'The size of the recovery: large amounts on one line, smaller ones on the other',why:'There is no size rule. A one-franc recovery on a mispriced book still counts as a recovery on onerous underlying contracts.'},
           {t:'The type of treaty: quota shares on one line, other covers on the other',why:'The treaty’s shape never decides the line. Either line can carry any kind of cover; what differs is how the underlying loss came about.'}],
         cite:['47','B119D']},fresh);
@@ -2717,8 +2717,8 @@ async function stationRenewal(){
       await teach('Why the cohort, and not the fleet',
         `<p><strong>1 · The unit of account is the group.</strong> A contract is measured inside a group of contracts, and the CSM belongs to the group, not to any one member of it. M1, M2 and M3 sit in one file because they were written in the same cohort.</p>
          <p><strong>2 · A group turns onerous when its CSM is exhausted.</strong> Bad news is set against the group's CSM. While there is CSM left, nothing hits P&amp;L. Once the CSM reaches zero, the excess is a loss recognized immediately, and a loss component records it (paragraph 47-48).</p>
-         <p><strong>3 · No single fleet turns the cohort onerous alone.</strong> M3 is not covered by the treaty, and M3 alone could drive the whole group onerous while M1 and M2 are still comfortably profitable. The loss is a fact about the cohort, not about whichever account went bad.</p>
-         <p><strong>4 · Which is why it does not matter which account went bad.</strong> Hold on to this: further into the case it decides the whole method. The loss on the flip has no natural owner among the three, so the recovery cannot be worked out one fleet at a time.</p>`,
+         <p><strong>3 · No single fleet turns the cohort onerous alone.</strong> M3 is not covered by the treaty, and M3 alone could drive the whole group onerous while M1 and M2 are still comfortably profitable. The loss is a fact about the cohort, not about whichever account the claims hit.</p>
+         <p><strong>4 · Which is why it does not matter which account the claims hit.</strong> This one decides the whole method later in the case: the loss has no natural owner among the three fleets, so the recovery cannot be worked out one fleet at a time.</p>`,
         ['47–48','B119C']);
       read=true;P.read=1;save();maybeEnd();},
     file:async(g)=>{
@@ -3156,7 +3156,7 @@ async function stationMirror(){
     lever:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'chief',n:'V. Torres',t:'“Now the test the auditor will run in March. The claims system wants the worsening written against individual fleets, but the loss of <span class="num">'+fmt(FLIP_LC)+'</span> belongs to the cohort, not to whichever fleet went bad. Watch the printed income while I write it down three different ways.”'},
+        {w:'chief',n:'V. Torres',t:'“Now the test the auditor will run in March. The claims system wants the worsening written against individual fleets, but the loss of <span class="num">'+fmt(FLIP_LC)+'</span> belongs to the cohort, not to whichever fleet the claims hit. Watch the printed income while I write it down three different ways.”'},
       ]);
       /* the output is nailed down: however the loss is booked, the print is the same */
       const cap=sc.querySelector('#railcap');
