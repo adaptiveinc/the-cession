@@ -997,7 +997,11 @@ function castFig(x,name,color,dark,kind,s){
 }
 /* the standing casts, by meeting */
 const CAST={
-  you:   x=>castFig(x,'YOU','#d9a648','#6b5222','staff'),
+  /* the series carries over from module 1's Clearbook: You is the same gold
+     'avatar' rig, and the auditor the same red one. The chief actuary keeps
+     module 1's 'actuary' rig but not its gold, which would put three
+     near-identical figures side by side in the Clearbook rooms. */
+  you:   x=>castFig(x,'YOU','#d9a648','#6b5222','avatar'),
   torres:x=>castFig(x,'TORRES','#72b7cc','#274b59','actuary'),
   novak: x=>castFig(x,'MEIER','#e0865e','#7a5c33','staff2'),
   brandt:x=>castFig(x,'BRANDT','#c9a25a','#7a6c45','staff2'),
@@ -1993,7 +1997,7 @@ function token(x,y,s,stage){
   }[stage]||{amt:'#8b98aa',label:'—'};
   return `<g class="token" transform="translate(${x},${y}) scale(${s})">
     <ellipse cx="0" cy="28" rx="28" ry="6" fill="#000" opacity=".28"/>
-    <g class="tok-bob">${person(8,-36,0.72,'#d9a648','#6b5222','staff')}</g>
+    <g class="tok-bob">${person(8,-36,0.72,'#d9a648','#6b5222','avatar')}</g>
     <g class="tok-sway">
       <rect x="-56" y="-4" width="50" height="28" rx="4" fill="#c9a25a" stroke="#8b6f36" stroke-width="2"/>
       <rect x="-52" y="3" width="42" height="16" rx="2" fill="#e9eef5" stroke="#8b98aa"/>
