@@ -1106,7 +1106,7 @@ const COMP_NAMES={
   pnl:'The M&T recovery lines in P&L, booked to date'};
 const COMP_NOTES={
   alc:'Born at initial recognition, not from a flip: premiums of '+fmt(NA.prem)+' against fulfilment cash flows of '+fmt(NA.fcf)+' (paragraph 47). No CSM ever existed on this cohort.',
-  alorc:'The underlying loss scaled by the recovery share. The cover reaches the whole cohort, so the allocation is 1.00 and the share <em>is</em> the cession.',
+  alorc:'The underlying loss scaled by the recovery share. The treaty covers the whole cohort, so the allocation is 1.00 and the share <em>is</em> the cession.',
   apnl:'Recognized as <strong>recovery of losses on onerous underlying contracts</strong>, reversed through <strong>reversal of loss recoveries</strong> as the two coverage years run. Sums to exactly zero over the life.',
   lorc:'Every movement of the underlying loss component, scaled by the recovery share of 0.3. Because the mirror scales the loss component itself, this balance can never exceed the recoverable part of it (B119F).',
   ccsm:'Held flat at 20 apart from the paragraph 66(c)(ii) adjustments, so the drop is attributable. Only the <strong>loss events</strong> adjust it; the run-off movements must not, or the recovery income would be counted twice.',
@@ -1336,7 +1336,7 @@ const NUMQ=[
            {t:'0, the CSM covers it',why:'The CSM is '+fmt(CSM_2027)+' against a deterioration of '+fmt(N.det2027)+'. It is not enough.'}]},
  {kicker:'The mirror',q:'A flip loss of '+fmt(FLIP_LC)+' at a share of '+N.share.toFixed(2)+'. How much income goes on the treaty?',
   options:[{t:fmt(RECOVERY),ok:true,why:fmt(FLIP_LC)+' × '+N.share.toFixed(2)+' = '+fmt(RECOVERY)+', recognized in the same period as the loss (paragraph 66A).'},
-           {t:fmt(r2(FLIP_LC*N.ratio)),why:'That applies the cession without the allocation; it assumes the treaty reaches the whole group.'},
+           {t:fmt(r2(FLIP_LC*N.ratio)),why:'That applies the cession without the allocation; it assumes the treaty covers the whole group.'},
            {t:fmt(FLIP_LC),why:'A 50% quota share over part of a group does not return the whole loss.'}]},
  {kicker:'The 2028 close',q:'Opening '+fmt(RECOVERY)+', interest '+fmt(ROLLS[1].lorc)+', deterioration '+fmt(ROLLS[2].lorc)+', then half released. What reverses?',
   options:[{t:fmt(Math.abs(ROLLS[3].lorc)),ok:true,why:'Balance before release '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc))+'; half of it is '+fmt(Math.abs(ROLLS[3].lorc))+', leaving '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc+ROLLS[3].lorc))+'.'},
@@ -2010,7 +2010,7 @@ const ICONS={
     <text x="${x+80}" y="${y+96}" text-anchor="middle" font-family="var(--mono)" font-size="10.5" font-weight="700" fill="#276942">${fmt(r2(FLIP_LC*N.allocation))}</text>
     <text x="${x+192}" y="${y+96}" text-anchor="middle" font-family="var(--mono)" font-size="10.5" fill="#4a586b">${fmt(r2(FLIP_LC*(1-N.allocation)))}</text>
     <text x="${x+136}" y="${y+124}" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="#8b6f36">0.60 × 0.50 = 0.30</text>
-    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">WHO THE TREATY REACHES</text></g>`,
+    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">WHO THE TREATY COVERS</text></g>`,
   /* the mirror: loss in, income out, one multiplier between */
   mirror:(x,y,w,h,d)=>`<g opacity="${d?.35:1}">
     <rect x="${x+22}" y="${y+44}" width="80" height="54" rx="4" fill="#26354c" stroke="#4a5d78"/>
@@ -2374,10 +2374,10 @@ async function stationDesk(){
         {w:'sys',t:'The gross loss never moves. The recovery climbs in steps of three thousand; the cost climbs with it, fifteen hundred at a time. At half the book the desk reads: relief <b>'+fmt(A_LORC)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.5).net))+'</b>, cost <b>'+fmt(A_COST)+'</b>.'},
       ]);
       await quiz({kicker:'The quote at 50%',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Half the tranche:</strong> expected recoveries <b>'+fmt(NA.quote(.5).rec)+'</b> on the cohort’s expected claims of <b>'+fmt(NA.fcf)+'</b>, premium <b>'+fmt(NA.quote(.5).prem)+'</b>. The cover reaches the <b>whole cohort</b>. Loss on the file <b>'+fmt(NA.lc)+'</b>.</div>',
+        ctx:'<div class="memo"><strong>Half the tranche:</strong> expected recoveries <b>'+fmt(NA.quote(.5).rec)+'</b> on the cohort’s expected claims of <b>'+fmt(NA.fcf)+'</b>, premium <b>'+fmt(NA.quote(.5).prem)+'</b>. The treaty covers the <b>whole cohort</b>. Loss on the file <b>'+fmt(NA.lc)+'</b>.</div>',
         q:'How much loss-recovery income does signing at 50% put on day one?',
         options:[
-          {t:fmt(NA.lc)+' × 0.50 = '+fmt(A_LORC)+'. The cover reaches the whole cohort, so the share is the cession',ok:true,why:'The recovery ratio (B119D) is expected recoveries over the claims of the covered contracts: '+fmt(NA.quote(.5).rec)+' / '+fmt(NA.fcf)+' = 0.50. The allocation share (B119E) is 1.00, because every contract of the group is covered. So the multiplier is simply the cession, and the income is <strong>'+fmt(A_LORC)+'</strong>, recognized the same day as the loss (paragraph 66A), as <strong>recovery of losses on onerous underlying contracts</strong>, the line for groups that were loss-making from the very start. Keep the two dials in mind anyway: across town there is a treaty that reaches only part of a group, and there the allocation stops being 1.00.'},
+          {t:fmt(NA.lc)+' × 0.50 = '+fmt(A_LORC)+'. The treaty covers the whole cohort, so the share is the cession',ok:true,why:'The recovery ratio (B119D) is expected recoveries over the claims of the covered contracts: '+fmt(NA.quote(.5).rec)+' / '+fmt(NA.fcf)+' = 0.50. The allocation share (B119E) is 1.00, because every contract of the group is covered. So the multiplier is simply the cession, and the income is <strong>'+fmt(A_LORC)+'</strong>, recognized the same day as the loss (paragraph 66A), as <strong>recovery of losses on onerous underlying contracts</strong>, the line for groups that were loss-making from the very start. Keep the two dials in mind anyway: across town there is a treaty that covers only part of a group, and there the allocation stops being 1.00.'},
           {t:fmt(NA.quote(.5).rec)+' / '+fmt(NA.quote(.5).prem)+' × '+fmt(NA.lc)+' = '+fmt(r2(NA.quote(.5).rec/NA.quote(.5).prem*NA.lc))+', recoveries over premium',why:'The price of the treaty never enters the loss-recovery component. The ratio is recoveries over covered <em>claims</em> (B119D); what you paid for them lives in the treaty’s own result.'},
           {t:fmt(A_LORC)+' less the margin of '+fmt(A_COST)+' = '+fmt(r2(A_LORC-A_COST))+', the net benefit',why:'The recovery lines and the cost of cover are two different stories on two different lines. The income is the full '+fmt(A_LORC)+'; the margin is spread over the coverage period elsewhere. Netting them would hide both.'}],
         cite:['B119D','66A']},fresh);
@@ -2658,7 +2658,7 @@ async function stationRenewal(){
           options:[
             {t:'No. There is no loss yet, and the recovery is income on a loss',ok:true,why:'Paragraph 66A gives income on the reinsurance held <strong>when the entity recognizes a loss</strong> on the onerous underlying contracts. The cohort is profitable, its CSM is intact, and no loss exists to recover. The treaty is on the books, its own CSM is on the books, and none of the recovery machinery has anything to do yet.'},
             {t:'Yes. The treaty covers half the claims, so half the CSM mirrors across',why:'The mirror scales <em>losses</em>, not profit. A profitable group has no loss component, and nothing to mirror. Ceded CSM and gross CSM are measured separately; they do not offset.'},
-            {t:'Yes, but only for M1 and M2, the two fleets the treaty reaches',why:'Still nothing to recover. Cover decides how much of a loss comes back, never whether a loss exists. Today there is no loss on this file.'}],
+            {t:'Yes, but only for M1 and M2, the two fleets the treaty covers',why:'Still nothing to recover. Cover decides how much of a loss comes back, never whether a loss exists. Today there is no loss on this file.'}],
           cite:['66A','B119C']},fresh);
         if(fresh)applyDeltas({csm:N.csm0,ccsm:N.cededCsm0});
         sign();setTank(N.csm0);
@@ -2781,7 +2781,7 @@ async function stationBooking(){
       <line x1="${FR.RAIL.x+20}" y1="${FR.RAIL.y+130}" x2="${FR.RAIL.x+392}" y2="${FR.RAIL.y+130}" stroke="#2c394a"/>
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+164}" font-family="var(--mono)" font-size="12.5" fill="#8b98aa">contracts covered</text>
       <text id="linkrow" x="${FR.RAIL.x+392}" y="${FR.RAIL.y+164}" text-anchor="end" font-family="var(--mono)" font-size="14" font-weight="700" fill="#e06a5e">— not stated —</text>
-      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+218}" font-family="var(--mono)" font-size="11" fill="#8b6b74">the treaty reaches … which of them?</text>`)}
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+218}" font-family="var(--mono)" font-size="11" fill="#8b6b74">the treaty covers … which of them?</text>`)}
     ${CAST.torres(540)}${CAST.you(640)}${CAST.brandt(712)}
     ${hotspot(380,446,'!','scan','','RUN THE CHECK')}
     <circle cx="712" cy="449" r="2.5" fill="#8b98aa"/><circle cx="712" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(712,404,'?','timing','q','BRANDT’S IDEA')}
@@ -2829,11 +2829,11 @@ async function stationBooking(){
       await quiz({kicker:'The overnight rejection',pts:QUESTION_PTS,
         /* the memo gives the situation, never the verdict: showing the
            rejection note here would hand over the answer before it is asked */
-        intro:'<div class="memo"><strong>In the books:</strong> one treaty, <b>QS50</b>, bought to cover our own policies — but the list of covered contracts was left empty. Cohort Motor-2026 has just booked a loss of <b>'+fmt(FLIP_LC)+'</b>. Nothing in the booking says which contracts the treaty reaches.</div>',
+        intro:'<div class="memo"><strong>In the books:</strong> one treaty, <b>QS50</b>, bought to cover our own policies — but the list of covered contracts was left empty. Cohort Motor-2026 has just booked a loss of <b>'+fmt(FLIP_LC)+'</b>. Nothing in the booking says which contracts the treaty covers.</div>',
         q:'The treaty is signed, filed and paid for. Why is there still no loss-recovery component on the books?',
         options:[
           {t:'Because nobody can compute one: without the coverage list there is no recovery share to multiply the loss by',ok:true,why:'The loss-recovery component is the loss multiplied by the share of it the treaty is expected to pay back — and that share is built from the coverage list: which contracts are covered (B119E), and how much of their claims comes back (B119D). With the list empty the share is not zero, it is <strong>unknown</strong>, so the run stops with this note: <span style="font-family:var(--mono);font-size:12px">'+REJECTION_NOTE+'</span><br><br>Refusing to run is the safe failure. If the system quietly booked nothing instead, the paragraph 66A income would silently vanish from the accounts, the books would still balance, and nothing downstream would ever catch it. A calculation you cannot perform must never look like a calculation that came to zero.'},
-          {t:'It should show one: QS50 is a 50% quota share, so '+fmt(r2(FLIP_LC*0.5))+' comes back',why:'The cession percentage alone is not the recovery share. QS50 cedes 50% <em>of the contracts it covers</em>, and nothing on file says which those are. If the treaty reaches only part of the group — and it does, M3 is excluded — then half of the whole '+fmt(FLIP_LC)+' overstates the recovery. The share must be built from the coverage, which is exactly the missing piece.'},
+          {t:'It should show one: QS50 is a 50% quota share, so '+fmt(r2(FLIP_LC*0.5))+' comes back',why:'The cession percentage alone is not the recovery share. QS50 cedes 50% <em>of the contracts it covers</em>, and nothing on file says which those are. If the treaty covers only part of the group — and it does, M3 is excluded — then half of the whole '+fmt(FLIP_LC)+' overstates the recovery. The share must be built from the coverage, which is exactly the missing piece.'},
           {t:'Because no recovery cash has arrived: the reinsurer pays only when the claims are paid',why:'Cash timing never gates the loss-recovery component: it is recognized in the same period as the loss it mirrors (paragraph 66A), long before any claim is settled. The block here is missing information, not missing money.'}],
         cite:['66A','B119D']},fresh);
       await talk(sc,[{w:'sys',t:'You pull the signed treaty from the file and key the coverage in: QS50 covers M1 and M2. Rerun.'}]);
@@ -2845,7 +2845,7 @@ async function stationBooking(){
     timing:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'cfo',n:'M. Brandt · CFO',t:'“While you were fixing the plumbing, I did some thinking. The treaty only reaches part of the '+fmt(FLIP_LC)+'. Call Odermatt, buy a second cover <em>now</em>, and we recover the rest this quarter.”'},
+        {w:'cfo',n:'M. Brandt · CFO',t:'“While you were fixing the plumbing, I did some thinking. The treaty only covers part of the '+fmt(FLIP_LC)+'. Call Odermatt, buy a second cover <em>now</em>, and we recover the rest this quarter.”'},
       ]);
       await quiz({kicker:'Brandt’s idea',pts:QUESTION_PTS,
         intro:'<div class="memo"><strong>The timing condition (B119C):</strong> the loss-recovery component only arises where the reinsurance contract held was entered into <b>on or before</b> the onerous underlying contracts were recognized.</div>',
@@ -2881,7 +2881,7 @@ async function stationBooking(){
 }
 /* ================= MEETING 3: THE ALLOCATION =================
    One sheet of working paper between the loss and the recovery. The loss is
-   shared out by claims weight: the part the treaty reaches carries a recovery,
+   shared out by claims weight: the part the treaty covers carries a recovery,
    the rest is Mutual & Torres' own problem. The dials are the player's: work
    out the allocation share from the claims table (LOSS_ALLOCATION_SHARE, B119E). */
 async function stationWorkpaper(){
@@ -2892,14 +2892,14 @@ async function stationWorkpaper(){
     ${frame('MUTUAL & TORRES · THE ALLOCATION WORKPAPER','#1e2a3e')}
     ${plate(90,140,580,290)}
     <rect x="90" y="140" width="580" height="34" rx="6" fill="#141d2e"/>
-    <text x="110" y="162" font-family="var(--mono)" font-size="10" letter-spacing="1.8" fill="#8b98aa">ALLOCATION WORKPAPER · HOW FAR THE TREATY REACHES</text>
+    <text x="110" y="162" font-family="var(--mono)" font-size="10" letter-spacing="1.8" fill="#8b98aa">ALLOCATION WORKPAPER · HOW MUCH THE TREATY COVERS</text>
     <rect x="270" y="192" width="220" height="56" rx="5" fill="#141d2e" stroke="#8b6b74" stroke-width="1.5"/>
     <text x="380" y="222" text-anchor="middle" font-family="var(--mono)" font-size="20" font-weight="700" fill="#e06a5e">${fmt(FLIP_LC)}</text>
     <text x="380" y="240" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.6" fill="#8b98aa">THE LOSS ON THE FILE</text>
     <path d="M330,248 L232,290" stroke="#63b380" stroke-width="10" opacity=".55" stroke-linecap="round"/>
     <path d="M430,248 L528,290" stroke="#4a586b" stroke-width="7" opacity=".5" stroke-linecap="round"/>
-    <g id="covchute">${bigNumber(226,336,'—','REACHED BY QS50','green')}</g>
-    <g id="uncchute">${bigNumber(534,336,'—','NOT REACHED · M3','plain')}</g>
+    <g id="covchute">${bigNumber(226,336,'—','COVERED BY QS50','green')}</g>
+    <g id="uncchute">${bigNumber(534,336,'—','NOT COVERED · M3','plain')}</g>
     ${plate(120,382,520,36,'#141d2e')}
     <text x="140" y="405" font-family="var(--mono)" font-size="11" fill="#8b98aa">allocation</text>
     <text id="dAlloc" x="266" y="405" text-anchor="end" font-family="var(--mono)" font-size="15" font-weight="700" fill="#d9a648">—</text>
@@ -2938,16 +2938,16 @@ async function stationWorkpaper(){
     split:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'chief',n:'V. Torres',t:'“Two questions, and people run them together. The first: <em>how much of this cohort does the treaty reach?</em> That is claims of the covered fleets over claims of the whole group, the excluded one included.”'},
-        {w:'chief',n:'V. Torres',t:'“The second: <em>within what it reaches, how much comes back?</em> That is expected recoveries over the covered claims. QS50 takes half.”'},
+        {w:'chief',n:'V. Torres',t:'“Two questions, and people run them together. The first: <em>how much of this cohort does the treaty cover?</em> That is claims of the covered fleets over claims of the whole group, the excluded one included.”'},
+        {w:'chief',n:'V. Torres',t:'“The second: <em>within what it covers, how much comes back?</em> That is expected recoveries over the covered claims. QS50 takes half.”'},
       ]);
-      await quiz({kicker:'The first question · how far the treaty reaches',pts:QUESTION_PTS,
+      await quiz({kicker:'The first question · how much the treaty covers',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Claims:</strong> M1 <b>'+fmt(N.claims.M1)+'</b> and M2 <b>'+fmt(N.claims.M2)+'</b> are covered by QS50; M3 <b>'+fmt(N.claims.M3)+'</b> is not. Group total <b>'+fmt(N.groupClaims)+'</b>.</div>',
-        q:'What proportion of this group does the treaty reach?',
+        q:'What proportion of this group does the treaty cover?',
         options:[
-          {t:fmt(N.covered)+' / '+fmt(N.groupClaims)+' = '+N.allocation.toFixed(2),ok:true,why:'The allocation share (B119E) is <strong>the covered block’s claims over the whole group’s claims, uncovered contracts included</strong>. M3 stays in the denominator precisely because it is part of the group whose loss this is. Leaving it out would say the treaty reaches all of the loss, when it reaches '+(N.allocation*100).toFixed(0)+'% of the cohort.'},
+          {t:fmt(N.covered)+' / '+fmt(N.groupClaims)+' = '+N.allocation.toFixed(2),ok:true,why:'The allocation share (B119E) is <strong>the covered block’s claims over the whole group’s claims, uncovered contracts included</strong>. M3 stays in the denominator precisely because it is part of the group whose loss this is. Leaving it out would say the treaty covers all of the loss, when it covers '+(N.allocation*100).toFixed(0)+'% of the cohort.'},
           {t:'2 / 3 = 0.67, two covered fleets out of three in the file',why:'Counting fleets, not claims. M2 is half the size of M1; a row in a file is not a unit of exposure. The allocation is claims-weighted (B119E).'},
-          {t:fmt(N.covered)+' / '+fmt(N.covered)+' = 1.00, the treaty reaches all of what it reaches',why:'That is the denominator of the <em>ratio</em>, not the allocation. This question asks how much of the group the treaty reaches, and M3 is in the group too.'}],
+          {t:fmt(N.covered)+' / '+fmt(N.covered)+' = 1.00, the treaty covers all of what it covers',why:'That is the denominator of the <em>ratio</em>, not the allocation. This question asks how much of the group the treaty covers, and M3 is in the group too.'}],
         cite:['B119E','B119D']},fresh);
       setDial('#dAlloc',N.allocation.toFixed(2));
       await quiz({kicker:'The second question · how much comes back',pts:QUESTION_PTS,
@@ -2955,12 +2955,12 @@ async function stationWorkpaper(){
         q:'Now the ratio, and then read off the share.',
         options:[
           {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.allocation.toFixed(2)+' × '+N.ratio.toFixed(2)+' = '+N.share.toFixed(2),ok:true,why:'The recovery ratio is <strong>expected claim recoveries over the corresponding covered claims</strong> (B119D): '+fmt(N.ceded)+' / '+fmt(N.covered)+' = '+N.ratio.toFixed(2)+'. The recovery share is the two dials multiplied, <strong>'+N.share.toFixed(2)+'</strong>, and every contract of the group carries it. A proportional treaty over every period of its group reproduces its cession percentage exactly, which is the sanity check: '+N.ratio.toFixed(2)+' is the cession.'},
-          {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.ratio.toFixed(2)+': the cession percentage is the answer',why:'That would be right only if the treaty reached the whole group. It reaches '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'},
+          {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.ratio.toFixed(2)+': the cession percentage is the answer',why:'That would be right only if the treaty covered the whole group. It covers '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'},
           {t:'ratio '+fmt(N.ceded)+' / '+fmt(N.groupClaims)+' = '+(N.ceded/N.groupClaims).toFixed(2)+', which is the share directly',why:'This reaches the right number, '+N.share.toFixed(2)+', by collapsing both dials at once, and that is why it is a trap: it only coincides because the ratio’s denominator cancels. Keep them apart. The ratio belongs to the <em>treaty</em> and blends claims-weighted across every group it touches; the allocation belongs to the <em>group</em>. Collapse them and a treaty over two groups gives the wrong share for both.'}],
         cite:['B119D','B119E']},fresh);
       showSplit();
       await talk(sc,[
-        {w:'sys',t:'The sheet splits the loss where the treaty stops. <b>'+fmt(r2(FLIP_LC*N.allocation))+'</b> is loss the cover reaches; <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> belongs to M3, and Brandt signed nothing that reaches it.'},
+        {w:'sys',t:'The sheet splits the loss where the treaty stops. <b>'+fmt(r2(FLIP_LC*N.allocation))+'</b> is loss the treaty covers; <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> belongs to M3, and Brandt signed nothing that covers it.'},
       ]);
       dialed=true;P.split=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
@@ -3058,7 +3058,7 @@ async function stationMirror(){
         q:'How much income goes on the treaty held?',
         options:[
           {t:fmt(FLIP_LC)+' × '+N.share.toFixed(2)+' = '+fmt(RECOVERY),ok:true,why:'The recovery percentage (B119D) sets it: the income equals the underlying loss multiplied by <strong>the percentage of claims the entity expects to recover</strong> from the treaty. Here that percentage is the allocated share, '+N.share.toFixed(2)+', so the mirrored income is <strong>'+fmt(RECOVERY)+'</strong>. Recognized in the same period as the loss, not later (paragraph 66A). The ratio did the '+N.ratio.toFixed(2)+' and the workpaper did the '+N.allocation.toFixed(2)+'; the mirror only copies.'},
-          {t:fmt(FLIP_LC)+' × '+N.ratio.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.ratio))+', the cession percentage',why:'That skips the allocation. It assumes the treaty reaches the whole group, but M3’s share of the loss is not covered by anyone.'},
+          {t:fmt(FLIP_LC)+' × '+N.ratio.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.ratio))+', the cession percentage',why:'That skips the allocation. It assumes the treaty covers the whole group, but M3’s share of the loss is not covered by anyone.'},
           {t:fmt(FLIP_LC)+', the whole loss: that is what the treaty is for',why:'A 50% quota share over part of a group does not return the whole loss. Both dials apply.'}],
         cite:['66A','B119D']},fresh);
       show();
@@ -3489,7 +3489,7 @@ function endOverlay(){
   const grade=S.score>=100?'Full marks. The case is mastered.':S.score>=85?'A strong file, a few findings still open.':S.score>=60?'The shape is there; the audit file shows where to look.':'An honest first pass. The retake desk is open.';
   card.append(el('div','qk','Case closed · mastery '+S.score+'/100'));
   card.append(el('div','grade',grade));
-  card.append(el('p','','At Limmat you booked a loss the day it was born (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Mutual & Torres you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty reaches and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
+  card.append(el('p','','At Limmat you booked a loss the day it was born (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Mutual & Torres you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
   const rules=el('div','rules');
   rules.innerHTML=['16','47–48','44','45','66A','66B','B119C','B119D','B119E','B119F','66(c)(ii)','86'].map(citeChip).join('');
   card.append(rules);
