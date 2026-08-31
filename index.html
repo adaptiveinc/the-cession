@@ -1342,7 +1342,7 @@ const NUMQ=[
   options:[{t:fmt(Math.abs(ROLLS[3].lorc)),ok:true,why:'Balance before release '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc))+'; half of it is '+fmt(Math.abs(ROLLS[3].lorc))+', leaving '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc+ROLLS[3].lorc))+'.'},
            {t:fmt(r2(RECOVERY*0.5)),why:'That releases against the opening balance, before this year’s interest and deterioration.'},
            {t:'0',why:'The loss component is running off, and the mirror copies every one of its movements.'}]},
- {kicker:'The treaty CSM',q:'Starting at '+fmt(N.cededCsm0)+', which movements adjust it, and where does it end?',
+ {kicker:'The treaty CSM',q:'The treaty’s own CSM starts at '+fmt(N.cededCsm0)+'. Which of the case’s movements adjust it, and where does it end?',
   options:[{t:'Only the two loss events, ending at '+fmt(CEDED_CSM_END),ok:true,why:fmt(N.cededCsm0)+' − '+fmt(RECOVERY)+' − '+fmt(ROLLS[2].lorc)+' = '+fmt(CEDED_CSM_END)+'. Interest and the reversals must not touch it, or the income counts twice.'},
            {t:'All six movements, ending at '+fmt(N.cededCsm0),why:'Mirroring the run-off movements onto the CSM as well would count the recovery income a second time.'},
            {t:'Only the first, ending at '+fmt(r2(N.cededCsm0-RECOVERY)),why:'The 2028 top-up is a genuine loss event too, and adjusts it again.'}]},
@@ -1368,7 +1368,7 @@ function retakeQuiz(r){
 function examQuiz(o,idx,total,drill){
   return new Promise(res=>{
     const card=el('div','mcard');
-    card.append(el('div','qk',(drill?'Numbers drill':'Retake')+' · '+idx+' of '+total+(o.kicker&&!drill?' · '+o.kicker:'')));
+    card.append(el('div','qk',(drill?'Numbers drill':'Retake')+' · '+idx+' of '+total+(o.kicker?' · '+o.kicker:'')));
     if(o.intro)card.insertAdjacentHTML('beforeend',o.intro);
     card.append(el('div','q',o.q));
     const opts=el('div','opts'); const keys='ABCD';
@@ -1390,13 +1390,15 @@ function examQuiz(o,idx,total,drill){
           b.classList.add('wrong');
           if(drill){
             const co=o.options.find(x=>x.ok)||{};
-            card.append(el('div','verdict bad','<strong>Not quite.</strong> '+(op.why||'')+' The right call: <strong>'+co.t+'</strong>. <em>Practice only, no penalty.</em>'));
+            card.append(el('div','verdict bad','<strong>Not quite.</strong> '+(op.why||'')+' The right call: <strong>'+co.t+'</strong>. <em>Practice only: the drill cannot be failed, just keep going.</em>'));
             const f=el('div','mfoot');const c=el('button','cta big',idx<total?'Next question':'Finish');
             c.onclick=()=>{closeModal();res('wrong');};f.append(c);card.append(f);
           } else {
-            card.append(el('div','verdict bad','<strong>Not this time.</strong> '+(op.why||'')+' <em>One miss ends the retake. The findings stay open; come back whenever you are ready.</em>'));
-            const f=el('div','mfoot');const c=el('button','cta big','Back to the game');
-            c.onclick=()=>{closeModal();res(false);};f.append(c);card.append(f);
+            card.append(el('div','verdict bad','<strong>Not this time.</strong> '+(op.why||'')+' <em>One miss ends this attempt.</em>'));
+            /* 'wrong' rather than false, so the caller can tell a miss apart from
+               someone closing the card, and offer another go */
+            const f=el('div','mfoot');const c=el('button','cta big','Continue');
+            c.onclick=()=>{closeModal();res('wrong');};f.append(c);card.append(f);
           }
         }
       };
@@ -1436,11 +1438,28 @@ function finishRetake(){
   const f=el('div','mfoot');const b=el('button','cta big','Continue');b.onclick=()=>{closeModal();if(isLastDone())endOverlay();};f.append(b);card.append(f);
   openModal(card,true);
 }
+/* a missed retake must never dead-end: say what happened, and offer another go */
+function retakeMissed(cleared,total){
+  const card=el('div','mcard');
+  card.append(el('div','qk','Attempt ended'));
+  card.append(el('h4','','Not cleared this time'));
+  card.insertAdjacentHTML('beforeend','<p>'+(cleared
+    ?'You had '+cleared+' of '+total+' right before that one. '
+    :'')+'A retake has to be answered right in one sitting, so this attempt stops here — but <strong>nothing is lost</strong>. The findings are still open, still worth the same mastery, and the retake starts again from the top whenever you want. The explanation you just read stays with them.</p>');
+  card.insertAdjacentHTML('beforeend','<p class="fy">You can also come back to it later from <strong>✎ quiz</strong> in the top bar.</p>');
+  const f=el('div','mfoot');
+  const again=el('button','cta big','Try the retake again');
+  again.onclick=()=>{closeModal();runRetake(retakeList());};
+  const b=el('button','cta','Back to the game');b.onclick=closeModal;
+  f.append(b,again);card.append(f);
+  openModal(card,true);
+}
 async function runRetake(R){
   const qs=R.map(retakeQuiz);
   for(let i=0;i<qs.length;i++){
     const ok=await examQuiz(qs[i],i+1,qs.length);
-    if(!ok)return;
+    if(ok==='wrong'){retakeMissed(i,qs.length);return;}
+    if(!ok)return;   /* the card was closed: leave quietly, no penalty */
   }
   if(!isLastDone()){finishRetake();return;}
   /* end-game: the numbers drill is the mandatory last step */
@@ -1465,18 +1484,32 @@ async function runDrillCore(){
   }
   return right;
 }
+/* leaving the drill half-way, when it is the last step of a cleared retake, must
+   not look like a failure: the retake answers are banked and the drill is free */
+function drillUnfinished(){
+  const card=el('div','mcard');
+  card.append(el('div','qk','Drill unfinished'));
+  card.append(el('h4','','Your retake answers are still banked'));
+  card.insertAdjacentHTML('beforeend','<p>You already answered every finding correctly, and that stays done. The numbers drill is only the last step before the mastery comes back, and it <strong>cannot be failed</strong>: a wrong answer costs nothing, you simply have to reach the end of the '+NUMQ.length+' questions.</p>');
+  card.insertAdjacentHTML('beforeend','<p class="fy">Pick it up again any time from <strong>✎ quiz</strong> in the top bar.</p>');
+  const f=el('div','mfoot');
+  const b=el('button','cta','Back to the game');b.onclick=closeModal;
+  const go=el('button','cta big','Finish the drill now');go.onclick=()=>{closeModal();runDrill();};
+  f.append(b,go);card.append(f);
+  openModal(card,true);
+}
 async function runDrill(){
   const right=await runDrillCore();
-  if(right<0)return;
+  if(right<0){if(S.drillDue)drillUnfinished();return;}
   S.drillDone=1;save(); /* a finished drill stops being pitched at the end card */
   if(S.drillDue){finishRetake();return;}
   const n=NUMQ.length;
   const card=el('div','mcard');
   card.append(el('div','qk','Numbers drill'));
-  card.append(el('h4','',right===n?'Drill complete: '+n+' of '+n:'Drill complete: '+right+' of '+n));
+  card.append(el('h4','','Drill complete'));
   card.insertAdjacentHTML('beforeend','<p>'+GAME.drill.doneCopy+' '+(right===n
     ?'All '+n+' right on the first try. Run it again any time.'
-    :'You got '+right+' of '+n+' right on the first try; each miss showed the right calculation along the way. Nothing is at stake here, so run it again any time and get all '+n+'.')+'</p>');
+    :'You got '+right+' of '+n+' right on the first try, and every miss showed the right calculation as you went. The drill <strong>cannot be failed</strong> and nothing is at stake, so run it again whenever you like and go for all '+n+'.')+'</p>');
   const f=el('div','mfoot');
   if(right<n){const rr=el('button','cta','Run it again');rr.onclick=()=>{closeModal();runDrill();};f.append(rr);}
   const b=el('button','cta big','Close');b.onclick=closeModal;f.append(b);card.append(f);
