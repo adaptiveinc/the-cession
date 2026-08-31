@@ -2899,8 +2899,16 @@ async function stationWorkpaper(){
     <text x="380" y="240" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.6" fill="#8b98aa">THE LOSS ON THE FILE</text>
     <path d="M330,260 L236,296" stroke="#63b380" stroke-width="10" opacity=".55" stroke-linecap="round"/>
     <path d="M430,260 L524,296" stroke="#4a586b" stroke-width="7" opacity=".5" stroke-linecap="round"/>
-    <g id="covchute">${bigNumber(226,336,'—','COVERED BY QS50','green')}</g>
-    <g id="uncchute">${bigNumber(534,336,'—','NOT COVERED · M3','plain')}</g>
+    <g id="covchute">
+      <text x="226" y="330" text-anchor="middle" font-family="var(--mono)" font-size="30" font-weight="700" fill="#63b380">—</text>
+      <text x="226" y="352" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#8b98aa">ON THE FLEETS QS50 COVERS</text>
+      <text x="226" y="370" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1" fill="#5d6b7e">QS50 pays back half of this</text>
+    </g>
+    <g id="uncchute">
+      <text x="534" y="330" text-anchor="middle" font-family="var(--mono)" font-size="30" font-weight="700" fill="#c9d3df">—</text>
+      <text x="534" y="352" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#8b98aa">ON M3 · NOT COVERED</text>
+      <text x="534" y="370" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1" fill="#5d6b7e">nothing comes back on this</text>
+    </g>
     ${plate(120,382,520,36,'#141d2e')}
     <text x="140" y="405" font-family="var(--mono)" font-size="11" fill="#8b98aa">allocation</text>
     <text id="dAlloc" x="266" y="405" text-anchor="end" font-family="var(--mono)" font-size="15" font-weight="700" fill="#d9a648">—</text>
@@ -2961,7 +2969,7 @@ async function stationWorkpaper(){
         cite:['B119D','B119E']},fresh);
       showSplit();
       await talk(sc,[
-        {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>, and the treaty covers '+N.allocation.toFixed(2)+' of the group: <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on fleets it covers. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> belongs to M3, and Brandt signed nothing that covers it.'},
+        {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>, and the treaty covers '+N.allocation.toFixed(2)+' of the group: <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on fleets it covers. Careful: that is not the recovery. QS50 cedes half of those fleets, so half of the '+fmt(r2(FLIP_LC*N.allocation))+' comes back — <b>'+fmt(RECOVERY)+'</b>. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> sits on M3, and Brandt signed nothing that covers it, so none of that comes back at all.'},
       ]);
       dialed=true;P.split=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
