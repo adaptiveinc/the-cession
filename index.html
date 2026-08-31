@@ -301,6 +301,26 @@
   .pv.bro{background:#232e3d;color:#aeb9c9;border:1px solid #8b98aa44}
   .pv.re{background:#173340;color:var(--cyan);border:1px solid #72b7cc44}
   .pv.cuo{background:#2c222c;color:#e8907f;border:1px solid #e06a5e44}
+  /* ---------------- the act recap card ---------------- */
+  /* a scoreboard, then the act as numbered beats: it should read like the end
+     of a level, not like a page of notes */
+  .recap .score{display:flex;gap:9px;margin:14px 0 2px}
+  .recap .sc{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:11px 8px;text-align:center}
+  .recap .sc b{display:block;font-family:var(--mono);font-size:19px;font-weight:700}
+  .recap .sc span{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:1.3px;color:var(--faint);margin-top:6px}
+  .recap .sc.loss b{color:var(--red)}
+  .recap .sc.back b{color:var(--gold)}
+  .recap .sc.left b{color:var(--text)}
+  .recap ol.beats{list-style:none;margin:18px 0 0;counter-reset:beat}
+  .recap ol.beats li{counter-increment:beat;position:relative;padding:0 0 13px 36px;font-size:13.5px;line-height:1.6;color:#c9d3df}
+  .recap ol.beats li:last-child{padding-bottom:0}
+  .recap ol.beats li::before{content:counter(beat);position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;
+    background:var(--gold-dim);border:1px solid #d9a64866;color:var(--gold);
+    font-family:var(--mono);font-size:11px;display:grid;place-items:center}
+  .recap ol.beats li b{color:var(--text)}
+  .recap .rule{margin-top:16px;background:var(--green-dim);border:1px solid #63b38044;border-radius:9px;
+    padding:12px 14px;font-size:13.5px;line-height:1.6;color:#cfe6d6}
+  .recap .rule b{color:var(--green)}
   /* ---------------- light mode ---------------- */
   [data-theme="light"]{
     --ink:#eef1f6; --panel:#ffffff; --panel2:#f3f5f9; --line:#1c243026;
@@ -333,6 +353,8 @@
   [data-theme="light"] .thought rect,[data-theme="light"] .thought circle{stroke:#c3ccd8;stroke-width:1}
   [data-theme="light"] .cta.big{color:#ffffff}
   [data-theme="light"] .file-list li{color:#2a3442}
+  [data-theme="light"] .recap ol.beats li{color:#2a3442}
+  [data-theme="light"] .recap .rule{color:#1d5a36}
   [data-theme="light"] [fill="#0a0f16"]{fill:#aeb9c9}
   [data-theme="light"] [stroke="#0a0f16"]{stroke:#aeb9c9}
   [data-theme="light"] [fill="#111926"]{fill:#c9d3e1}
@@ -637,7 +659,7 @@ const GAME={
   restartCopy:'Both cases reset: every meeting, the books and the audit file. Your theme choice stays.',
   /* the books open the moment the first loss is on a file */
   ledgerOpen:()=>!(L.alc===0&&L.alorc===0&&L.csm===0&&L.lc===0&&L.lorc===0&&!S.done.slip),
-  booksCallout:'<b>Your books just opened.</b>The balances in this bar follow whichever case you are in, from the loss on the file to the treaty and back to zero. Click any of them to see its full roll-forward.',
+  booksCallout:'<b>Your books just opened.</b>The balances in this bar follow whichever case you are in, from the loss on the file to the treaty and back to zero. Click any of them to see all its movements.',
   masteryCallout:'<b>That answer just went in your file.</b>The mastery bar collects points across both cases: a question answered right on the first try banks 3, the year-five case at the end banks 10, and a full run is 100. A miss banks nothing but files a finding instead; clear the retake later and those points come back. Click the bar anytime to open your audit file.',
   drill:{
     retakeIntro:'Every missed question answered right. Before the mastery comes back, one walk through the numbers of both cases: eight quick questions, from the day-one net at Limmat to the lifetime zero at Mutual & Torres. Wrong answers cost nothing here, you only have to finish.',
@@ -931,10 +953,12 @@ function sideboardProp(x,y){
     <line x1="${x+18}" y1="${y+60}" x2="${x+18}" y2="${y+70}" stroke="#1b2431" stroke-width="6"/>
     <line x1="${x+172}" y1="${y+60}" x2="${x+172}" y2="${y+70}" stroke="#1b2431" stroke-width="6"/></g>`;
 }
-/* one member of the cast, standing on the floor with a name plate */
+/* one member of the cast, standing on the floor with a name plate.
+   Both heights are set so the plate clears the centred exit button, which
+   occupies x 490-710 of the bottom 70px once a meeting is finished. */
 function castFig(x,name,color,dark,kind,s){
-  return person(x,474,s||1.0,color,dark,kind)
-    +`<text x="${x}" y="600" text-anchor="middle" font-family="var(--mono)" font-size="11" letter-spacing="2" fill="#5d6b7e">${name}</text>`;
+  return person(x,446,s||1.0,color,dark,kind)
+    +`<text x="${x}" y="556" text-anchor="middle" font-family="var(--mono)" font-size="11" letter-spacing="2" fill="#5d6b7e">${name}</text>`;
 }
 /* the standing casts, by meeting */
 const CAST={
@@ -1012,7 +1036,7 @@ function renderChips(){
     .map(d=>{
       const cls=typeof d.cls==='function'?d.cls(L[d.k]):(d.cls||'');
       const v=(d.dp===2?fmt2:fmt)(L[d.k]);
-      return `<div class="chip ${cls}" id="chip-${d.k}" role="button" tabindex="0" title="Click for the roll-forward" aria-label="${d.label} ${v}, open the roll-forward"><span>${d.label}</span><b>${v}</b></div>`;
+      return `<div class="chip ${cls}" id="chip-${d.k}" role="button" tabindex="0" title="Click for the movements" aria-label="${d.label} ${v}, open the movements"><span>${d.label}</span><b>${v}</b></div>`;
     }).join('');
   c.querySelectorAll('.chip').forEach(elc=>{
     const k=elc.id.replace('chip-','');
@@ -1180,6 +1204,38 @@ function teach(title,html,cites){
     openModal(card,true,res);
   });
 }
+/* ================= the act recap =================
+   Shown when an act closes. Not a teaching point: a look back at the whole
+   act in plain sentences, with the numbers it produced, so what the player
+   remembers is how the reinsurance actually reached the books. */
+function actOneRecap(){
+  return new Promise(res=>{
+    const q=NA.quote(NA.signed);
+    const card=el('div','mcard recap');
+    card.append(el('div','qk','Act One · case closed'));
+    card.append(el('h4','','What you did at Limmat'));
+    card.insertAdjacentHTML('beforeend',`
+      <p>Two years of personal accident cover, sold for less than it will cost. The whole act, in six lines.</p>
+      <div class="score">
+        <div class="sc loss"><b>−${fmt(NA.lc)}</b><span>THE LOSS</span></div>
+        <div class="sc back"><b>+${fmt(A_LORC)}</b><span>COMES BACK</span></div>
+        <div class="sc left"><b>−${fmt(r2(NA.lc-A_LORC))}</b><span>LIMMAT KEEPS</span></div>
+      </div>
+      <ol class="beats">
+        <li><b>The price was wrong.</b> Limmat sold the cover for ${fmt(NA.prem)} and expects to pay ${fmt(NA.fcf)}. The gap is ${fmt(NA.lc)}, and it is there the day the contracts are signed.</li>
+        <li><b>You book it straight away.</b> Cover that will cost more than it earns is a loss now, not when the claims turn up. The whole ${fmt(NA.lc)} goes on the P&amp;L on day one.</li>
+        <li><b>You keep it visible.</b> Mixing these contracts in with profitable ones would have buried the loss. That is not allowed: they are grouped on their own, where the loss can be seen.</li>
+        <li><b>Half of it comes back.</b> Turicum Re carries half the book, so ${fmt(A_LORC)} of the loss is recovered — and it goes on the books in the <em>same period</em> as the loss, not when the cash arrives.</li>
+        <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. The ${fmt(A_COST)} difference is what certainty costs. It sits on its own line and is never subtracted from the ${fmt(A_LORC)}.</li>
+        <li><b>Both sides run off together.</b> Half the cover is given in 2026 and half in 2027. The loss and the recovery come down side by side, and both finish at zero.</li>
+      </ol>
+      <div class="rule"><b>The rule to carry across town.</b> The loss and the money the treaty gives back are two separate figures, and they have to land in the same period. What you paid for the treaty is a third figure, on a line of its own. Netting any of them together hides something a reader is entitled to see.</div>`);
+    card.append(el('div','',['47','16','66A','86'].map(citeChip).join('')));
+    const f=el('div','mfoot'), b=el('button','cta','Close the case →');
+    b.onclick=()=>closeModal(); f.append(b); card.append(f);
+    openModal(card,true,res);
+  });
+}
 function showDirectory(){
   return teach('Case card: the paragraphs behind each meeting',
     `<p><strong>ACT ONE · LIMMAT ASSURANCE</strong><br>
@@ -1212,7 +1268,7 @@ function showComponent(k){
   const H=ledgerHistory().filter(h=>h.d&&h.d[k]!==undefined);
   const dp=(LEDGER_CHIPS.find(d=>d.k===k)||{}).dp===2?fmt2:fmt;
   const card=el('div','mcard');
-  card.append(el('div','qk','Roll-forward'));
+  card.append(el('div','qk','Movements'));
   card.append(el('h4','',(COMP_NAMES[k]||k)+' · now '+dp(L[k])));
   const note=(typeof COMP_NOTES!=='undefined'&&COMP_NOTES)?COMP_NOTES[k]:null;
   if(note)card.insertAdjacentHTML('beforeend','<p class="fy">'+note+'</p>');
@@ -1285,7 +1341,7 @@ const NUMQ=[
  {kicker:'The 2028 close',q:'Opening '+fmt(RECOVERY)+', interest '+fmt(ROLLS[1].lorc)+', deterioration '+fmt(ROLLS[2].lorc)+', then half released. What reverses?',
   options:[{t:fmt(Math.abs(ROLLS[3].lorc)),ok:true,why:'Balance before release '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc))+'; half of it is '+fmt(Math.abs(ROLLS[3].lorc))+', leaving '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc+ROLLS[3].lorc))+'.'},
            {t:fmt(r2(RECOVERY*0.5)),why:'That releases against the opening balance, before this year’s interest and deterioration.'},
-           {t:'0',why:'The loss component is running off, and the mirror copies every one of its rolls.'}]},
+           {t:'0',why:'The loss component is running off, and the mirror copies every one of its movements.'}]},
  {kicker:'The treaty CSM',q:'Starting at '+fmt(N.cededCsm0)+', which movements adjust it, and where does it end?',
   options:[{t:'Only the two loss events, ending at '+fmt(CEDED_CSM_END),ok:true,why:fmt(N.cededCsm0)+' − '+fmt(RECOVERY)+' − '+fmt(ROLLS[2].lorc)+' = '+fmt(CEDED_CSM_END)+'. Interest and the reversals must not touch it, or the income counts twice.'},
            {t:'All six movements, ending at '+fmt(N.cededCsm0),why:'Mirroring the run-off movements onto the CSM as well would count the recovery income a second time.'},
@@ -1798,7 +1854,7 @@ function titleScreen(){
   const h=el('div','hero fadein');
   h.append(el('div','kicker','An IFRS 17 case · module 2'));
   h.append(el('h1','','Two books go bad.<br>Make the cover <em>count</em>.'));
-  h.append(el('p','','Two Zurich insurers, one standard, and you working both cases: the consulting actuary the Zurich houses call when reinsurance has to make it into the accounts. At Limmat Assurance the tariff slipped, and a cohort is onerous the day it signs: you book the loss, then sit at the cession desk playing the quota share up and down until the board can live with the day-one number and its price. At Mutual & Torres a book that was priced right takes a claims shock two years in: the treaty you argued for at renewal, over the CFO’s objections, is what softens it. Ten meetings, both roll-forwards, down to exactly zero. The books in the header only move when you book it correctly.'));
+  h.append(el('p','','You do not work for either company. You are a consulting actuary, called in from outside when reinsurance has to make it into the accounts — and this winter two Zurich insurers call in the same month. At Limmat Assurance the tariff was set too low, and a batch of contracts loses money the day it is signed: you book the loss, then sit at the cession desk moving the quota share up and down until the board can live with the day-one number and what it costs. At Mutual & Torres a book that was priced properly takes a claims shock two years in, and the treaty you argued for at renewal, over the CFO’s objections, is what softens it. Ten meetings, both books taken down to exactly zero. The figures in the header only move when you book it correctly.'));
   const btns=el('div','btns');
   const done=Object.keys(S.done).length;
   const finished=!!(S.done.audit&&S.capstoneDone);
@@ -2084,21 +2140,12 @@ async function rideTo(id,sc){
   const from=ST_POS[tokenAt], to=ST_POS[id];
   tokenAt=id;
   if(RM||!cargo||document.hidden||(from.x===to.x&&from.y===to.y))return;
-  const TR_X=16;
-  const trY=r=>r===0?454:Math.round((TRAIL[r]+42+BOX_Y[r+1])/2);
-  const legs=[];
-  if(from.row===to.row)legs.push({x:to.x,y:to.y});
-  else if(from.row<to.row){
-    for(let r=from.row;r<to.row;r++){
-      legs.push({x:LINE_W-TR_X,y:TRAIL[r]},{x:LINE_W-TR_X,y:trY(r)},{x:TR_X,y:trY(r)},{x:TR_X,y:TRAIL[r+1]});
-    }
-    legs.push({x:to.x,y:to.y});
-  } else {
-    for(let r=from.row;r>to.row;r--){
-      legs.push({x:TR_X,y:TRAIL[r]},{x:TR_X,y:trY(r-1)},{x:LINE_W-TR_X,y:trY(r-1)},{x:LINE_W-TR_X,y:TRAIL[r-1]});
-    }
-    legs.push({x:to.x,y:to.y});
-  }
+  /* along the lane you are on, then straight across to the one you want. The
+     old route ran out to the edge of the map and back, which walked the same
+     ground twice — very obvious when the walk is backwards. */
+  const legs = from.row===to.row
+    ? [{x:to.x,y:to.y}]
+    : [{x:to.x,y:from.y},{x:to.x,y:to.y}];
   cargo.classList.add('walking');
   let cur={x:from.x,y:from.y};
   for(const pt of legs){
@@ -2173,8 +2220,8 @@ async function stationSlip(){
     gap:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'sys',t:'Limmat Assurance, two floors above a chocolatier on Bahnhofstrasse. You run the January bordereau against the new tariff twice, because the first answer looked like a typo.'},
-        {w:'cuo',n:'D. Meier · chief underwriting officer',t:'“Before you say anything: the distribution deal is signed, the volume target is met, and the board photograph was very cheerful. How bad?”'},
+        {w:'sys',t:'Limmat Assurance, two floors above a chocolatier on Bahnhofstrasse. You are not on the payroll here: they brought you in last week as an outside actuary, precisely because you had nothing to do with the tariff. You run January’s new business against it twice, because the first answer looked like a typo.'},
+        {w:'cuo',n:'D. Meier · chief underwriting officer',t:'“You are the consultant. Before you say anything: the distribution deal is signed, the volume target is met, and the board photograph was very cheerful. How bad?”'},
         {w:'you',n:'You',t:'“Premiums of <span class="num">'+fmt(NA.prem)+'</span> against fulfilment cash flows of <span class="num">'+fmt(NA.fcf)+'</span>. The tariff is still on the 2023 table. Every contract in the tranche is underwater the day it signs.”'},
       ]);
       await quiz({kicker:'Onerous at initial recognition',pts:QUESTION_PTS,
@@ -2241,7 +2288,6 @@ async function stationDesk(){
   const BX=[168,310,452,594]; /* the four cession buttons */
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('LIMMAT ASSURANCE · THE CESSION DESK')}
-    <text x="${FR.FOCUS.cx}" y="150" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">DAY ONE, AT THE CESSION YOU CHOOSE</text>
     ${plate(96,170,568,150)}
     <text x="200" y="238" text-anchor="middle" font-family="var(--mono)" font-size="25" font-weight="700" fill="#e06a5e">−${fmt(NA.lc)}</text>
     <text x="200" y="262" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#8b98aa">GROSS LOSS · STANDS REGARDLESS</text>
@@ -2272,10 +2318,15 @@ async function stationDesk(){
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+240}" font-family="var(--mono)" font-size="10.5" fill="#5d6b7e">the slip is Limmat’s either way; the margin</text>
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+258}" font-family="var(--mono)" font-size="10.5" fill="#5d6b7e">is the price of certainty, spread over the</text>
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+276}" font-family="var(--mono)" font-size="10.5" fill="#5d6b7e">coverage in net expense from cover held</text>`)}
-    <g><rect x="566" y="450" width="40" height="9" rx="4" fill="#3b4a5f"/><rect x="570" y="458" width="32" height="15" rx="3" fill="#131a24"/><circle cx="586" cy="465" r="2.5" fill="#63b380"/></g>
+    <g><rect x="190" y="496" width="140" height="10" rx="4" fill="#31445e"/>
+      <rect x="202" y="506" width="9" height="52" fill="#26354c"/><rect x="309" y="506" width="9" height="52" fill="#26354c"/>
+      <rect x="232" y="474" width="56" height="22" rx="3" fill="#131a24" stroke="#3b4a5f"/>
+      <rect x="228" y="463" width="64" height="13" rx="6" fill="#3b4a5f"/>
+      <rect x="240" y="482" width="24" height="10" rx="2" fill="#4a5d78"/>
+      <circle cx="277" cy="487" r="3" fill="#63b380"/></g>
     ${CAST.novak(700)}${CAST.you(806)}
-    ${hotspot(584,458,'!','quote','','CALL TURICUM RE')}
-    ${hotspot(420,448,'!','sign','','SIGN AT 50%')}
+    ${hotspot(110,470,'!','quote','','CALL TURICUM RE')}
+    ${hotspot(400,500,'!','sign','','SIGN AT 50%')}
     ${hotspot(1118,462,'?','costwhere','q','WHERE THE COST SITS')}
   </svg>`);
   const P=prog('desk');
@@ -2442,8 +2493,11 @@ async function stationShortyear(){
       if(g){g.style.transition='opacity .9s';g.style.opacity=(i===0||closed)?1:.22;}}
     if(closed)ayearlabel.textContent='2027 · THE SHORT BOOK IS OFF THE PAGE';
   }
-  const maybeEnd=()=>{ if(!(closed&&contrasted)||S.done.shortyear)return; completeRoom('shortyear');
-    setObjective('Act One closed · Limmat’s books read zero');doorOut(sc,'Cross town to Mutual & Torres →'); };
+  /* the act closes here, so the look back at it belongs here too */
+  const maybeEnd=async()=>{ if(!(closed&&contrasted)||S.done.shortyear)return; completeRoom('shortyear');
+    setObjective('Act One closed · Limmat’s books read zero');
+    await actOneRecap();
+    doorOut(sc,'Cross town to Mutual & Torres →'); };
   bindHotspots(sc,{
     close:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2468,7 +2522,7 @@ async function stationShortyear(){
         {w:'sys',t:'Both bars land on the baseline. Lifetime recovery lines: +'+fmt(A_LORC)+' recognized, −'+fmt(A_LORC)+' reversed, sum <b>exactly zero</b>. The cost of the cover, <b>'+fmt(A_COST)+'</b>, sits in net expense from reinsurance held, where a cost belongs.'},
       ]);
       if(fresh&&!contrasted)setObjective('Objective: <b>read THE TWO LINES</b> before you leave Limmat');
-      maybeEnd();},
+      await maybeEnd();},
     contrast:async(g)=>{
       if(g.classList.contains('done'))return;
       await quiz({kicker:'Two lines for the same kind of income',pts:QUESTION_PTS,
@@ -2481,7 +2535,7 @@ async function stationShortyear(){
         cite:['47','B119D']},fresh);
       contrasted=true;P.contrast=1;save();
       if(fresh&&count2()<2)setObjective('Objective: close the short book <b>'+count2()+'/2</b>');
-      maybeEnd();},
+      await maybeEnd();},
   });
   function count2(){return [closed,contrasted].filter(Boolean).length;}
   paint();
@@ -2502,21 +2556,28 @@ async function stationRenewal(){
   const fresh=!S.done.renewal;
   const {sc,mount}=sceneShell('renewal', fresh?'Objective: work the file <b>0/3</b>':'Done · read it again');
   /* the file: one row per fleet account */
-  const row=(i,id,claims,cover,col)=>{const y=222+i*46;
+  const row=(i,id,claims,col)=>{const y=222+i*46;
     return `<text x="130" y="${y}" font-family="var(--mono)" font-size="14" font-weight="700" fill="${col}">${id}</text>
       <text x="200" y="${y}" font-family="var(--mono)" font-size="12" fill="#8b98aa">motor fleet</text>
-      <text x="440" y="${y}" text-anchor="end" font-family="var(--mono)" font-size="13" fill="#c9d3df">${fmt(claims)}</text>
-      <text x="640" y="${y}" text-anchor="end" font-family="var(--mono)" font-size="10.5" letter-spacing="1.2" fill="${col}">${cover}</text>`;};
+      <text x="440" y="${y}" text-anchor="end" font-family="var(--mono)" font-size="13" fill="#c9d3df">${fmt(claims)}</text>`;};
+  /* the cession column is empty until the treaty is actually placed: nothing is
+     ceded before anyone signs, and the board should not say otherwise */
+  const cess=(i,cover,col)=>`<text x="640" y="${222+i*46}" text-anchor="end" font-family="var(--mono)" font-size="10.5" letter-spacing="1.2" fill="${col}">${cover}</text>`;
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('RENEWAL 2026 · COHORT MOTOR-2026','#1e2a3e')}
     ${plate(90,140,580,290)}
     <rect x="90" y="140" width="580" height="34" rx="6" fill="#141d2e"/>
     <text x="110" y="162" font-family="var(--mono)" font-size="10" letter-spacing="1.8" fill="#8b98aa">UNDERWRITING FILE · WRITTEN TOGETHER, MEASURED TOGETHER</text>
     <text x="440" y="196" text-anchor="end" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#5d6b7e">EXPECTED CLAIMS</text>
-    <text x="640" y="196" text-anchor="end" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#5d6b7e">CESSION</text>
-    ${row(0,'M1',N.claims.M1,'QS50 · 50%','#c9a25a')}
-    ${row(1,'M2',N.claims.M2,'QS50 · 50%','#c9a25a')}
-    ${row(2,'M3',N.claims.M3,'EXCLUDED','#7a6c45')}
+    ${row(0,'M1',N.claims.M1,'#c9a25a')}
+    ${row(1,'M2',N.claims.M2,'#c9a25a')}
+    ${row(2,'M3',N.claims.M3,'#7a6c45')}
+    <g id="cession" style="opacity:0">
+      <text x="640" y="196" text-anchor="end" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#5d6b7e">CESSION</text>
+      ${cess(0,'QS50 · 50%','#c9a25a')}
+      ${cess(1,'QS50 · 50%','#c9a25a')}
+      ${cess(2,'EXCLUDED','#7a6c45')}
+    </g>
     <g id="treatybox" style="opacity:0">
       <rect x="110" y="356" width="540" height="52" rx="5" fill="#141d2e" stroke="#8b6f36" stroke-width="1.5"/>
       <text x="130" y="378" font-family="var(--mono)" font-size="11" fill="#d9a648">TREATY QS50 · TURICUM RE, ZÜRICH</text>
@@ -2529,7 +2590,6 @@ async function stationRenewal(){
         <text x="380" y="296" text-anchor="middle" font-family="var(--mono)" font-size="30" font-weight="700" letter-spacing="6" fill="#e06a5e">ONEROUS</text>
       </g>
     </g>
-    <g id="lcout" style="opacity:0">${bigNumber(380,404,fmt(FLIP_LC),'LEFT WHEN THE CSM IS GONE','red')}</g>
     ${rail('GROUP CSM · UNEARNED PROFIT',`
       <rect x="${FR.RAIL.x+40}" y="${FR.RAIL.y+58}" width="120" height="200" rx="6" fill="#141d2e" stroke="#2c394a" stroke-width="2"/>
       <rect id="tankfill" x="${FR.RAIL.x+45}" y="${FR.RAIL.y+63}" width="110" height="190" rx="4" fill="#d9a648" opacity=".85"/>
@@ -2547,7 +2607,7 @@ async function stationRenewal(){
   </svg>`);
   const tank=sc.querySelector('#tankfill'), tval=sc.querySelector('#tankval'),
         treatybox=sc.querySelector('#treatybox'), onerous=sc.querySelector('#onerous'),
-        lcout=sc.querySelector('#lcout'), stepdots=sc.querySelector('#stepdots');
+        stepdots=sc.querySelector('#stepdots');
   function setTank(v){
     const frac=Math.max(0,v)/N.csm0;
     tank.style.transition='height .9s ease, y .9s ease';
@@ -2555,13 +2615,14 @@ async function stationRenewal(){
     tval.textContent=fmt(Math.max(0,v));
   }
   const setSteps=n=>{if(stepdots)stepdots.innerHTML=steps(n,3);};
-  const sign=()=>{treatybox.style.transition='opacity .7s';treatybox.style.opacity=1;};
+  const cession=sc.querySelector('#cession');
+  const sign=()=>{treatybox.style.transition='opacity .7s';treatybox.style.opacity=1;
+    if(cession){cession.style.transition='opacity .7s .3s';cession.style.opacity=1;}};
   /* the stamp comes down on the file: the cohort is onerous, in red, on record */
   const stampOnerous=()=>{
     onerous.style.transition='opacity .5s, transform .5s cubic-bezier(.2,1.6,.5,1)';
     onerous.style.opacity=1;
     if(!RM){onerous.animate([{transform:'scale(1.6)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:420,easing:'cubic-bezier(.2,1.4,.5,1)'});}
-    lcout.style.transition='opacity .8s'; lcout.style.opacity=1;
   };
   const P=prog('renewal');
   let step=P.step||0, read=(!fresh)||!!P.read;
@@ -2661,9 +2722,9 @@ async function stationRenewal(){
   /* the hand-over between the acts: new company, new cast, the clock rewound */
   if(fresh&&step===0&&!P.act2){
     await teach('Act Two · Across town at Mutual & Torres',
-      `<p><strong>Limmat’s case is closed:</strong> a loss born from bad pricing, recovered as recovery of losses on onerous underlying contracts, run off to zero, with the cost of the cover sitting where costs belong. Your engagement there ends with the books at zero.</p>
+      `<p><strong>Limmat’s case is closed.</strong> The tariff was too low, so those contracts lost money from the day they were signed. You put the loss on the books at once, booked back the half the treaty covers, kept the price of the cover on its own line, and ran both down to zero.</p>
        <p><strong>Odermatt walks your card across town to Mutual &amp; Torres</strong>, a motor insurer that wants the same outside eye on its reinsurance accounting. The calendar rewinds to January 2026: both cases started the same winter, and this one is now told from its beginning. New chairs around you: <strong>V. Torres</strong>, the chief actuary, runs the room here, and <strong>M. Brandt</strong>, the CFO, pays for it. You hold the same role at both houses — the consultant who has to get the cover into the books. Odermatt brokers both accounts, and Turicum Re sits across both tables.</p>
-       <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to be profitable — and two years from now a claims shock will hit it anyway. Act Two answers the question Limmat never faced: what does a treaty do for a loss that was <em>nobody’s pricing mistake</em>? That loss lands on the neighbouring line, <strong>recovery of losses on contracts turning onerous</strong>.</p>
+       <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money — and two years from now a claims shock hits it anyway. Act Two answers the question Limmat never had to ask: what does a treaty do for a loss that nobody got wrong? That loss is reported on the neighbouring line, <strong>recovery of losses on contracts turning onerous</strong>.</p>
        <p class="fy">A practical note: both cases speak whole francs. This book carries a CSM of 100’000 at inception — the same order of magnitude as Limmat’s premiums, and a coincidence the two chief actuaries have joked about.</p>`,
       ['47–48','B119C']);
     P.act2=1;save();
@@ -2702,13 +2763,16 @@ async function stationBooking(){
       <rect id="slot${m}" x="492" y="${224+i*40}" width="146" height="28" rx="4" fill="#141d2e" stroke="${i<2?'#2c394a':'#243347'}"/>
       <text x="512" y="${243+i*40}" font-family="var(--mono)" font-size="12" fill="${i<2?'#c9d3df':'#5d6b7e'}">${m}</text>
       <text id="tick${m}" x="618" y="${243+i*40}" text-anchor="end" font-family="var(--mono)" font-size="11" fill="${i<2?'#63b380':'#5d6b7e'}" style="opacity:${i<2?0:1}">${i<2?'✓ linked':'excluded'}</text>`).join('')}
-    <path id="deadlink" d="M300,262 q60,4 96,14" fill="none" stroke="#e06a5e" stroke-width="4" stroke-dasharray="9 7"/>
-    <text id="deadq" x="428" y="286" text-anchor="middle" font-family="var(--mono)" font-size="20" font-weight="700" fill="#e06a5e">?</text>
-    <g id="livelinks" style="opacity:0">
-      <path d="M300,250 q84,-24 190,-12" fill="none" stroke="#63b380" stroke-width="3.5"/>
-      <path d="M300,268 q84,16 190,10" fill="none" stroke="#63b380" stroke-width="3.5"/>
+    <g id="deadlink">
+      <path d="M300,262 q60,4 96,14" fill="none" stroke="#e06a5e" stroke-width="4" stroke-dasharray="9 7"/>
+      <path d="M390,270 l13,13 M403,270 l-13,13" stroke="#e06a5e" stroke-width="3" stroke-linecap="round"/>
     </g>
-    <text x="380" y="404" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">A COVER THAT NAMES NO CONTRACTS RECOVERS NOTHING, AND MUST SAY SO</text>
+    <text id="deadq" x="440" y="286" text-anchor="middle" font-family="var(--mono)" font-size="20" font-weight="700" fill="#e06a5e">?</text>
+    <g id="livelinks" style="opacity:0">
+      <path d="M300,250 q84,-24 190,-12 m-12,-5 l12,5 l-12,6" fill="none" stroke="#63b380" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M300,268 q84,16 190,10 m-12,-5 l12,5 l-12,6" fill="none" stroke="#63b380" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="380" y="404" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">NO LIST OF COVERED CONTRACTS, NO RECOVERY</text>
     ${rail('THE TREATY, AS BOOKED',`
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+72}" font-family="var(--mono)" font-size="12.5" fill="#8b98aa">treaty</text>
       <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+72}" text-anchor="end" font-family="var(--mono)" font-size="12.5" fill="#c9d3df">QS50</text>
@@ -2760,7 +2824,7 @@ async function stationBooking(){
       await talk(sc,[
         {w:'sys',t:'You queue the recovery entry and go home. At 06:12 the overnight run mails you a rejection, and by 08:00 it has been forwarded to you four times, once with just a question mark.'},
         {w:'cfo',n:'M. Brandt · CFO',t:'“The treaty is signed, filed and paid for. Why is our own system refusing my income?”'},
-        {w:'chief',n:'V. Torres',t:'“It knows we <em>have</em> cover. It does not know <em>who</em> the cover is on. A treaty booking has to name the contracts it covers, or the recovery has no denominator and no loss to work from.”'},
+        {w:'chief',n:'V. Torres',t:'“It knows we <em>have</em> cover. It does not know <em>who</em> the cover is on. A treaty has to name the contracts it covers. Without that list there is nothing to measure against: no claims to compare the cover with, and no loss to apply it to.”'},
       ]);
       await quiz({kicker:'The overnight rejection',pts:QUESTION_PTS,
         /* the memo gives the situation, never the verdict: showing the
@@ -3432,7 +3496,7 @@ function endOverlay(){
   const R=(!S.drillDue)?retakeList():[];
   if(R.length)card.insertAdjacentHTML('beforeend','<p class="fy">The auditor offers a retake: answer the '+R.length+' question'+(R.length>1?'s':'')+' you missed, all right in one sitting, then walk through the numbers drill, and the mastery those findings carry, '+R.reduce((t,r)=>t+(r.p||QUESTION_PTS),0)+' points, is earned back.</p>');
   if(S.drillDue)card.insertAdjacentHTML('beforeend','<p class="fy">Your retake is cleared. One step left: finish the numbers drill, nothing at stake, and the mastery your findings carried comes back.</p>');
-  if(S.score>=100)card.insertAdjacentHTML('beforeend','<p class="fy">Before you go: click any number in the top bar to see its whole story as a roll-forward and waterfall. The recovery P&amp;L one is the shortest and the most worth reading.</p>');
+  if(S.score>=100)card.insertAdjacentHTML('beforeend','<p class="fy">Before you go: click any number in the top bar to see its whole story, movement by movement, as a waterfall. The recovery P&amp;L one is the shortest and the most worth reading.</p>');
   const f=el('div','mfoot');
   const again=el('button','cta ghost','Play again');
   again.onclick=()=>{S=freshState();ledgerFromState();renderChips();setAudit();save();tokenAt='slip';closeModal();renderMap();};
