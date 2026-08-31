@@ -2204,7 +2204,7 @@ async function stationSlip(){
       <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+254}" text-anchor="end" font-family="var(--mono)" font-size="11.5" fill="#c9d3df">none: too short a book to matter</text>`)}
     ${CAST.you(596)}${CAST.novak(716)}
     ${hotspot(380,404,'!','gap','','FACE THE TARIFF')}
-    <circle cx="716" cy="449" r="2.5" fill="#8b98aa"/><circle cx="716" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(716,404,'?','grouping','q','MEIER’S IDEA')}
+    <circle cx="716" cy="421" r="2.5" fill="#8b98aa"/><circle cx="716" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(716,376,'?','grouping','q','MEIER’S IDEA')}
     ${hotspot(610,64,'?','when','q','THE ONLY WINDOW')}
   </svg>`);
   const gapout=sc.querySelector('#gapout'), slipstamp=sc.querySelector('#slipstamp');
@@ -2603,7 +2603,7 @@ async function stationRenewal(){
     <g id="stepdots">${steps(0,3)}</g>
     ${CAST.torres(524)}${CAST.you(644)}${CAST.brandt(764)}
     ${hotspot(380,444,'!','file','','WORK THE FILE')}
-    <circle cx="524" cy="449" r="2.5" fill="#8b98aa"/><circle cx="524" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(524,404,'?','unit','q','THE UNIT OF ACCOUNT')}
+    <circle cx="764" cy="421" r="2.5" fill="#8b98aa"/><circle cx="764" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(764,376,'?','unit','q','THE UNIT OF ACCOUNT')}
   </svg>`);
   const tank=sc.querySelector('#tankfill'), tval=sc.querySelector('#tankval'),
         treatybox=sc.querySelector('#treatybox'), onerous=sc.querySelector('#onerous'),
@@ -2784,7 +2784,7 @@ async function stationBooking(){
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+218}" font-family="var(--mono)" font-size="11" fill="#8b6b74">the treaty covers … which of them?</text>`)}
     ${CAST.torres(540)}${CAST.you(640)}${CAST.brandt(712)}
     ${hotspot(380,446,'!','scan','','RUN THE CHECK')}
-    <circle cx="712" cy="449" r="2.5" fill="#8b98aa"/><circle cx="712" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(712,404,'?','timing','q','BRANDT’S IDEA')}
+    <circle cx="712" cy="421" r="2.5" fill="#8b98aa"/><circle cx="712" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(712,376,'?','timing','q','BRANDT’S IDEA')}
     ${hotspot(1118,430,'?','scope','q','THE ASSUMED BOOK')}
   </svg>`);
   const klaxon=sc.querySelector('#klaxon'), linkrow=sc.querySelector('#linkrow');
@@ -2896,8 +2896,8 @@ async function stationWorkpaper(){
     <rect x="270" y="192" width="220" height="56" rx="5" fill="#141d2e" stroke="#8b6b74" stroke-width="1.5"/>
     <text x="380" y="222" text-anchor="middle" font-family="var(--mono)" font-size="20" font-weight="700" fill="#e06a5e">${fmt(FLIP_LC)}</text>
     <text x="380" y="240" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.6" fill="#8b98aa">THE LOSS ON THE FILE</text>
-    <path d="M330,248 L232,290" stroke="#63b380" stroke-width="10" opacity=".55" stroke-linecap="round"/>
-    <path d="M430,248 L528,290" stroke="#4a586b" stroke-width="7" opacity=".5" stroke-linecap="round"/>
+    <path d="M330,260 L236,296" stroke="#63b380" stroke-width="10" opacity=".55" stroke-linecap="round"/>
+    <path d="M430,260 L524,296" stroke="#4a586b" stroke-width="7" opacity=".5" stroke-linecap="round"/>
     <g id="covchute">${bigNumber(226,336,'—','COVERED BY QS50','green')}</g>
     <g id="uncchute">${bigNumber(534,336,'—','NOT COVERED · M3','plain')}</g>
     ${plate(120,382,520,36,'#141d2e')}
@@ -2919,7 +2919,7 @@ async function stationWorkpaper(){
       <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+244}" text-anchor="end" font-family="var(--mono)" font-size="13" fill="#c9d3df">${fmt(N.groupClaims)}</text>`)}
     ${CAST.torres(560)}${CAST.you(688)}
     ${hotspot(380,444,'!','split','','WORK IT OUT')}
-    <circle cx="560" cy="449" r="2.5" fill="#8b98aa"/><circle cx="560" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(560,404,'?','why','q','WHY CLAIMS')}
+    <circle cx="688" cy="421" r="2.5" fill="#8b98aa"/><circle cx="688" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(688,376,'?','why','q','WHY CLAIMS')}
     ${hotspot(1118,430,'?','fixture','q','A SECOND COHORT')}
   </svg>`);
   const P=prog('workpaper');
@@ -2938,21 +2938,21 @@ async function stationWorkpaper(){
     split:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'chief',n:'V. Torres',t:'“Two questions, and people run them together. The first: <em>how much of this cohort does the treaty cover?</em> That is claims of the covered fleets over claims of the whole group, the excluded one included.”'},
-        {w:'chief',n:'V. Torres',t:'“The second: <em>within what it covers, how much comes back?</em> That is expected recoveries over the covered claims. QS50 takes half.”'},
+        {w:'chief',n:'V. Torres',t:'“Two separate things, and people run them together. First: <em>how much of this cohort does the treaty cover at all?</em> M1 and M2 are in, M3 is not — so weigh the claims of the covered fleets against the claims of the whole group, M3 included.”'},
+        {w:'chief',n:'V. Torres',t:'“Second, and this one is about the treaty itself: <em>on the fleets it does cover, how much of a claim comes back to us?</em> QS50 is a fifty per cent quota share, so half of every covered claim. Weigh the expected recoveries against the covered claims and that half is what you get.”'},
       ]);
       await quiz({kicker:'The first question · how much the treaty covers',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Claims:</strong> M1 <b>'+fmt(N.claims.M1)+'</b> and M2 <b>'+fmt(N.claims.M2)+'</b> are covered by QS50; M3 <b>'+fmt(N.claims.M3)+'</b> is not. Group total <b>'+fmt(N.groupClaims)+'</b>.</div>',
-        q:'What proportion of this group does the treaty cover?',
+        q:'How much of the whole group’s claims does the treaty cover?',
         options:[
           {t:fmt(N.covered)+' / '+fmt(N.groupClaims)+' = '+N.allocation.toFixed(2),ok:true,why:'The allocation share (B119E) is <strong>the covered block’s claims over the whole group’s claims, uncovered contracts included</strong>. M3 stays in the denominator precisely because it is part of the group whose loss this is. Leaving it out would say the treaty covers all of the loss, when it covers '+(N.allocation*100).toFixed(0)+'% of the cohort.'},
           {t:'2 / 3 = 0.67, two covered fleets out of three in the file',why:'Counting fleets, not claims. M2 is half the size of M1; a row in a file is not a unit of exposure. The allocation is claims-weighted (B119E).'},
-          {t:fmt(N.covered)+' / '+fmt(N.covered)+' = 1.00, the treaty covers all of what it covers',why:'That is the denominator of the <em>ratio</em>, not the allocation. This question asks how much of the group the treaty covers, and M3 is in the group too.'}],
+          {t:fmt(N.covered)+' / '+fmt(N.covered)+' = 1.00, measuring the covered fleets against themselves',why:'That compares the covered fleets with the covered fleets, so it can only ever come out at 1.00. The question is how much of the <em>group</em> the treaty covers, and M3 is part of that group.'}],
         cite:['B119E','B119D']},fresh);
       setDial('#dAlloc',N.allocation.toFixed(2));
       await quiz({kicker:'The second question · how much comes back',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Inside the cover:</strong> QS50 takes <b>50%</b> of M1 and M2. Covered claims <b>'+fmt(N.covered)+'</b>, expected recoveries <b>'+fmt(N.ceded)+'</b>.</div>',
-        q:'Now the ratio, and then read off the share.',
+        q:'How much comes back on the claims QS50 covers, and what share does that give the group as a whole?',
         options:[
           {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.allocation.toFixed(2)+' × '+N.ratio.toFixed(2)+' = '+N.share.toFixed(2),ok:true,why:'The recovery ratio is <strong>expected claim recoveries over the corresponding covered claims</strong> (B119D): '+fmt(N.ceded)+' / '+fmt(N.covered)+' = '+N.ratio.toFixed(2)+'. The recovery share is the two dials multiplied, <strong>'+N.share.toFixed(2)+'</strong>, and every contract of the group carries it. A proportional treaty over every period of its group reproduces its cession percentage exactly, which is the sanity check: '+N.ratio.toFixed(2)+' is the cession.'},
           {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.ratio.toFixed(2)+': the cession percentage is the answer',why:'That would be right only if the treaty covered the whole group. It covers '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'},
@@ -2960,7 +2960,7 @@ async function stationWorkpaper(){
         cite:['B119D','B119E']},fresh);
       showSplit();
       await talk(sc,[
-        {w:'sys',t:'The sheet splits the loss where the treaty stops. <b>'+fmt(r2(FLIP_LC*N.allocation))+'</b> is loss the treaty covers; <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> belongs to M3, and Brandt signed nothing that covers it.'},
+        {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>, and the treaty covers '+N.allocation.toFixed(2)+' of the group: <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on fleets it covers. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> belongs to M3, and Brandt signed nothing that covers it.'},
       ]);
       dialed=true;P.split=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
@@ -3013,21 +3013,20 @@ async function stationMirror(){
     ${frame('MUTUAL & TORRES · THE MIRROR RUN','#1e2a3e')}
     ${plate(80,148,600,286,'#141d2e')}
     <text x="${FR.FOCUS.cx}" y="164" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">WHAT GOES IN, AND WHAT THE MIRROR PRINTS BACK</text>
-    ${plate(90,196,200,110)}
-    <text x="190" y="226" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#8b98aa">UNDERLYING · FLIP LOSS</text>
-    <text x="190" y="262" text-anchor="middle" font-family="var(--mono)" font-size="24" font-weight="700" fill="#e0865e">${fmt(FLIP_LC)}</text>
-    <text x="190" y="288" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#8b98aa">THE GROUP’S LOSS EVENT</text>
-    <path d="M290,250 h96" stroke="#e0865e" stroke-width="4"/>
-    <text id="mmult" x="440" y="258" text-anchor="middle" font-family="var(--mono)" font-size="26" font-weight="700" fill="#72b7cc">×?</text>
-    <text id="mmultcap" x="440" y="284" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#72b7cc">ONE FIXED MULTIPLIER</text>
-    <path d="M494,250 h96" stroke="#e0865e" stroke-width="4" opacity=".55"/>
+    ${plate(90,196,180,110)}
+    <text x="180" y="226" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#8b98aa">UNDERLYING · FLIP LOSS</text>
+    <text x="180" y="262" text-anchor="middle" font-family="var(--mono)" font-size="24" font-weight="700" fill="#e0865e">${fmt(FLIP_LC)}</text>
+    <text x="180" y="288" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#8b98aa">THE GROUP’S LOSS EVENT</text>
+    <path d="M278,250 h60" stroke="#e0865e" stroke-width="4"/>
+    <text id="mmult" x="380" y="258" text-anchor="middle" font-family="var(--mono)" font-size="26" font-weight="700" fill="#72b7cc">×?</text>
+    <text id="mmultcap" x="380" y="284" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#72b7cc">ONE FIXED MULTIPLIER</text>
+    <path d="M422,250 h60" stroke="#e0865e" stroke-width="4" opacity=".55"/>
     <g id="twin" style="opacity:0">
-      ${plate(560,196,160,110,'#141d2e')}
-      <text x="640" y="226" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#d9a648">TREATY · MIRRORED</text>
-      <text x="640" y="262" text-anchor="middle" font-family="var(--mono)" font-size="24" font-weight="700" fill="#d9a648">${fmt(RECOVERY)}</text>
-      <text x="640" y="288" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#8b98aa">INCOME · 66A</text>
+      ${plate(490,196,180,110,'#141d2e')}
+      <text x="580" y="226" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#d9a648">TREATY · MIRRORED</text>
+      <text x="580" y="262" text-anchor="middle" font-family="var(--mono)" font-size="24" font-weight="700" fill="#d9a648">${fmt(RECOVERY)}</text>
+      <text x="580" y="288" text-anchor="middle" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#8b98aa">INCOME · 66A</text>
     </g>
-    <text x="380" y="404" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">EVERY MOVEMENT OF THE LOSS COMPONENT, SCALED BY ONE FIXED SHARE, NOTHING RE-MEASURED</text>
     ${rail('THE MIRROR’S OUTPUT',`
       <text id="needleval" x="${FR.RAIL.x+206}" y="${FR.RAIL.y+150}" text-anchor="middle" font-family="var(--mono)" font-size="42" font-weight="700" fill="#63b380">—</text>
       <text id="railcap" x="${FR.RAIL.x+206}" y="${FR.RAIL.y+186}" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#8b98aa">INCOME ON THE TREATY HELD</text>
@@ -3035,7 +3034,7 @@ async function stationMirror(){
       <text x="${FR.RAIL.x+206}" y="${FR.RAIL.y+274}" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="#5d6b7e">change who carries the loss</text>`)}
     ${CAST.torres(560)}${CAST.you(688)}
     ${hotspot(380,448,'!','raise','','RUN THE MIRROR')}
-    <circle cx="560" cy="449" r="2.5" fill="#8b98aa"/><circle cx="560" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(560,404,'?','lever','q','RE-BOOK THE LOSS')}
+    <circle cx="560" cy="421" r="2.5" fill="#8b98aa"/><circle cx="560" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(560,376,'?','lever','q','RE-BOOK THE LOSS')}
     ${hotspot(1118,430,'?','cap','q','THE CEILING')}
   </svg>`);
   const twin=sc.querySelector('#twin'), needleval=sc.querySelector('#needleval');
@@ -3144,7 +3143,7 @@ async function stationPosting(){
     ${hotspot(196,448,'!','stamp','','FIRST ENTRY')}
     ${hotspot(524,448,'!','stamp2','','SECOND ENTRY')}
     ${hotspot(790,430,'?','adjust','q','THE 2028 TOP-UP')}
-    <circle cx="560" cy="449" r="2.5" fill="#8b98aa"/><circle cx="560" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(560,404,'?','runoffrule','q','ASK THE AUDITOR')}
+    <circle cx="688" cy="421" r="2.5" fill="#8b98aa"/><circle cx="688" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(688,376,'?','runoffrule','q','ASK THE AUDITOR')}
   </svg>`);
   const ccsmfill=sc.querySelector('#ccsmfill'), ccsmval=sc.querySelector('#ccsmval');
   function setCcsm(v){
@@ -3277,7 +3276,7 @@ async function stationRunoff(){
     ${rail('LOSS-RECOVERY COMPONENT · MOVEMENTS',`<g id="rolllines"></g>`)}
     ${CAST.torres(524)}${CAST.you(644)}${CAST.brandt(764)}
     ${hotspot(110,428,'!','lap','','CLOSE A YEAR')}
-    <circle cx="524" cy="449" r="2.5" fill="#8b98aa"/><circle cx="524" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(524,404,'?','lockstep','q','THE TALLER BAR')}
+    <circle cx="764" cy="421" r="2.5" fill="#8b98aa"/><circle cx="764" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(764,376,'?','lockstep','q','THE TALLER BAR')}
   </svg>`);
   const P=prog('runoff');
   let lap=P.lap||(fresh?0:2), locked=!!P.lockstep||!fresh;
@@ -3406,7 +3405,7 @@ async function stationAudit(){
     ${CAST.aud(540)}${CAST.you(624)}${CAST.brandt(712)}
     ${hotspot(380,444,'!','weigh','','FOOT THE SCHEDULE')}
     ${hotspot(1118,430,'?','where','q','WHERE EACH LANDS')}
-    <circle cx="712" cy="449" r="2.5" fill="#8b98aa"/><circle cx="712" cy="440" r="3.5" fill="#8b98aa"/>${hotspot(712,404,'?','meaning','q','WHAT ZERO PROVES')}
+    <circle cx="712" cy="421" r="2.5" fill="#8b98aa"/><circle cx="712" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(712,376,'?','meaning','q','WHAT ZERO PROVES')}
   </svg>`);
   const verdict=sc.querySelector('#verdict'), signoff=sc.querySelector('#signoff');
   const P=prog('audit');
