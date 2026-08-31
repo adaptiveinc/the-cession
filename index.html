@@ -624,7 +624,7 @@
 <script>
 'use strict';
 /* ================= what this game is =================
-   THE CESSION. Two companies, two ways a loss is born, one standard.
+   THE CESSION. Two companies, two ways a loss starts, one standard.
 
    YOU are a consulting actuary, the outside specialist the Zurich houses
    call when reinsurance has to make it into the accounts. Odermatt, the
@@ -1105,7 +1105,7 @@ const COMP_NAMES={
   ccsm:'CSM of the treaty held (QS50, Turicum Re)',
   pnl:'The M&T recovery lines in P&L, booked to date'};
 const COMP_NOTES={
-  alc:'Born at initial recognition, not from a flip: premiums of '+fmt(NA.prem)+' against fulfilment cash flows of '+fmt(NA.fcf)+' (paragraph 47). No CSM ever existed on this cohort.',
+  alc:'Loss-making from the first day, not after a CSM ran out: premiums of '+fmt(NA.prem)+' against fulfilment cash flows of '+fmt(NA.fcf)+' (paragraph 47). No CSM ever existed on this cohort.',
   alorc:'The underlying loss scaled by the recovery share. The treaty covers the whole cohort, so the allocation is 1.00 and the share <em>is</em> the cession.',
   apnl:'Recognized as <strong>recovery of losses on onerous underlying contracts</strong>, reversed through <strong>reversal of loss recoveries</strong> as the two coverage years run. Sums to exactly zero over the life.',
   lorc:'Every movement of the underlying loss component, scaled by the recovery share of 0.3. Because the mirror scales the loss component itself, this balance can never exceed the recoverable part of it (B119F).',
@@ -1226,7 +1226,7 @@ function actOneRecap(){
         <li><b>You book it straight away.</b> Cover that will cost more than it earns is a loss now, not when the claims turn up. The whole ${fmt(NA.lc)} goes on the P&amp;L on day one.</li>
         <li><b>You keep it visible.</b> Mixing these contracts in with profitable ones would have buried the loss. That is not allowed: they are grouped on their own, where the loss can be seen.</li>
         <li><b>Half of it comes back.</b> Turicum Re carries half the book, so ${fmt(A_LORC)} of the loss is recovered — and it goes on the books in the <em>same period</em> as the loss, not when the cash arrives.</li>
-        <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. The ${fmt(A_COST)} difference is what certainty costs. It sits on its own line and is never subtracted from the ${fmt(A_LORC)}.</li>
+        <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. That ${fmt(A_COST)} difference is what certainty costs — and it is <em>not</em> an expense on day one. It goes into the CSM of the reinsurance you hold, and is released a little at a time across the two years you are covered, showing up each year in <strong>net expense from reinsurance contracts held</strong>. It is never subtracted from the ${fmt(A_LORC)}: the benefit of the cover and the price of it are reported apart, so a reader can see both.</li>
         <li><b>Both sides run off together.</b> Half the cover is given in 2026 and half in 2027. The loss and the recovery come down side by side, and both finish at zero.</li>
       </ol>
       <div class="rule"><b>The rule to carry across town.</b> The loss and the money the treaty gives back are two separate figures, and they have to land in the same period. What you paid for the treaty is a third figure, on a line of its own. Netting any of them together hides something a reader is entitled to see.</div>`);
@@ -1241,7 +1241,7 @@ function showDirectory(){
     `<p><strong>ACT ONE · LIMMAT ASSURANCE</strong><br>
      <strong>1 · The Pricing Slip</strong>: a group onerous at initial recognition takes its loss immediately (paragraph 47), and forms its own group so no profitable business can absorb it (paragraph 16, 22).<br>
      <strong>2 · The Cession Desk</strong>: the recovery ratio (B119D) with an allocation of 1.00, the cap that stops a cession erasing a loss (B119F), and the net cost of cover, spread over the coverage period in net expense from reinsurance held (paragraph 86).<br>
-     <strong>3 · The Short Book</strong>: the mirror runs off with the loss it reflects, and the disclosure splits recoveries by how the loss arose: born onerous against turned onerous.</p>
+     <strong>3 · The Short Book</strong>: the mirror runs off with the loss it reflects, and the disclosure splits recoveries by how the loss came about: contracts sold at a loss-making price against contracts that went bad later.</p>
      <p><strong>ACT TWO · MUTUAL &amp; TORRES</strong><br>
      <strong>4 · The Renewal</strong>: the group is the unit; a group turns onerous when its CSM is exhausted, and the excess is a loss recognized immediately with a loss component (paragraph 47–48), in the order interest, changes, release (paragraph 44–45).<br>
      <strong>5 · The Booking Check</strong>: income on reinsurance held when a loss is recognized on the underlying (paragraph 66A–66B), and the timing condition that the cover was entered into on or before the underlying was recognized (B119C).<br>
@@ -1875,8 +1875,8 @@ function titleScreen(){
 }
 /* ================= the case files: two companies on one desk =================
    Act One runs across the top row: Limmat Assurance, three meetings, a loss
-   born at signing. Act Two fills the two rows below: Mutual & Torres, seven
-   meetings, a loss born from a shock. One broker and one reinsurer sit across
+   loss-making at signing. Act Two fills the rows below: Mutual & Torres, seven
+   meetings, a loss caused by a shock. One broker and one reinsurer sit across
    both tables. The case file is the game's avatar; rideTo slides it along the
    paper trail, and the amount on its label is whatever the case is carrying. */
 const ST_W=272, ST_H=196, GAP=24, X0=32;
@@ -2228,7 +2228,7 @@ async function stationSlip(){
         ctx:'<div class="memo"><strong>Cohort PA-2026 signs today.</strong> Premiums <b>'+fmt(NA.prem)+'</b>, fulfilment cash flows <b>'+fmt(NA.fcf)+'</b>. The tariff cannot be repriced: the distribution deal locks it.</div>',
         q:'What goes in the accounts on the day the cohort is recognized?',
         options:[
-          {t:'A loss of '+fmt(NA.lc)+' in P&L today, recorded by a loss component. No CSM exists',ok:true,why:'A group onerous at initial recognition takes its loss <strong>immediately</strong> (paragraph 47): the fulfilment cash flows exceed what the contracts bring in, and the excess of '+fmt(NA.lc)+' goes through the service result on day one, recorded by a loss component in the liability for remaining coverage. There is no CSM and never was one: the CSM is unearned <em>profit</em>, and it cannot be negative. Compare this to a book that turns onerous later, where a CSM lived and died first. Two births, one instrument: the loss component.'},
+          {t:'A loss of '+fmt(NA.lc)+' in P&L today, recorded by a loss component. No CSM exists',ok:true,why:'A group onerous at initial recognition takes its loss <strong>immediately</strong> (paragraph 47): the fulfilment cash flows exceed what the contracts bring in, and the excess of '+fmt(NA.lc)+' goes through the service result on day one, recorded by a loss component in the liability for remaining coverage. There is no CSM and never was one: the CSM is unearned <em>profit</em>, and it cannot be negative. Compare this to a book that turns onerous later, where a CSM lived and died first. Two different starts, one instrument: the loss component.'},
           {t:'A negative CSM of −'+fmt(NA.lc)+', released over the two coverage years',why:'The CSM is floored at zero from the first day (paragraph 38, 47). A negative CSM would spread today’s known loss over tomorrow’s periods, which is exactly what the standard is built to prevent.'},
           {t:'Nothing yet: the loss is recognized as the claims actually arrive',why:'That is cash thinking. The measurement is of the contracts’ whole fulfilment cash flows, and they are deficient <em>now</em>. Recognition when identified, not when paid (paragraph 47).'}],
         cite:['47','16']},fresh);
@@ -2437,7 +2437,8 @@ async function stationDesk(){
    Personal accident runs off fast: two coverage years, half the service in
    each, and the whole Limmat schedule fits on one page. The player closes
    both years, watches the loss and its mirror land on zero together, and
-   meets the line pair Act Two will contrast: born onerous against turned onerous. */
+   meets the line pair Act Two will contrast: loss-making from the start against
+   turned onerous later. */
 async function stationShortyear(){
   const fresh=!S.done.shortyear;
   const {sc,mount}=sceneShell('shortyear', fresh?'Objective: close the short book <b>0/2</b>':'Done · read it again');
@@ -2529,9 +2530,9 @@ async function stationShortyear(){
         intro:'<div class="memo"><strong>Limmat’s recovery income went on the P&amp;L line “recovery of losses on onerous underlying contracts”.</strong> The chart of accounts has a second, almost identical line: “recovery of losses on contracts turning onerous”. Both mean “a reinsurer will pay back part of a loss we just booked”. One fact about the loss decides which line is used.</div>',
         q:'What decides which of the two recovery lines the income is reported on?',
         options:[
-          {t:'How the loss was born. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and went bad later',ok:true,why:'A reader of the accounts wants to know <em>which kind of problem</em> the reinsurer is paying for. <strong>Recovery of losses on onerous underlying contracts</strong> points at the pricing desk: the contracts were already loss-making the day they were signed — Meier’s frozen tariff. <strong>Recovery of losses on contracts turning onerous</strong> points at the world: a book that was priced well and carried real profit was overtaken by events later — a claims shock, a court ruling, inflation. The arithmetic behind both lines is identical; the management conversations are opposites. One ends in a repricing, the other in a reserve review. Limmat’s whole case lived on the first; across town, a motor book that was priced perfectly well is about to write the second.'},
+          {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and went bad later',ok:true,why:'A reader of the accounts wants to know <em>which kind of problem</em> the reinsurer is paying for. <strong>Recovery of losses on onerous underlying contracts</strong> points at the pricing desk: the contracts were already loss-making the day they were signed — Meier’s frozen tariff. <strong>Recovery of losses on contracts turning onerous</strong> points at the world: a book that was priced well and carried real profit was overtaken by events later — a claims shock, a court ruling, inflation. The arithmetic behind both lines is identical; the management conversations are opposites. One ends in a repricing, the other in a reserve review. Limmat’s whole case lived on the first; across town, a motor book that was priced perfectly well is about to write the second.'},
           {t:'The size of the recovery: large amounts on one line, smaller ones on the other',why:'There is no size rule. A one-franc recovery on a mispriced book still counts as a recovery on onerous underlying contracts.'},
-          {t:'The type of treaty: quota shares on one line, other covers on the other',why:'The treaty’s shape never decides the line. Either line can carry any kind of cover; what differs is how the underlying loss was born.'}],
+          {t:'The type of treaty: quota shares on one line, other covers on the other',why:'The treaty’s shape never decides the line. Either line can carry any kind of cover; what differs is how the underlying loss came about.'}],
         cite:['47','B119D']},fresh);
       contrasted=true;P.contrast=1;save();
       if(fresh&&count2()<2)setObjective('Objective: close the short book <b>'+count2()+'/2</b>');
@@ -2981,7 +2982,7 @@ async function stationWorkpaper(){
     why:async(g)=>{
       if(g.classList.contains('done'))return;
       await teach('Why claims, and why one method for both kinds of loss',
-        `<p>A loss component is born in two ways, and the claims-proportional allocation is the one method that is sound for both. So it is the accounting policy for both.</p>
+        `<p>A loss component can start in two ways, and the claims-proportional allocation is the one method that is sound for both. So it is the accounting policy for both.</p>
          <table class="roll"><tr><th>Loss event</th><th>Owner of the loss</th><th>Allocation by claims</th></tr>
          <tr><td>Onerous at inception</td><td>Each contract</td><td>Permitted (B119E)</td></tr>
          <tr><td>Group turns onerous later</td><td>The group</td><td>The only sound method</td></tr></table>
@@ -3488,7 +3489,7 @@ function endOverlay(){
   const grade=S.score>=100?'Full marks. The case is mastered.':S.score>=85?'A strong file, a few findings still open.':S.score>=60?'The shape is there; the audit file shows where to look.':'An honest first pass. The retake desk is open.';
   card.append(el('div','qk','Case closed · mastery '+S.score+'/100'));
   card.append(el('div','grade',grade));
-  card.append(el('p','','At Limmat you booked a loss the day it was born (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Mutual & Torres you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
+  card.append(el('p','','At Limmat you booked a loss the day you found it (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Mutual & Torres you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
   const rules=el('div','rules');
   rules.innerHTML=['16','47–48','44','45','66A','66B','B119C','B119D','B119E','B119F','66(c)(ii)','86'].map(citeChip).join('');
   card.append(rules);
