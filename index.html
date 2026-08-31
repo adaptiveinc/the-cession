@@ -853,7 +853,7 @@ const N={
   stopLoss:{attach:1000,w:[0.6,0.4],base:[700,1200],deteriorated:[800,1400]},
 };
 /* half-up to the whole franc, the same convention the worked example uses at
-   cent level. Verified by hand: with these inputs every roll lands on a whole
+   cent level. Verified by hand: with these inputs every roll comes out on a whole
    franc and the lifetime sum of the recovery lines still closes at exactly
    zero (5'850 + 585 + 3'000 − 4'718 + 472 − 5'189 = 0). */
 const r2=x=>{const s=Math.sign(x);return s*Math.round(Math.abs(x)+1e-9);};
@@ -1229,7 +1229,7 @@ function actOneRecap(){
         <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. That ${fmt(A_COST)} difference is what certainty costs — and it is <em>not</em> an expense on day one. It goes into the CSM of the reinsurance you hold, and is released a little at a time across the two years you are covered, showing up each year in <strong>net expense from reinsurance contracts held</strong>. It is never subtracted from the ${fmt(A_LORC)}: the benefit of the cover and the price of it are reported apart, so a reader can see both.</li>
         <li><b>Both sides run off together.</b> Half the cover is given in 2026 and half in 2027. The loss and the recovery come down side by side, and both finish at zero.</li>
       </ol>
-      <div class="rule"><b>The rule to carry across town.</b> The loss and the money the treaty gives back are two separate figures, and they have to land in the same period. What you paid for the treaty is a third figure, on a line of its own. Netting any of them together hides something a reader is entitled to see.</div>`);
+      <div class="rule"><b>The rule to carry across town.</b> The loss and the money the treaty gives back are two separate figures, and they have to go on the books in the same period. What you paid for the treaty is a third figure, on a line of its own. Netting any of them together hides something a reader is entitled to see.</div>`);
     card.append(el('div','',['47','16','66A','86'].map(citeChip).join('')));
     const f=el('div','mfoot'), b=el('button','cta','Close the case →');
     b.onclick=()=>closeModal(); f.append(b); card.append(f);
@@ -1322,7 +1322,7 @@ const NUMQ=[
   options:[{t:'−'+fmt(Math.abs(NA.quote(.5).net)),ok:true,why:'Loss −'+fmt(NA.lc)+' plus recovery +'+fmt(A_LORC)+'. Both lines stay visible; only the net is smaller.'},
            {t:'−'+fmt(NA.lc),why:'That ignores the recovery income recognized the same day (paragraph 66A).'},
            {t:'0',why:'Only a 100% cession nets to zero, and even then both gross lines remain on the page.'}]},
- {kicker:'The price of relief',q:'Limmat pays '+fmt(NA.quote(.5).prem)+' for expected recoveries of '+fmt(NA.quote(.5).rec)+'. Where does the difference land?',
+ {kicker:'The price of relief',q:'Limmat pays '+fmt(NA.quote(.5).prem)+' for expected recoveries of '+fmt(NA.quote(.5).rec)+'. Where is the difference reported?',
   options:[{t:fmt(A_COST)+' of net cost, spread over the coverage period in net expense from reinsurance held',ok:true,why:'The recovery lines sum to zero; the cost of cover is its own story (paragraph 86).'},
            {t:'It reduces the loss-recovery component to '+fmt(r2(A_LORC-A_COST)),why:'Price never enters the mirror; the ratio is recoveries over covered claims (B119D).'},
            {t:'Nowhere: it nets against the day-one recovery income',why:'Netting a coverage-period expense against a day-one timing credit would misstate both periods.'}]},
@@ -2248,7 +2248,7 @@ async function stationSlip(){
         options:[
           {t:'No. Contracts onerous at initial recognition go into their own group, by design',ok:true,why:'Paragraph 16 splits a portfolio into, at minimum: contracts <strong>onerous at initial recognition</strong>, contracts with no significant possibility of becoming onerous, and the rest — and paragraph 22 adds the annual-cohort wall on top. The onerous bucket exists precisely so a known day-one loss cannot be netted into someone else’s profit. Meier’s idea is not an aggressive reading of the rule; it is the specific thing the rule was written to stop. Note the contrast with Act Two’s flip: a group that turns onerous <em>later</em> shares one CSM by design, which is why that loss belongs to the whole group.'},
           {t:'Yes, if the profitable business is in the same annual cohort',why:'The annual cohort (paragraph 22) is a wall, not a door: it further divides the paragraph 16 buckets by underwriting year. It never merges the onerous bucket into a profitable one.'},
-          {t:'Yes, at portfolio level: losses net against expected profits of similar risks',why:'The portfolio is where grouping <em>starts</em>, not where measurement lands. Measurement runs at group level, and the onerous group stands alone (paragraph 16, 24).'}],
+          {t:'Yes, at portfolio level: losses net against expected profits of similar risks',why:'The portfolio is where grouping <em>starts</em>, not where measurement happens. Measurement runs at group level, and the onerous group stands alone (paragraph 16, 24).'}],
         cite:['16','22']},fresh);
       grouped=true;P.grouping=1;save();
       if(fresh&&count()<3)setObjective('Objective: face the tariff <b>'+count()+'/3</b>');
@@ -2436,7 +2436,7 @@ async function stationDesk(){
 /* ================= ACT ONE · MEETING 3: THE SHORT BOOK =================
    Personal accident runs off fast: two coverage years, half the service in
    each, and the whole Limmat schedule fits on one page. The player closes
-   both years, watches the loss and its mirror land on zero together, and
+   both years, watches the loss and its mirror come down to zero together, and
    meets the line pair Act Two will contrast: loss-making from the start against
    turned onerous later. */
 async function stationShortyear(){
@@ -2508,7 +2508,7 @@ async function stationShortyear(){
       ]);
       await quiz({kicker:'The two closes',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Signed:</strong> LC <b>'+fmt(NA.lc)+'</b>, LoRC <b>'+fmt(A_LORC)+'</b>. Coverage runs 2026–2027, half the cover given in each year, no interest per the case card. Claims arrive as expected. One more line to know: the day-one income went in as <b>recovery of losses</b>; when any of it is later handed back, the give-back has its own P&amp;L line, <b>reversal of loss recoveries</b>.</div>',
-        q:'Walk the two year-ends. What reverses, and where does everything land?',
+        q:'Walk the two year-ends. What reverses, and where does everything end up?',
         options:[
           {t:'Each year-end releases half: the loss component drops '+fmt(r2(NA.lc/2))+' and the recovery drops '+fmt(r2(A_LORC/2))+', both booked as a reversal of loss recoveries. After 2027 both stand at exactly zero',ok:true,why:'The cohort promised two years of cover, half in each year. As each year of cover is actually delivered, the loss that was booked for it is used up: the loss component releases '+fmt(r2(NA.lc/2))+' a year, and the recovery mirrors every move at the fixed 0.50, releasing '+fmt(r2(A_LORC/2))+'. Each release is booked as a <strong>reversal of loss recoveries</strong>: the income recognized on day one is handed back as the cover it related to is provided. After 2027 no cover is left to give, so nothing is left of either balance — the loss lived exactly as long as the coverage it paid for, and its mirror with it (B119F holds the whole way down by construction).'},
           {t:'Hold the LoRC at '+fmt(A_LORC)+' until the premium of '+fmt(NA.quote(.5).prem)+' has been earned back',why:'The premium has nothing to do with the mirror. The LoRC tracks the loss component, not the treaty’s cash flows; holding it while the LC runs off would breach the cap (B119F) in the first year.'},
@@ -2520,7 +2520,7 @@ async function stationShortyear(){
         applyDeltas({alc:A_ROLLS[2].alc,alorc:A_ROLLS[2].alorc,apnl:A_ROLLS[2].alorc});}
       g.classList.add('done');
       await talk(sc,[
-        {w:'sys',t:'Both bars land on the baseline. Lifetime recovery lines: +'+fmt(A_LORC)+' recognized, −'+fmt(A_LORC)+' reversed, sum <b>exactly zero</b>. The cost of the cover, <b>'+fmt(A_COST)+'</b>, sits in net expense from reinsurance held, where a cost belongs.'},
+        {w:'sys',t:'Both bars come down to zero. Lifetime recovery lines: +'+fmt(A_LORC)+' recognized, −'+fmt(A_LORC)+' reversed, sum <b>exactly zero</b>. The cost of the cover, <b>'+fmt(A_COST)+'</b>, sits in net expense from reinsurance held, where a cost belongs.'},
       ]);
       if(fresh&&!contrasted)setObjective('Objective: <b>read THE TWO LINES</b> before you leave Limmat');
       await maybeEnd();},
@@ -2686,7 +2686,7 @@ async function stationRenewal(){
       } else {
         await talk(sc,[
           {w:'chief',n:'V. Torres · 2027',t:'“Interest again: <span class="num">'+fmt(FILE_STEPS[1].csm)+'</span> × 1.1 = <span class="num">'+fmt(CSM_2027)+'</span>.”'},
-          {w:'sys',t:'Then the Q3 reserve review lands on your desk, and it is bad. Repair inflation, two large bodily-injury files reopened, a court table revised. Future claims on the cohort: worse by <b>'+fmt(N.det2027)+'</b>.'},
+          {w:'sys',t:'Then the Q3 reserve review arrives on your desk, and it is bad. Repair inflation, two large bodily-injury files reopened, a court table revised. Future claims on the cohort: worse by <b>'+fmt(N.det2027)+'</b>.'},
           {w:'cfo',n:'M. Brandt · CFO',t:'“Tell me the CSM absorbs it.”'},
           {w:'chief',n:'V. Torres',t:'“It absorbs <span class="num">'+fmt(CSM_2027)+'</span> of it. That is all there is.”'},
         ]);
@@ -2980,7 +2980,7 @@ async function stationWorkpaper(){
         intro:'<div class="memo"><strong>A second cohort, as a practice case.</strong> Treaty D covers contract A (<b>'+fmt(F.cA)+'</b> ceded of <b>'+fmt(F.A)+'</b> claims) and contract C (<b>'+fmt(F.cC)+'</b> of <b>'+fmt(F.C)+'</b>). Contract B, <b>'+fmt(F.B)+'</b> of claims, has no cover at all. All three are one group.</div>',
         q:'What share does every contract of that group carry?',
         options:[
-          {t:'0.1 — allocation '+fmt(F.covered)+'/'+fmt(F.group)+' times ratio '+fmt(F.ceded)+'/'+fmt(F.covered),ok:true,why:'Allocation = '+fmt(F.covered)+' / '+fmt(F.group)+' = '+F.allocation.toFixed(5)+'. Ratio = '+fmt(F.ceded)+' / '+fmt(F.covered)+' = '+F.ratio.toFixed(3)+'. Share = <strong>0.1</strong>, and it is carried by A, B <em>and</em> C alike, uncovered B included. That is the point of an allocated share: the group is the unit, so the share is a property of the group, not of whichever contract happens to carry a booking. Notice the two dials pull hard in opposite directions here, '+F.allocation.toFixed(2)+' against '+F.ratio.toFixed(3)+', and still land on a clean 0.1.'},
+          {t:'0.1 — allocation '+fmt(F.covered)+'/'+fmt(F.group)+' times ratio '+fmt(F.ceded)+'/'+fmt(F.covered),ok:true,why:'Allocation = '+fmt(F.covered)+' / '+fmt(F.group)+' = '+F.allocation.toFixed(5)+'. Ratio = '+fmt(F.ceded)+' / '+fmt(F.covered)+' = '+F.ratio.toFixed(3)+'. Share = <strong>0.1</strong>, and it is carried by A, B <em>and</em> C alike, uncovered B included. That is the point of an allocated share: the group is the unit, so the share is a property of the group, not of whichever contract happens to carry a booking. Notice the two dials pull hard in opposite directions here, '+F.allocation.toFixed(2)+' against '+F.ratio.toFixed(3)+', and still come out at a clean 0.1.'},
           {t:'0.325 — the recovery ratio, since that is what the treaty pays',why:'That is dial two alone. It ignores that '+fmt(F.B)+' of the group’s claims, more than two thirds of it, are not covered at all.'},
           {t:'A and C carry 0.325, B carries nothing',why:'This is the per-contract answer the module rejects. The loss belongs to the group; if B is what drives the group onerous, a per-contract mirror books zero recovery on a treaty that genuinely covers part of that group.'}],
         cite:['B119E','B119D']},fresh);
@@ -3127,10 +3127,10 @@ async function stationPosting(){
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('TWO ENTRIES, ONE AMOUNT','#1e2a3e')}
     ${plate(80,148,600,286,'#141d2e')}
-    <text x="${FR.FOCUS.cx}" y="164" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">THE SAME ${fmt(RECOVERY)} LANDS IN TWO PLACES</text>
+    <text x="${FR.FOCUS.cx}" y="164" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">THE SAME ${fmt(RECOVERY)} GOES IN TWO PLACES</text>
     ${[0,1].map(i=>{const x=196+i*328,line=i?'ADJUSTMENT':'RECOVERY',col=i?'#72b7cc':'#63b380';return `
       <g id="die${i+1}" style="transform-origin:${x}px 196px">
-        <rect x="${x-52}" y="196" width="104" height="58" rx="6" fill="#4a5d78" stroke="#33435e" stroke-width="2"/>
+        <rect x="${x-52}" y="196" width="104" height="58" rx="6" fill="#26354c" stroke="#33435e" stroke-width="2"/>
         <rect x="${x-24}" y="182" width="48" height="16" rx="4" fill="#33435e"/>
         <text x="${x}" y="232" text-anchor="middle" font-family="var(--mono)" font-size="12" fill="#e7ecf3">${line}</text></g>
       <g id="copy${i+1}" style="opacity:.35">
@@ -3148,7 +3148,7 @@ async function stationPosting(){
       <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+142}" font-family="var(--mono)" font-size="11" fill="#8b98aa">the second</text>
       <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+160}" font-family="var(--mono)" font-size="11" fill="#8b98aa">entry takes</text>
       <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+150}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#e06a5e">−${fmt(RECOVERY)}</text>`)}
-    ${CAST.aud(560)}${CAST.you(688)}
+    ${CAST.aud(620)}${CAST.you(688)}
     ${hotspot(196,448,'!','stamp','','FIRST ENTRY')}
     ${hotspot(524,448,'!','stamp2','','SECOND ENTRY')}
     ${hotspot(790,430,'?','adjust','q','THE 2028 TOP-UP')}
@@ -3321,7 +3321,7 @@ async function stationRunoff(){
         ]);
         await quiz({kicker:'First close · 2028',pts:QUESTION_PTS,
           ctx:'<div class="memo"><strong>Opening loss-recovery component '+fmt(RECOVERY)+'.</strong> Interest <b>10%</b> gives <b>'+fmt(ROLLS[1].lorc)+'</b>. The 2028 deterioration adds <b>'+fmt(ROLLS[2].lorc)+'</b>. Half of what then stands is released as service is received.</div>',
-          q:'Walk the close: what is the reversal, and what closes the year?',
+          q:'At the 2028 year-end, how much is reversed, and what is left on the books?',
           options:[
             {t:'Reversal of '+fmt(Math.abs(ROLLS[3].lorc))+', closing at '+fmt(OPEN29),ok:true,why:'Balance before the release: '+fmt(RECOVERY)+' + '+fmt(ROLLS[1].lorc)+' + '+fmt(ROLLS[2].lorc)+' = <strong>'+fmt(PRE28)+'</strong>. Half of it, <strong>'+fmt(Math.abs(ROLLS[3].lorc))+'</strong>, reverses out as a <strong>reversal of loss recoveries</strong>, leaving <strong>'+fmt(OPEN29)+'</strong>. Same order as the underlying: accrete, adjust for future service, then release for the service of the period.'},
             {t:'Reversal of '+fmt(r2(RECOVERY*0.5))+', half the opening balance, closing at '+fmt(r2(PRE28-RECOVERY*0.5)),why:'That releases against the balance before this year’s interest and deterioration. The release is measured last, on the fully updated balance, exactly as it is on the underlying CSM.'},
@@ -3344,7 +3344,7 @@ async function stationRunoff(){
           applyDeltas(r.event?{lc:r.lc,lorc:r.lorc,pnl:r.lorc,ccsm:-r.lorc}:{lc:r.lc,lorc:r.lorc,pnl:r.lorc});}
         lap=2;P.lap=2;save();paint();g.classList.add('done');
         await talk(sc,[
-          {w:'sys',t:'The 2029 close posts and both columns land on the baseline together. Loss component zero, loss-recovery component zero. The case has nothing left to carry.'},
+          {w:'sys',t:'The 2029 close posts and both columns come down to zero together. Loss component zero, loss-recovery component zero. The case has nothing left to carry.'},
           {w:'cfo',n:'M. Brandt · CFO',t:'“Three years of entries and it all nets to nothing? Someone will have to explain to me what I paid Turicum Re for.”'},
           {w:'chief',n:'V. Torres',t:'“Someone will. At the sign-off, with the auditor in the room.”'},
         ]);
@@ -3445,7 +3445,7 @@ async function stationAudit(){
       maybeEnd();},
     where:async(g)=>{
       if(g.classList.contains('done'))return;
-      await quiz({kicker:'Where each number lands',pts:QUESTION_PTS,
+      await quiz({kicker:'Where each number is reported',pts:QUESTION_PTS,
         ctx:'<div class="memo">Two of the numbers in this case look alike and belong in different statements: the recovery <b>income</b> of '+fmt(RECOVERY)+' and the <b>loss recovery adjustment</b> of '+fmt(RECOVERY)+'.</div>',
         q:'Which statement does each belong to?',
         options:[
