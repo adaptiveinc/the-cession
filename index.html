@@ -2122,9 +2122,22 @@ function token(x,y,s,stage){
     gold: {amt:'#d9a648',label:fmt(RECOVERY)},
     spent:{amt:'#4a586b',label:'0'},
   }[stage]||{amt:'#8b98aa',label:'—'};
+  /* A-dot carries the case file. The room figures stay human: A-dot is here
+     because carrying source material is an action it performs, not a costume
+     for a character who stands and watches. Indigo is deliberately outside the
+     light-mode swap table, so the brand colour is the same in both themes;
+     the linework uses #0b0f15, which does swap. */
   return `<g class="token" transform="translate(${x},${y}) scale(${s})">
-    <ellipse cx="0" cy="28" rx="28" ry="6" fill="#000" opacity=".28"/>
-    <g class="tok-bob">${person(8,-36,0.72,'#d9a648','#6b5222','avatar')}</g>
+    <ellipse cx="4" cy="30" rx="24" ry="5.5" fill="#000" opacity=".28"/>
+    <g class="tok-bob">
+      <path d="M0,6 L-2,29" stroke="#0b0f15" stroke-width="3.6" stroke-linecap="round"/>
+      <path d="M13,6 L15,29" stroke="#0b0f15" stroke-width="3.6" stroke-linecap="round"/>
+      <ellipse cx="6.5" cy="-13" rx="18" ry="21" fill="#615fff"/>
+      <path d="M-9,-10 L-23,1" stroke="#0b0f15" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M22,-10 L30,2" stroke="#0b0f15" stroke-width="3.2" stroke-linecap="round"/>
+      <ellipse cx="0.5" cy="-18" rx="5.2" ry="5.6" fill="#ffffff"/><circle cx="0.5" cy="-17" r="2.1" fill="#0b0f15"/>
+      <ellipse cx="13" cy="-18" rx="5.2" ry="5.6" fill="#ffffff"/><circle cx="13" cy="-17" r="2.1" fill="#0b0f15"/>
+    </g>
     <g class="tok-sway">
       <rect x="-56" y="-4" width="50" height="28" rx="4" fill="#c9a25a" stroke="#8b6f36" stroke-width="2"/>
       <rect x="-52" y="3" width="42" height="16" rx="2" fill="#e9eef5" stroke="#8b98aa"/>
