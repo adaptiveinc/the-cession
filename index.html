@@ -703,7 +703,7 @@ const GAME={
   themeKey:'vfa-theme',   /* one theme choice across the whole series */
   tipKey:'tc-mobiletip',
   /* mastery economy: 30 station questions x 3 + 1 capstone case x 10 = 100 */
-  questionPts:3, capstonePts:10,
+  questionPts:3, capstonePts:13,
   where:'Two books, two companies, one standard: getting reinsurance to count',
   wherePrefix:'The Cession · ',
   /* which house a meeting belongs to, for the phone nameplate */
@@ -720,8 +720,8 @@ const GAME={
     pendingLine:'Your retake is cleared. Finish the numbers drill, eight quick questions with nothing at stake, and the mastery your findings carried comes back.',
     doneCopy:'All eight numbers walked through, from the day-one net of −6’000 to the lifetime sum of exactly zero.'},
   capstoneTitle:'Year five: the stop-loss on the renewal desk',
-  capstoneBlurb:'one treaty neither desk was built for, worth 10 mastery. The cases close only after you have made this call.',
-  capstoneIntro:'Ten meetings tested proportional treaties, where one recovery ratio scales every loss event exactly. This final case tests whether you know where that arrangement stops working. Odermatt is back at the renewal desk with a cheap stop-loss. Get the call right on your first attempt to earn <strong>10 mastery points</strong>. Get it wrong and a finding is recorded, just like before, with another attempt available later. Take your time with the memo.',
+  capstoneBlurb:'one treaty neither desk was built for, worth 13 mastery. The cases close only after you have made this call.',
+  capstoneIntro:'Ten meetings tested proportional treaties, where one recovery ratio scales every loss event exactly. This final case tests whether you know where that arrangement stops working. Odermatt is back at the renewal desk with a cheap stop-loss. Get the call right on your first attempt to earn <strong>13 mastery points</strong>. Get it wrong and a finding is recorded, just like before, with another attempt available later. Take your time with the memo.',
 };
 /* the cast: which figure kind animates for each dialogue slot, and its chip */
 const SPEAKERS={chief:'actuary',aud:'auditor',bro:'ana',re:'ana',cfo:'staff2',cuo:'staff2',you:'staff'};
@@ -2958,7 +2958,7 @@ async function stationRenewal(){
 const REJECTION_NOTE='a reinsurance treaty is on the books, but nothing says which underlying contracts it covers; the loss recovery (IFRS 17 paragraphs 66A\u201366B) cannot be calculated. Name the covered contracts, or take the treaty off the books.';
 async function stationBooking(){
   const fresh=!S.done.booking;
-  const {sc,mount}=sceneShell('booking', fresh?'Objective: clear the booking check <b>0/3</b>':'Done · read it again');
+  const {sc,mount}=sceneShell('booking', fresh?'Objective: clear the booking check <b>0/2</b>':'Done · read it again');
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('CLEARBOOK ASSURANCE · THE BOOKING CHECK','#1e2a3e')}
     ${plate(78,132,600,300,'#141d2e')}
@@ -3004,12 +3004,11 @@ async function stationBooking(){
     ${CAST.torres(540)}${CAST.you(640)}${CAST.brandt(712)}
     ${hotspot(380,446,'!','scan','','RUN THE CHECK')}
     <circle cx="712" cy="421" r="2.5" fill="#8b98aa"/><circle cx="712" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(712,376,'?','timing','q','BRANDT’S IDEA')}
-    ${hotspot(1118,430,'?','scope','q','THE BUSINESS WE TAKE IN')}
   </svg>`);
   const klaxon=sc.querySelector('#klaxon'), linkrow=sc.querySelector('#linkrow');
   const P=prog('booking');
-  let scanned=!!P.scan||!fresh, timed=!!P.timing||!fresh, scoped=!!P.scope||!fresh;
-  const maybeEnd=()=>{ if(!(scanned&&timed&&scoped)||S.done.booking)return; completeRoom('booking');
+  let scanned=!!P.scan||!fresh, timed=!!P.timing||!fresh;
+  const maybeEnd=()=>{ if(!(scanned&&timed)||S.done.booking)return; completeRoom('booking');
     setObjective('Meeting closed · every row names what it covers');doorOut(sc,'Open the allocation workpaper →'); };
   /* the link is keyed, visibly: the rail row flips, the dead end fades, the
      live links draw themselves to M1 and M2, and the rejection turns green */
@@ -3056,7 +3055,7 @@ async function stationBooking(){
           {t:'Because no recovery cash has arrived: the reinsurer pays only when the claims are paid',why:'Cash timing never gates the loss-recovery component: it is recognized in the same period as the loss it mirrors (paragraph 66A), long before any claim is settled. The block here is missing information, not missing money.'}],
         cite:['66A','B119D']},fresh);
       scanned=true;P.scan=1;save();g.classList.add('done');
-      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed,scoped].filter(Boolean).length+'/3</b>');
+      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed].filter(Boolean).length+'/2</b>');
       await talk(sc,[{w:'sys',t:'You pull the signed treaty from the file and key the coverage in: QS50 covers M1 and M2. Rerun.'}]);
       await fixRow(true);
       await talk(sc,[{w:'chief',n:'V. Torres',t:'“Green on the first rerun. Now the number it was waiting to compute.”'}]);
@@ -3075,27 +3074,14 @@ async function stationBooking(){
           {t:'Yes, but only for the part of the loss expected to run off after 2028',why:'The timing condition is not proportional. It is a condition on the treaty; if it fails, there is no loss-recovery component for that underlying loss at all.'}],
         cite:['B119C','66A']},fresh);
       timed=true;P.timing=1;save();
-      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed,scoped].filter(Boolean).length+'/3</b>');
-      maybeEnd();},
-    scope:async(g)=>{
-      if(g.classList.contains('done'))return;
-      await quiz({kicker:'What this line will and will not process',pts:QUESTION_PTS,
-        intro:'<div class="memo"><strong>What this desk handles:</strong> treaties never overlap, so each policy is covered by at most one treaty; and the calculation is only run on cover bought for <b>the policies Clearbook wrote directly</b>. Business assumed from other insurers is left out by this desk, not by the standard.</div>',
-        q:'Clearbook Assurance also earns money as a reinsurer for smaller insurers, and it passes part of that assumed book onward to Turicum Re. Does that outward cover create a loss recovery, the way QS50 does?',
-        options:[
-          {t:'Under the standard it can, but this desk does not process it',ok:true,why:'When Clearbook accepts business from a smaller insurer, the contract it writes is <strong>an insurance contract Clearbook issued</strong>. It can be onerous and carry a loss component like any policy. Cover bought over it is a reinsurance contract held, so a loss on it can carry a recovery in the ordinary way. Nothing is mirrored twice: the loss recovered is <em>Clearbook\u2019s own</em> on its assumed book, not the original insurer\u2019s loss on its policyholders. What keeps it out of this calculation is a <strong>scope decision of this desk</strong>, stated on the case card, not a rule of IFRS 17.'},
-          {t:'Yes, and this desk will calculate it once the the covered fleets are named',why:'The first half is right and the second is not. A naming the covered contracts makes the number computable, but this desk\u2019s scope stops at cover over directly written policies; the assumed book is measured elsewhere.'},
-          {t:'No. A loss recovery can only ever arise on policies sold to the public',why:'There is no such restriction. The test is whether the contracts covered are insurance contracts the entity issued, and an accepted reinsurance treaty is one \u2014 the counterparty being an insurer rather than a motorist changes nothing.'}],
-        cite:['66A','B119D']},fresh);
-      scoped=true;P.scope=1;save();
-      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed,scoped].filter(Boolean).length+'/3</b>');
+      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed].filter(Boolean).length+'/2</b>');
       maybeEnd();},
   });
   if(fresh){
     const mk=id=>{const g=[...sc.querySelectorAll('.hs')].find(h=>h.dataset.hs===id);if(g)g.classList.add('done');};
-    if(scanned){mk('scan');fixRow();} if(timed)mk('timing'); if(scoped)mk('scope');
-    const n=[scanned,timed,scoped].filter(Boolean).length;
-    if(n&&n<3)setObjective('Objective: clear the booking check <b>'+n+'/3</b>');
+    if(scanned){mk('scan');fixRow();} if(timed)mk('timing');
+    const n=[scanned,timed].filter(Boolean).length;
+    if(n&&n<2)setObjective('Objective: clear the booking check <b>'+n+'/2</b>');
   } else {fixRow();doorOut(sc,'Open the allocation workpaper →');}
 }
 /* ================= MEETING 3: THE ALLOCATION =================
@@ -3725,7 +3711,7 @@ function endOverlay(){
     const card=el('div','mcard');
     card.append(el('div','qk','Case almost closed · mastery '+S.score+'/100'));
     card.append(el('div','grade','Last thing: the offer on the renewal desk.'));
-    card.insertAdjacentHTML('beforeend','<p>You took both cases through all ten meetings and both lifetime schedules footed to zero. For the final challenge, year five brings a treaty <strong>this desk was never built for</strong>: a cheap stop-loss, and Odermatt is very pleased with the price. One call, worth 10 mastery points, to close the case.</p>');
+    card.insertAdjacentHTML('beforeend','<p>You took both cases through all ten meetings and both lifetime schedules footed to zero. For the final challenge, year five brings a treaty <strong>this desk was never built for</strong>: a cheap stop-loss, and Odermatt is very pleased with the price. One call, worth 13 mastery points, to close the case.</p>');
     const f=el('div','mfoot');
     const later=el('button','cta ghost','Back to the case file');later.onclick=()=>{closeModal();renderMap();};
     const go=el('button','cta big','Hear the offer');go.onclick=()=>{closeModal();runCapstones();};
