@@ -2914,7 +2914,7 @@ async function stationRenewal(){
           options:[
             {t:'CSM to zero, and a loss component of '+fmt(FLIP_LC)+' recognized in P&L now',ok:true,why:'The CSM absorbs what it can, <strong>'+fmt(CSM_2027)+'</strong>, and is floored at zero. The excess, <strong>'+fmt(N.det2027)+' − '+fmt(CSM_2027)+' = '+fmt(FLIP_LC)+'</strong>, is a loss recognized immediately in the service result (paragraph 47-48), recorded by a loss component inside the liability for remaining coverage. That number is what the rest of this case exists to carry. Note what did <em>not</em> happen: no release this year, because the adjustment came first and left nothing.'},
             {t:'CSM at −'+fmt(r2(N.det2027-CSM_2027))+', recovering in later years',why:'A negative CSM would be unearned <em>losses</em> carried as an asset of profit. Paragraph 48 floors the CSM at zero and puts the excess through P&L today.'},
-            {t:'Spread the '+fmt(FLIP_LC)+' over the remaining coverage period',why:'IFRS 17 does not smooth losses. Onerous means recognized when identified (paragraph 47-48). Brandt will ask for exactly this in the corridor; the answer is no there too.'}],
+            {t:'Spread the '+fmt(FLIP_LC)+' over the remaining coverage period',why:'IFRS 17 does not smooth losses. Onerous means recognized when identified (paragraph 47-48).'}],
           cite:['47–48','48']},fresh);
         if(fresh)applyDeltas({csm:-FILE_STEPS[1].csm,lc:FLIP_LC});  /* the year nets to: interest in, all of it absorbed, the excess a loss */
         setTank(0);stampOnerous();
