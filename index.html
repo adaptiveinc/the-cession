@@ -871,7 +871,7 @@ const N={
   det2027:80000, /* the 2027 deterioration that exhausts the CSM */
   det2028:10000, /* a further deterioration while the group is already onerous */
 
-  cededCsm0:20000, /* the treaty's own CSM, held flat apart from paragraph 66(c)(ii) */
+  cededCsm0:20000, /* the treaty's own CSM; the loss recoveries never move it */
 
   /* the practice-case allocation fixture:
      treaty D covers A (6,000 of 30,000) and C (7,000 of 10,000); B (90,000) is
@@ -900,8 +900,11 @@ const r2=x=>{const s=Math.sign(x);return s*Math.round(Math.abs(x)+1e-9);};
    the share, so the B119F cap holds by construction.
    Each entry: {yr, roll, line, lc, lorc, event}
      line   the disclosure line the mirrored amount is presented on
-     event  true for a loss event (adjusts the ceded CSM under paragraph 66(c)(ii)),
-            false for a run-off roll (which must not, or the income counts twice) */
+     event  true for a loss event, false for a run-off roll. Kept because the
+            two read differently on the disclosure lines; neither moves the
+            ceded CSM. Motor-2026 was profitable when it was written, so no
+            part of this loss was ever deferred in the treaty's CSM, and
+            paragraph 66(c) keeps the mirrored change out of it. */
 const ROLLS=(()=>{
   const out=[]; let lc=0;
   const push=(yr,roll,line,leg,event)=>{lc=r2(lc+leg);out.push({yr,roll,line,lc:leg,lorc:r2(leg*N.share),bal:lc,event});};
@@ -921,8 +924,11 @@ const ROLLS=(()=>{
 const CSM_2027=r2(r2(r2(N.csm0*(1+N.rate))*(1-N.release))*(1+N.rate)); /* 60’500 */
 const FLIP_LC=ROLLS[0].lc;      /* 19’500 */
 const RECOVERY=ROLLS[0].lorc;   /* 5’850 */
-/* the treaty's CSM after the paragraph 66(c)(ii) adjustments (loss events only) */
-const CEDED_CSM_END=r2(N.cededCsm0-ROLLS.filter(r=>r.event).reduce((t,r)=>t+r.lorc,0)); /* 11’150 */
+/* The treaty's CSM is untouched by the loss recoveries. A group onerous at
+   initial recognition would adjust it (paragraph 66A), because the recovery on
+   that day-one loss is already inside the CSM when the treaty is measured.
+   Motor-2026 turned onerous later, so nothing of this loss was ever in there. */
+const CEDED_CSM_END=N.cededCsm0; /* 20’000 */
 
 /* ---- Act One: Limmat Assurance, cohort PA-2026, onerous at inception ----
    Premiums of 100’000 francs against fulfilment cash flows of 112’000: the tariff slipped,
@@ -1150,7 +1156,7 @@ const COMP_NOTES={
   alorc:'The underlying loss scaled by the recovery share. The treaty covers the whole cohort, so the allocation is 1.00 and the share <em>is</em> the cession.',
   apnl:'Recognized as <strong>recovery of losses on onerous underlying contracts</strong>, reversed through <strong>reversal of loss recoveries</strong> as the two coverage years run. Sums to exactly zero over the life.',
   lorc:'Every movement of the underlying loss component, scaled by the recovery share of 0.3. Because the mirror scales the loss component itself, this balance can never exceed the recoverable part of it (B119F).',
-  ccsm:'Held flat at 20 apart from the paragraph 66(c)(ii) adjustments, so the drop is attributable. Only the <strong>loss events</strong> adjust it; the run-off movements must not, or the recovery income would be counted twice.',
+  ccsm:'The treaty\u2019s own unearned margin. The loss recoveries never move it: Motor-2026 was profitable when it was written, so no part of this loss was ever deferred here, and paragraph 66(c) keeps the mirrored change out. A group onerous on day one would be different \u2014 there paragraph 66A takes the recovery back out of this balance.',
   pnl:'The whole point of the line: recovery income is timing, not profit. Over the life of the case these lines sum to <strong>exactly zero</strong>.'};
 
 /* what the books look like once each meeting is closed (merged in room order) */
@@ -1160,7 +1166,7 @@ const CHECK={
   desk:{alc:NA.lc,alorc:A_LORC,apnl:A_LORC},
   shortyear:{alc:0,alorc:0,apnl:0},
   renewal:{csm:0,lc:FLIP_LC,lorc:0,ccsm:N.cededCsm0,pnl:0},
-  posting:{csm:0,lc:FLIP_LC,lorc:RECOVERY,ccsm:r2(N.cededCsm0-RECOVERY),pnl:RECOVERY},
+  posting:{csm:0,lc:FLIP_LC,lorc:RECOVERY,ccsm:N.cededCsm0,pnl:RECOVERY},
   runoff:{csm:0,lc:0,lorc:0,ccsm:CEDED_CSM_END,pnl:0},
 };
 /* Act One's short schedule: the loss at signing, then two clean closes */
@@ -1192,12 +1198,12 @@ function ledgerFromState(){
   if(!S.done.renewal&&p.renewal){const s=p.renewal.step||0;
     for(let i=0;i<s;i++)for(const k in FILE_STEPS[i])L[k]=FILE_STEPS[i][k];}
   if(!S.done.posting&&p.posting&&p.posting.stamped&&S.done.renewal){
-    L.lorc=r2(L.lorc+RECOVERY);L.pnl=r2(L.pnl+RECOVERY);L.ccsm=r2(L.ccsm-RECOVERY);}
+    L.lorc=r2(L.lorc+RECOVERY);L.pnl=r2(L.pnl+RECOVERY);}
   if(!S.done.runoff&&p.runoff&&S.done.posting){
     const lap=p.runoff.lap||0;
     for(let i=1;i<=lap;i++)for(const j of LAPS[i-1].filter(x=>x>0)){const r=ROLLS[j];
       L.lc=r2(L.lc+r.lc);L.lorc=r2(L.lorc+r.lorc);L.pnl=r2(L.pnl+r.lorc);
-      if(r.event)L.ccsm=r2(L.ccsm-r.lorc);}}
+}}
   for(const k in L)L[k]=r2(L[k]);
   syncChips();
 }
@@ -1223,11 +1229,10 @@ function ledgerHistory(){
   const stamped=S.done.posting||(p.posting&&p.posting.stamped&&S.done.renewal);
   if(stamped){
     add('Clearbook Entries','Loss mirrored onto the treaty: '+fmt(FLIP_LC)+' × '+N.share,{lorc:RECOVERY,pnl:RECOVERY});
-    add('Clearbook Entries','Second entry: the treaty CSM gives up the same amount',{ccsm:-RECOVERY});}
+    add('Clearbook Entries','Second entry: the loss-recovery component of the reinsurance asset',{lorc:0});}
   const lap=S.done.runoff?2:((p.runoff&&S.done.posting)?(p.runoff.lap||0):0);
   for(let i=1;i<=lap;i++)for(const j of LAPS[i-1].filter(x=>x>0)){const r=ROLLS[j];
     const d={lc:r.lc,lorc:r.lorc,pnl:r.lorc};
-    if(r.event)d.ccsm=-r.lorc;
     add('Clearbook Close · '+r.yr,r.line+' '+r.roll,d);}
   return H;
 }
@@ -1288,16 +1293,16 @@ function showDirectory(){
      <strong>5 · The Booking Check</strong>: income on reinsurance held when a loss is recognized on the underlying (paragraph 66A–66B), and the timing condition that the cover was entered into on or before the underlying was recognized (B119C).<br>
      <strong>6 · The Allocation</strong>: the recovery ratio (B119D) and the claims-proportional allocation share (B119E), and why one method serves both kinds of loss event.<br>
      <strong>7 · The Mirror Run</strong>: the income is the loss times the share (B119D); the cap on the loss-recovery component holds by construction (B119F).<br>
-     <strong>8 · The Two Entries</strong>: the income line, and the ceded-CSM adjustment that stops the same recovery being deferred twice (paragraph 66(c)(ii)).<br>
+     <strong>8 · The Two Entries</strong>: the income line, and the loss-recovery component of the reinsurance asset that carries it on the balance sheet (paragraph 66B).<br>
      <strong>9 · The Run-Off</strong>: every movement of the loss component is mirrored, so the recovery runs off with it (B119F).<br>
      <strong>10 · The Sign-Off</strong>: the recovery lines are a timing device and sum to zero over a life; the cost of cover lives elsewhere.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
-     <p><strong>How to read the references.</strong> The gold tags point to where each rule lives in IFRS 17. A plain number is a paragraph of the standard itself (paragraph 66A). A number starting with B is a paragraph of Appendix B, the application guidance (paragraph B119D). Letters in brackets, as in 66(c)(ii), are subparagraphs. Click any tag for its written-out reference.</p>
+     <p><strong>How to read the references.</strong> The gold tags point to where each rule lives in IFRS 17. A plain number is a paragraph of the standard itself (paragraph 66A). A number starting with B is a paragraph of Appendix B, the application guidance (paragraph B119D). Letters in brackets, as in 66(c), are subparagraphs. Click any tag for its written-out reference.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
      <p><strong>The P&amp;L lines these cases produce.</strong> Recovery of losses on onerous underlying contracts · changes in expected loss recoveries · reversal of loss recoveries · recovery of losses on contracts turning onerous · interest accretion on loss recovery · and, on the balance sheet inside the reinsurance CSM, the loss recovery adjustment.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
-     <p><strong>Assumptions of these cases.</strong> Act Two's numbers follow this module's standard worked example, restated in whole francs: one cohort of three fleet contracts, three annual periods at a flat 10%, half the remaining balance released each year. Act One is a companion case built to the same conventions: premiums <span class="num">100’000</span> against fulfilment cash flows of <span class="num">112’000</span>, two coverage years with half the service in each, discounting immaterial, and Turicum Re quoting any cession at expected claims plus 6 per hundred of cover. <strong>Proportional treaties only</strong>: the mirror multiplies every loss event by one recovery ratio, which is exact when recoveries track claims proportionally. The timing condition (B119C) is met in both acts because both treaties signed with, or before, their cohorts; cover is non-overlapping; and a recovery is only booked on cover bought for business the company wrote itself. The Clearbook treaty's own CSM is held flat at <span class="num">${fmt(N.cededCsm0)}</span> apart from the paragraph 66(c)(ii) adjustments, so the drop is attributable; Limmat's treaty is summarized by its expected net cost. Out of scope: the premium allocation approach, transition, and the disclosure requirements themselves. The year-five offer is where the proportional assumption breaks.</p>`,
-    ['16','47','66A','66B','B119C','B119D','B119E','B119F','66(c)(ii)','86']);
+     <p><strong>Assumptions of these cases.</strong> Act Two's numbers follow this module's standard worked example, restated in whole francs: one cohort of three fleet contracts, three annual periods at a flat 10%, half the remaining balance released each year. Act One is a companion case built to the same conventions: premiums <span class="num">100’000</span> against fulfilment cash flows of <span class="num">112’000</span>, two coverage years with half the service in each, discounting immaterial, and Turicum Re quoting any cession at expected claims plus 6 per hundred of cover. <strong>Proportional treaties only</strong>: the mirror multiplies every loss event by one recovery ratio, which is exact when recoveries track claims proportionally. The timing condition (B119C) is met in both acts because both treaties signed with, or before, their cohorts; cover is non-overlapping; and a recovery is only booked on cover bought for business the company wrote itself. <strong>The Clearbook treaty's own CSM is held flat</strong> at <span class="num">${fmt(N.cededCsm0)}</span>. Two things keep it there. The loss recoveries genuinely never touch it: Motor-2026 was profitable when it was written, so no part of this loss was ever deferred in the treaty's CSM, and paragraph 66(c) keeps the mirrored change out. Separately, and as a simplification of these cases, the part of the 2027 deterioration that the group's <em>own</em> CSM absorbed would carry its own change into the treaty CSM under the ordinary paragraph 66(c) rule; that movement is left out so the balance stays readable. Limmat's treaty is summarized by its expected net cost. Out of scope: the premium allocation approach, transition, and the disclosure requirements themselves. The year-five offer is where the proportional assumption breaks.</p>`,
+    ['16','47','66A','66B','B119C','B119D','B119E','B119F','66(c)','86']);
 }
 /* ================= roll-forward: one component's whole story =================
    Clicking a ledger chip opens every movement that built it, as a waterfall
@@ -1384,9 +1389,9 @@ const NUMQ=[
            {t:fmt(r2(RECOVERY*0.5)),why:'That releases against the opening balance, before this year’s interest and deterioration.'},
            {t:'0',why:'The loss component is running off, and the mirror copies every one of its movements.'}]},
  {kicker:'The treaty CSM',q:'The treaty’s own CSM starts at '+fmt(N.cededCsm0)+'. Which of the case’s movements adjust it, and where does it end?',
-  options:[{t:'Only the two loss events, ending at '+fmt(CEDED_CSM_END),ok:true,why:fmt(N.cededCsm0)+' − '+fmt(RECOVERY)+' − '+fmt(ROLLS[2].lorc)+' = '+fmt(CEDED_CSM_END)+'. Interest and the reversals must not touch it, or the income counts twice.'},
-           {t:'All six movements, ending at '+fmt(N.cededCsm0),why:'Mirroring the run-off movements onto the CSM as well would count the recovery income a second time.'},
-           {t:'Only the first, ending at '+fmt(r2(N.cededCsm0-RECOVERY)),why:'The 2028 top-up is a genuine loss event too, and adjusts it again.'}]},
+  options:[{t:'None of them, so it ends where it started at '+fmt(CEDED_CSM_END),ok:true,why:'Motor-2026 was profitable when it was written, so no part of this loss was ever deferred in the treaty\u2019s CSM. Paragraph 66(c) keeps every mirrored change out of it, and the balance is untouched at '+fmt(CEDED_CSM_END)+'. Only a loss recognized at the <strong>initial recognition</strong> of an onerous group moves it (paragraph 66A).'},
+           {t:'The two loss events, the flip and the top-up, ending at '+fmt(r2(N.cededCsm0-RECOVERY-ROLLS[2].lorc)),why:'A flip and a top-up are both <em>subsequent</em> measurement. The group\u2019s own CSM is already exhausted, so neither adjusts it, and neither reaches the treaty\u2019s CSM either.'},
+           {t:'Only the flip, ending at '+fmt(r2(N.cededCsm0-RECOVERY)),why:'The flip is the moment the group turned onerous, which is exactly the case paragraph 66(c) excludes from the ceded CSM. It would move the CSM only if the group had been onerous when it was first recognized.'}]},
  {kicker:'The lifetime',q:'Add every recovery line the case produced, across its whole life. What is the total?',
   options:[{t:'0',ok:true,why:'Everything recognized was reversed as the service it related to was received. The recovery is a timing item; the treaty’s profit lives in its own CSM.'},
            {t:fmt(RECOVERY),why:'That amount was recognized and then fully reversed.'},
@@ -2611,10 +2616,10 @@ async function stationShortyear(){
         {w:'you',n:'You',t:'“Noted. Now watch the two balances go down together: half the cover was given in 2026, half in 2027, and each time the recovery follows the loss. It has no schedule of its own.”'},
       ]);
       await quiz({kicker:'The two closes',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Signed:</strong> LC <b>'+fmt(NA.lc)+'</b>, LoRC <b>'+fmt(A_LORC)+'</b>. Coverage runs 2026–2027, half the cover given in each year, no interest per the case card. Claims arrive as expected. One more line to know: the day-one income went in as <b>recovery of losses</b>; when any of it is later handed back, the give-back has its own P&amp;L line, <b>reversal of loss recoveries</b>.</div>',
+        ctx:'<div class="memo"><strong>Signed:</strong> LC <b>'+fmt(NA.lc)+'</b>, LoRC <b>'+fmt(A_LORC)+'</b>. Coverage runs 2026–2027, half the cover given in each year, no interest per the case card. Claims arrive as expected. Two sides to keep apart: the <b>loss component</b> belongs to the contracts Limmat issued, and the <b>loss-recovery component</b> belongs to the treaty it holds. IFRS 17 reports the two on separate lines and never nets them.</div>',
         q:'Walk the two year-ends. What reverses, and where does everything end up?',
         options:[
-          {t:'Each year-end releases half: the loss component drops '+fmt(r2(NA.lc/2))+' and the recovery drops '+fmt(r2(A_LORC/2))+', both booked as a reversal of loss recoveries. After 2027 both stand at exactly zero',ok:true,why:'The cohort promised two years of cover, half in each year. As each year of cover is actually delivered, the loss that was booked for it is used up: the loss component releases '+fmt(r2(NA.lc/2))+' a year, and the recovery mirrors every move at the fixed 0.50, releasing '+fmt(r2(A_LORC/2))+'. Each release is booked as a <strong>reversal of loss recoveries</strong>: the income recognized on day one is handed back as the cover it related to is provided. After 2027 no cover is left to give, so nothing is left of either balance — the loss lived exactly as long as the coverage it paid for, and its mirror with it (B119F holds the whole way down by construction).'},
+          {t:'Each year-end releases half: the loss component drops '+fmt(r2(NA.lc/2))+' on the insurance side and the recovery drops '+fmt(r2(A_LORC/2))+' on the reinsurance side, each on its own line. After 2027 both stand at exactly zero',ok:true,why:'The cohort promised two years of cover, half in each year. As each year of cover is delivered, the loss booked for it is used up: the loss component releases '+fmt(r2(NA.lc/2))+' a year, and the recovery mirrors every move at the fixed 0.50, releasing '+fmt(r2(A_LORC/2))+'. <strong>The two releases are reported apart.</strong> The loss component belongs to the contracts Limmat <em>issued</em>, so its release sits with the insurance service result. The recovery belongs to the treaty Limmat <em>holds</em>, so its release is a <strong>reversal of loss recoveries</strong> among the amounts recoverable from reinsurers. Paragraph 86 keeps reinsurance held out of the issued-contract result, which is why a reader can see the gross loss and the cover separately instead of one netted figure. After 2027 no cover is left to give, so nothing is left of either balance (B119F holds the whole way down by construction).'},
           {t:'Hold the LoRC at '+fmt(A_LORC)+' until the premium of '+fmt(NA.quote(.5).prem)+' has been earned back',why:'The premium has nothing to do with the mirror. The LoRC tracks the loss component, not the treaty’s cash flows; holding it while the LC runs off would breach the cap (B119F) in the first year.'},
           {t:'Release the LC over the coverage years but the LoRC only when recoveries are actually received',why:'That is cash timing again. The LoRC is an accrual mirroring the LC’s movements; actual recovery cash settles separately, as the claims do.'}],
         cite:['B119F','66A']},fresh);
@@ -2966,12 +2971,12 @@ async function stationBooking(){
     scope:async(g)=>{
       if(g.classList.contains('done'))return;
       await quiz({kicker:'What this line will and will not process',pts:QUESTION_PTS,
-        intro:'<div class="memo"><strong>What this desk handles:</strong> treaties never overlap, so each policy is covered by at most one treaty; and a loss recovery is only booked on cover bought for <b>business we wrote ourselves</b>.</div>',
+        intro:'<div class="memo"><strong>What this desk handles:</strong> treaties never overlap, so each policy is covered by at most one treaty; and the calculation is only run on cover bought for <b>the policies Clearbook wrote directly</b>. Business assumed from other insurers is left out — by this desk, not by the standard.</div>',
         q:'Clearbook Assurance also earns money as a reinsurer for smaller insurers, and it passes part of that assumed book onward to Turicum Re. Does that outward cover create a loss recovery, the way QS50 does?',
         options:[
-          {t:'No. A loss recovery is only booked on cover for policies we wrote ourselves',ok:true,why:'The recovery mirrors a loss on <strong>our own onerous policies</strong>. Business assumed from another insurer sits one layer further out: their policyholders, their loss. Passing it onward and booking a recovery would mean mirroring a mirror, and the same underlying loss would end up counted twice. So the desk deliberately keeps assumed-and-passed-on business out of this calculation. That is a stated simplification of this desk, not a rule of the standard, and the case card says so.'},
-          {t:'Yes. Any outward cover with a named coverage list earns a recovery',why:'A coverage list makes the number computable, not correct. Following the chain outward would mirror an already-mirrored loss.'},
-          {t:'Yes, at the second cover’s own ratio, replacing QS50’s recovery',why:'Nothing replaces anything. Two covers over one loss would need the overlap resolved and the cap tested explicitly (B119F); this desk assumes covers never overlap instead.'}],
+          {t:'Under the standard it can, but this desk does not process it',ok:true,why:'When Clearbook accepts business from a smaller insurer, the contract it writes is <strong>an insurance contract Clearbook issued</strong>. It sits on Clearbook\u2019s books like any policy: it can be measured, it can be onerous, and it can carry a loss component. Cover bought over it is therefore a reinsurance contract held, and a loss on it can carry a recovery in the ordinary way. Nothing is being mirrored twice \u2014 the loss being recovered is <em>Clearbook\u2019s own</em> on its assumed book, not the original insurer\u2019s loss on its policyholders. What keeps it out of this calculation is a <strong>scope decision of this desk</strong>, stated on the case card, not a rule of IFRS 17.'},
+          {t:'Yes, and this desk will calculate it once the coverage list is named',why:'The first half is right and the second is not. A coverage list makes the number computable, but this desk\u2019s scope stops at cover over directly written policies; the assumed book is measured elsewhere.'},
+          {t:'No. A loss recovery can only ever arise on policies sold to the public',why:'There is no such restriction. The test is whether the contracts covered are insurance contracts the entity issued, and an accepted reinsurance treaty is one \u2014 the counterparty being an insurer rather than a motorist changes nothing.'}],
         cite:['66A','B119D']},fresh);
       scoped=true;P.scope=1;save();
       if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed,scoped].filter(Boolean).length+'/3</b>');
@@ -3222,9 +3227,13 @@ async function stationMirror(){
   } else {show();doorOut(sc,'Take it to posting →');}
 }
 /* ================= MEETING 5: THE TWO ENTRIES =================
-   Posting day. The amount goes through twice: once into P&L as recovery income,
-   once against the treaty's own CSM, so the same recovery is not deferred a
-   second time. Post only the first and the auditor is already in the doorway. */
+   Posting day. One amount, two entries: income in P&L, and the loss-recovery
+   component of the reinsurance asset on the balance sheet. The treaty's own CSM
+   is NOT one of them. Motor-2026 turned onerous after inception, so the loss
+   never adjusted the underlying CSM, and paragraph 66(c) keeps the mirrored
+   change out of the ceded CSM too. Only a loss recognized at the initial
+   recognition of an onerous group adjusts it (paragraph 66A), because there the
+   recovery is already sitting inside the newly measured CSM. */
 async function stationPosting(){
   const fresh=!S.done.posting;
   const {sc,mount}=sceneShell('posting', fresh?'Objective: post both entries <b>0/4</b>':'Done · read it again');
@@ -3232,7 +3241,7 @@ async function stationPosting(){
     ${frame('TWO ENTRIES, ONE AMOUNT','#1e2a3e')}
     ${plate(80,148,600,286,'#141d2e')}
     <text x="${FR.FOCUS.cx}" y="164" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">THE SAME ${fmt(RECOVERY)} GOES IN TWO PLACES</text>
-    ${[0,1].map(i=>{const x=196+i*328,line=i?'ADJUSTMENT':'RECOVERY',col=i?'#72b7cc':'#63b380';return `
+    ${[0,1].map(i=>{const x=196+i*328,line=i?'COMPONENT':'INCOME',col=i?'#72b7cc':'#63b380';return `
       <g id="die${i+1}" style="transform-origin:${x}px 196px">
         <rect x="${x-52}" y="196" width="104" height="58" rx="6" fill="#26354c" stroke="#33435e" stroke-width="2"/>
         <rect x="${x-24}" y="182" width="48" height="16" rx="4" fill="#33435e"/>
@@ -3241,17 +3250,21 @@ async function stationPosting(){
         ${plate(x-78,282,156,58,'#1a2432')}
         <text id="amt${i+1}" x="${x}" y="320" text-anchor="middle" font-family="var(--mono)" font-size="24" font-weight="700" fill="#131a24"></text>
         <text x="${x}" y="366" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.4" fill="${col}">${i?'BALANCE SHEET':'P&amp;L'}</text>
-        <text x="${x}" y="386" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="#5d6b7e">${i?'Loss recovery adjustment':'Recovery of losses on'}</text>
-        <text x="${x}" y="400" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="#5d6b7e">${i?'against the treaty CSM':'contracts turning onerous'}</text></g>`;}).join('')}
+        <text x="${x}" y="386" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="#5d6b7e">${i?'Loss-recovery component':'Recovery of losses on'}</text>
+        <text x="${x}" y="400" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="#5d6b7e">${i?'of the reinsurance asset':'contracts turning onerous'}</text></g>`;}).join('')}
     ${rail('TREATY CSM · WHAT IS STILL UNEARNED',`
       <rect x="${FR.RAIL.x+40}" y="${FR.RAIL.y+58}" width="120" height="200" rx="6" fill="#141d2e" stroke="#2c394a" stroke-width="2"/>
       <rect id="ccsmfill" x="${FR.RAIL.x+45}" y="${FR.RAIL.y+63}" width="110" height="190" rx="4" fill="#72b7cc" opacity=".7"/>
       <text id="ccsmval" x="${FR.RAIL.x+100}" y="${FR.RAIL.y+288}" text-anchor="middle" font-family="var(--mono)" font-size="20" font-weight="700" fill="#e7ecf3">${fmt(N.cededCsm0)}</text>
       <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+100}" font-family="var(--mono)" font-size="11" fill="#8b98aa">at inception</text>
       <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+100}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#c9d3df">${fmt(N.cededCsm0)}</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+142}" font-family="var(--mono)" font-size="11" fill="#8b98aa">the second</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+160}" font-family="var(--mono)" font-size="11" fill="#8b98aa">entry takes</text>
-      <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+150}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#e06a5e">−${fmt(RECOVERY)}</text>`)}
+      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+142}" font-family="var(--mono)" font-size="11" fill="#8b98aa">the loss</text>
+      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+160}" font-family="var(--mono)" font-size="11" fill="#8b98aa">recovery takes</text>
+      <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+150}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#63b380">nothing</text>
+      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+208}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">the loss never touched</text>
+      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+225}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">the group\u2019s own CSM,</text>
+      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+242}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">so its mirror does not</text>
+      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+259}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">touch this one either</text>`)}
     ${CAST.aud(620)}${CAST.you(688)}
     ${hotspot(196,448,'!','stamp','','FIRST ENTRY')}
     ${hotspot(524,448,'!','stamp2','','SECOND ENTRY')}
@@ -3302,19 +3315,18 @@ async function stationPosting(){
       if(!one){await teach('The first entry first','<p>Post in order. Take the income line first, then come back for the second.</p>');return;}
       /* the double-count demo: the wrong answer is shown as a consequence, not just marked wrong */
       await quiz({kicker:'The second entry',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Booked so far:</strong> income of <b>'+fmt(RECOVERY)+'</b> as recovery of losses. The treaty’s own CSM stands at <b>'+fmt(N.cededCsm0)+'</b>, unearned profit on the cover held.</div>',
-        q:'Is that the whole entry?',
+        ctx:'<div class="memo"><strong>Booked so far:</strong> income of <b>'+fmt(RECOVERY)+'</b> as recovery of losses. Motor-2026 was <b>profitable when it was written</b> and turned onerous in 2027. The treaty\u2019s own CSM stands at <b>'+fmt(N.cededCsm0)+'</b>.</div>',
+        q:'Income was the first entry. Where does the matching second entry go?',
         options:[
-          {t:'No. The treaty CSM is adjusted by the same '+fmt(RECOVERY)+', so the recovery is not deferred twice',ok:true,why:'Paragraph 66(c)(ii): the ceded CSM is adjusted for the loss-recovery income, presented as the <strong>loss recovery adjustment</strong> against the treaty CSM. Think about what the two numbers are. The recovery income says <em>this much of the treaty’s value has been earned right now, because the loss it covers happened right now</em>. The treaty CSM says <em>this much of its value is still unearned</em>. Recognize the income and leave the CSM alone, and the same '+fmt(RECOVERY)+' is claimed as both earned today and unearned for later. The second entry takes it out of the second place.'},
-          {t:'Yes. Income is income; the ceded CSM runs off on its own schedule',why:'Then the same value is counted twice: once as income today and once as unearned profit still sitting in the treaty CSM to be released later. Lifetime profit on the treaty would come out '+fmt(RECOVERY)+' too high. Paragraph 66(c)(ii) exists to stop exactly this.'},
-          {t:'No. The income should be deferred into the ceded CSM and released over time instead',why:'The opposite error. Paragraph 66A requires the income <strong>when the loss is recognized</strong>, matching the loss it covers. Deferring it would break the match that gives the recovery its whole purpose.'}],
-        cite:['66(c)(ii)','66A']},fresh);
+          {t:'On the balance sheet, as the loss-recovery component of the reinsurance asset. The treaty CSM is not touched',ok:true,why:'Both entries are real: the income in P&amp;L, and the same <strong>'+fmt(RECOVERY)+'</strong> on the balance sheet as the <strong>loss-recovery component</strong> of the asset for remaining coverage (paragraph 66B). It tracks the recovery so the later give-backs are presented correctly and stay out of the premium allocation.<br><br>The treaty CSM stays where it is, and the reason is worth holding on to. The CSM only defers value it actually holds. This loss did not exist when the treaty was measured \u2014 the cohort was profitable then \u2014 so no part of this recovery was ever put into the CSM. It arrives now as a fresh change, and <strong>paragraph 66(c)</strong> keeps it out: a change matching an underlying change that did not adjust the underlying CSM does not adjust the ceded CSM either. Nothing to remove, because nothing was deferred.'},
+          {t:'Against the treaty CSM, which gives up the same '+fmt(RECOVERY)+' so the recovery is not deferred twice',why:'That is the right instinct for a different case. It applies when a group is <strong>onerous at initial recognition</strong>: there the treaty is measured on day one with the recovery on that loss already inside its CSM, so paragraph 66A takes it out, or it would be recognized twice. Motor-2026 was profitable at inception. Nothing about this loss was ever inside the treaty CSM, so there is nothing to take out.'},
+          {t:'Nowhere. Income is income and the entry is complete',why:'The books would not balance. Recognizing '+fmt(RECOVERY)+' of income means the reinsurance asset is worth '+fmt(RECOVERY)+' more; that increase has to be recorded, and it is recorded as the loss-recovery component.'}],
+        cite:['66B','66(c)']},fresh);
       await punch('#die2'); lift('#copy2');
-      if(fresh){applyDeltas({lorc:RECOVERY,pnl:RECOVERY,ccsm:-RECOVERY});}
-      setCcsm(r2(N.cededCsm0-RECOVERY));
+      if(fresh){applyDeltas({lorc:RECOVERY,pnl:RECOVERY});}
       await talk(sc,[
-        {w:'sys',t:'The second entry posts. The gauge drops by the same <b>'+fmt(RECOVERY)+'</b>: what has been earned is no longer waiting to be earned.'},
-        {w:'aud',n:'Auditor',t:'“Good. I have signed off on files where only the first entry posted. The books balanced. The lifetime profit was wrong by exactly the recovery, every time.”'},
+        {w:'sys',t:'The second entry posts to the balance sheet. The treaty CSM gauge does not move: <b>'+fmt(N.cededCsm0)+'</b> before, <b>'+fmt(N.cededCsm0)+'</b> after.'},
+        {w:'aud',n:'Auditor',t:'“And that is the entry people get wrong. They reach for the CSM because it feels like the income has to come out of something. Here it comes out of nothing \u2014 it was never in there.”'},
       ]);
       two=true;P.stamped=1;save();g.classList.add('done');
       if(fresh&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
@@ -3325,10 +3337,10 @@ async function stationPosting(){
         ctx:'<div class="memo"><strong>A year on:</strong> Motor-2026 is already onerous, and future claims worsen by a further <b>'+fmt(N.det2028)+'</b>. There is no CSM left to absorb it, so the whole amount adds to the loss component.</div>',
         q:'What does the treaty book, and on which line?',
         options:[
-          {t:fmt(N.det2028)+' × '+N.share.toFixed(2)+' = '+fmt(ROLLS[2].lorc)+' as a change in expected loss recoveries, and the treaty CSM is adjusted again',ok:true,why:'The mirror treats this like any other loss event: the loss component grows by '+fmt(N.det2028)+', so the loss-recovery component grows by <strong>'+fmt(ROLLS[2].lorc)+'</strong>. Because it is a change to a recovery already recognized, it is presented as a <strong>change in expected loss recoveries</strong> rather than a fresh recovery. And because it is a <em>loss event</em>, the second entry posts again: the treaty CSM takes another '+fmt(ROLLS[2].lorc)+'.'},
-          {t:fmt(ROLLS[2].lorc)+' as a change in expected loss recoveries, but the treaty CSM is left alone this time',why:'The reason for the second entry has not changed. Any income recognized now must come out of what is still deferred, or it is counted twice. Loss events adjust the treaty CSM whenever they occur.'},
+          {t:fmt(N.det2028)+' × '+N.share.toFixed(2)+' = '+fmt(ROLLS[2].lorc)+' as a change in expected loss recoveries, and the treaty CSM is left alone again',ok:true,why:'The mirror treats this like any other movement of the loss component: it grows by '+fmt(N.det2028)+', so the loss-recovery component grows by <strong>'+fmt(ROLLS[2].lorc)+'</strong>, with '+fmt(ROLLS[2].lorc)+' of income. Because it is a change to a recovery already recognized, it is presented as a <strong>change in expected loss recoveries</strong> rather than a fresh recovery.<br><br>The treaty CSM is untouched for the same reason as last year, and more obviously: the group has no CSM left at all, so this deterioration cannot adjust one. A change that does not adjust the underlying CSM does not adjust the ceded CSM (paragraph 66(c)).'},
+          {t:fmt(ROLLS[2].lorc)+' as a change in expected loss recoveries, and the treaty CSM is adjusted by the same amount',why:'The treaty CSM is only adjusted for a loss recognized at the <strong>initial recognition</strong> of an onerous group (paragraph 66A). This is subsequent measurement of a group that is already onerous, so the exclusion in paragraph 66(c) applies instead.'},
           {t:'Nothing. The recovery was fixed when it was first recognized at '+fmt(RECOVERY),why:'The loss-recovery component is not a fixed amount; it mirrors the loss component through its whole life. When the loss component moves, so does the mirror.'}],
-        cite:['66(c)(ii)','B119D']},fresh);
+        cite:['66(c)','B119D']},fresh);
       adj=true;P.adjust=1;save();
       if(fresh&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
       maybeEnd();},
@@ -3336,13 +3348,13 @@ async function stationPosting(){
     runoffrule:async(g)=>{
       if(g.classList.contains('done'))return;
       await quiz({kicker:'Which movements come back for a second entry',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Six movements</strong> carry the loss component over its life: the flip, a top-up for further deterioration, interest accretion each year, and the reversals as service is given. All six are mirrored onto the treaty.</div>',
-        q:'Which of them also adjust the treaty CSM?',
+        ctx:'<div class="memo"><strong>Six movements</strong> carry the loss component over its life: the flip, a top-up for further deterioration, interest accretion each year, and the reversals as service is given. All six are mirrored onto the loss-recovery component.</div>',
+        q:'Which of them adjust the treaty CSM?',
         options:[
-          {t:'Only the loss events, the flip and the top-up. Interest and the reversals must not',ok:true,why:'The ceded CSM adjustment answers one question: <em>how much of the treaty’s deferred value has just been earned by a loss occurring?</em> Only a loss event earns any. Interest accretion is financing on a balance already recognized; a reversal is that same recognized balance being released as service is received. Mirror those onto the CSM as well and the recovery income is counted twice. It is worth saying plainly, because the mirror does copy every movement onto the <em>loss-recovery component</em>; it is only the CSM leg that is restricted to loss events.'},
-          {t:'All six. The mirror copies every movement, so every movement adjusts both',why:'Every movement is mirrored onto the loss-recovery component, yes. But mirroring the run-off movements onto the CSM too would count the recovery income a second time as it runs off.'},
-          {t:'None after the first. The CSM is adjusted once, at initial recognition',why:'The 2028 top-up is a genuine loss event and adjusts it again. The rule is by <em>kind</em> of movement, not by whether it is the first.'}],
-        cite:['66(c)(ii)','B119D']},fresh);
+          {t:'None of them. This group was profitable when it was written, so nothing here reaches the treaty CSM',ok:true,why:'The treaty CSM is adjusted in one situation only: a loss recognized on the <strong>initial recognition</strong> of an onerous group, or on onerous contracts being added to one (paragraph 66A). That is a recognition event, and Motor-2026 never had one \u2014 it was written profitable.<br><br>Every movement here is subsequent measurement of a group whose own CSM is exhausted, so none of them adjusts the underlying CSM, so none of the mirrored changes adjusts the ceded CSM (paragraph 66(c)). All six move the <strong>loss-recovery component</strong> and go through P&amp;L; the treaty CSM releases over the coverage period on its own schedule, untouched by any of this.'},
+          {t:'The loss events, the flip and the top-up. Interest and the reversals must not',why:'This sounds like a rule but is not one. A flip and a top-up are both <em>subsequent</em> measurement, no different from the interest and the reversals in this respect: the group\u2019s CSM is already at zero and none of them move it. The line the standard draws is between a recognition event and everything after it, not between loss events and run-off.'},
+          {t:'All six. The mirror copies every movement, so every movement adjusts both',why:'Every movement is mirrored onto the loss-recovery component, yes \u2014 but the ceded CSM is not a second mirror. It moves only for a paragraph 66A recognition event.'}],
+        cite:['66A','66(c)']},fresh);
       why=true;P.why=1;save();
       if(fresh&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
       maybeEnd();},
@@ -3350,9 +3362,9 @@ async function stationPosting(){
   if(fresh){
     const mk=id=>{const g=[...sc.querySelectorAll('.hs')].find(h=>h.dataset.hs===id);if(g)g.classList.add('done');};
     if(one){mk('stamp');lift('#copy1');} if(adj)mk('adjust'); if(why)mk('runoffrule');
-    if(two){mk('stamp2');lift('#copy2');setCcsm(r2(N.cededCsm0-RECOVERY));}
+    if(two){mk('stamp2');lift('#copy2');}
     if(count()&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
-  } else {lift('#copy1');lift('#copy2');setCcsm(r2(N.cededCsm0-RECOVERY));doorOut(sc,'On to the year-end closes →');}
+  } else {lift('#copy1');lift('#copy2');doorOut(sc,'On to the year-end closes →');}
 }
 /* ================= MEETING 6: THE RUN-OFF =================
    One column is one year-end close. Each close accretes interest and
@@ -3432,7 +3444,7 @@ async function stationRunoff(){
             {t:'No reversal: the year closes at the full '+fmt(PRE28)+', held until the loss component is gone',why:'The loss component is itself running off, and the mirror copies every one of its movements. Holding the recovery flat while the loss it mirrors shrinks would breach the cap on the loss-recovery component (B119F).'}],
           cite:['B119F','66A']},fresh);
         if(fresh)for(const i of LAPS[0].filter(x=>x>0)){const r=ROLLS[i];
-          applyDeltas(r.event?{lc:r.lc,lorc:r.lorc,pnl:r.lorc,ccsm:-r.lorc}:{lc:r.lc,lorc:r.lorc,pnl:r.lorc});}
+          applyDeltas({lc:r.lc,lorc:r.lorc,pnl:r.lorc});}
         lap=1;P.lap=1;save();paint();
         if(fresh)setObjective('Objective: close the years <b>1/2</b>');
       } else {
@@ -3445,7 +3457,7 @@ async function stationRunoff(){
             {t:'It stays at '+fmt(Math.abs(ROLLS[5].lorc))+' until the treaty is commuted',why:'The recovery relates to service; when the coverage ends there is no service left for it to relate to. It cannot outlive the loss component.'}],
           cite:['B119F','66A']},fresh);
         if(fresh)for(const i of LAPS[1]){const r=ROLLS[i];
-          applyDeltas(r.event?{lc:r.lc,lorc:r.lorc,pnl:r.lorc,ccsm:-r.lorc}:{lc:r.lc,lorc:r.lorc,pnl:r.lorc});}
+          applyDeltas({lc:r.lc,lorc:r.lorc,pnl:r.lorc});}
         lap=2;P.lap=2;save();paint();g.classList.add('done');
         await talk(sc,[
           {w:'sys',t:'The 2029 close posts and both columns come down to zero together. Loss component zero, loss-recovery component zero. The case has nothing left to carry.'},
@@ -3540,9 +3552,9 @@ async function stationAudit(){
         q:'Add them all up over the life of the case. What must the total be?',
         options:[
           {t:'Exactly zero',ok:true,why:'<strong>'+fmt(sumIn)+' recognized, '+fmt(Math.abs(sumOut))+' reversed, and the difference is exactly zero.</strong> Every franc of recovery income that went into P&amp;L came back out as the service it related to was received. The recovery is a <em>timing</em> item: it puts income in the period the loss it covers is recognized, so the two meet, and then it undoes itself. Note that the interest of '+fmt(r2(ROLLS[1].lorc+ROLLS[4].lorc))+' is in the total too. It is not free profit either; it only funds the larger reversals that follow it.'},
-          {t:'The original recovery of '+fmt(RECOVERY)+', which is the profit on the treaty',why:'That amount was recognized and then fully reversed. The treaty’s profit lives in its <em>own</em> CSM, not in the recovery lines, which is exactly what the second entry at posting was protecting.'},
+          {t:'The original recovery of '+fmt(RECOVERY)+', which is the profit on the treaty',why:'That amount was recognized and then fully reversed. The treaty\u2019s profit lives in its <em>own</em> CSM, which these lines never touched.'},
           {t:'The interest accreted, '+fmt(r2(ROLLS[1].lorc+ROLLS[4].lorc))+', since only that is genuinely earned',why:'Tempting, but the interest is inside the reversals as well. The balance it accreted on is fully released, so the interest is released with it. The sum is zero including the interest.'}],
-        cite:['66A','66(c)(ii)']},fresh);
+        cite:['66A','66B']},fresh);
       level();
       weighed=true;P.weigh=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: close the case <b>'+count()+'/3</b>');
@@ -3550,13 +3562,13 @@ async function stationAudit(){
     where:async(g)=>{
       if(g.classList.contains('done'))return;
       await quiz({kicker:'Where each number is reported',pts:QUESTION_PTS,
-        ctx:'<div class="memo">Two of the numbers in this case look alike and belong in different statements: the recovery <b>income</b> of '+fmt(RECOVERY)+' and the <b>loss recovery adjustment</b> of '+fmt(RECOVERY)+'.</div>',
+        ctx:'<div class="memo">The same '+fmt(RECOVERY)+' was entered twice on posting day: once as recovery <b>income</b>, once as the <b>loss-recovery component</b> of the reinsurance asset.</div>',
         q:'Which statement does each belong to?',
         options:[
-          {t:'The income sits in P&L on the recovery lines; the adjustment sits on the balance sheet, inside the reinsurance CSM',ok:true,why:'They are the same amount doing two different jobs. <strong>The recovery lines</strong> are profit-or-loss income on the treaty held, recognized against the loss it covers. The <strong>loss recovery adjustment</strong> is a movement in the <em>reinsurance contract CSM</em>, a balance-sheet item, reducing what is still deferred by what has just been earned. Interest accretion has its own home too: it sits in reinsurance finance income or expenses, not in the service result.'},
-          {t:'Both are P&L: the adjustment is just the contra-entry to the income',why:'The adjustment is a movement of the ceded CSM, which is a balance. It changes what remains deferred; it is not a second income line.'},
+          {t:'The income sits in P&L on the recovery lines; the component sits on the balance sheet, inside the reinsurance asset',ok:true,why:'They are the same amount doing two different jobs. <strong>The recovery lines</strong> are profit-or-loss income on the treaty held, recognized against the loss it covers. The <strong>loss-recovery component</strong> is part of the asset for remaining coverage on the balance sheet (paragraph 66B); it tracks the recovery so the later give-backs are presented as reversals and stay out of the premium allocation. Note what is <em>not</em> here: the treaty\u2019s own CSM, which this loss never touched. Interest accretion has its own home too, in reinsurance finance income or expenses rather than the service result.'},
+          {t:'Both are P&L: the component is just the contra-entry to the income',why:'The loss-recovery component is a balance, not a line of income. It is the asset side of the same entry.'},
           {t:'Both are balance-sheet: the recovery is an asset movement until it reverses',why:'The loss-recovery component <em>is</em> an asset balance, but recognizing it puts income through P&L in the same period as the loss (paragraph 66A). That is the whole point of the matching.'}],
-        cite:['66A','66(c)(ii)']},fresh);
+        cite:['66A','66B']},fresh);
       placed=true;P.where=1;save();
       if(fresh&&count()<3)setObjective('Objective: close the case <b>'+count()+'/3</b>');
       maybeEnd();},
@@ -3566,10 +3578,10 @@ async function stationAudit(){
         {w:'cfo',n:'M. Brandt · CFO',t:'“Here is my question, then. Three years of recovery lines and they sum to zero. So the treaty did nothing for the accounts. Was Odermatt’s January masterpiece worthless?”'},
       ]);
       await quiz({kicker:'What the zero proves',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>What this treaty actually did.</strong> The recovery lines recognized <b>'+fmt(sumIn)+'</b> and reversed <b>'+fmt(Math.abs(sumOut))+'</b>, so they sum to <b>zero</b> over the life of the case. Separately, the treaty carried <b>'+fmt(N.cededCsm0)+'</b> of unearned profit at inception, ends at <b>'+fmt(CEDED_CSM_END)+'</b>, and pays real claim recoveries when the claims arrive.</div>',
+        ctx:'<div class="memo"><strong>What this treaty actually did.</strong> The recovery lines recognized <b>'+fmt(sumIn)+'</b> and reversed <b>'+fmt(Math.abs(sumOut))+'</b>, so they sum to <b>zero</b> over the life of the case. Separately, the treaty carries <b>'+fmt(N.cededCsm0)+'</b> of unearned profit, untouched by any of this, and pays real claim recoveries when the claims arrive.</div>',
         q:'Brandt says the lifetime zero shows the reinsurance was worthless. What is wrong with that?',
         options:[
-          {t:'It confuses the recovery lines with the treaty’s profit. The zero is about timing; the value of the cover is elsewhere',ok:true,why:'The recovery lines exist to put income in the <strong>same period</strong> as the loss they cover, so a reader sees the gross loss and its cover together instead of a loss in one year and relief in another. Being a timing device, they net to zero over a life. The treaty’s economics live in its own CSM and its own cash flows: '+fmt(N.cededCsm0)+' of unearned profit at inception, and real recoveries paid when the claims come. Reading the zero as “worthless” is like reading a zero on an accrual account as “no cash ever moved”. In 2027, when Brandt needed the P&amp;L to show the loss and its cover in the same breath, these lines are what did it.'},
+          {t:'It confuses the recovery lines with the treaty’s profit. The zero is about timing; the value of the cover is elsewhere',ok:true,why:'The recovery lines exist to put income in the <strong>same period</strong> as the loss they cover, so a reader sees the gross loss and its cover together instead of a loss in one year and relief in another. Being a timing device, they net to zero over a life. The treaty\u2019s economics live in its own CSM and its own cash flows: '+fmt(N.cededCsm0)+' of unearned profit, released over the cover as its own service is received, and real recoveries paid when the claims come. Reading the zero as “worthless” is like reading a zero on an accrual account as “no cash ever moved”. In 2027, when Brandt needed the P&amp;L to show the loss and its cover in the same breath, these lines are what did it.'},
           {t:'Nothing is wrong: a lifetime zero does mean no economic benefit',why:'Then every accrual would prove its underlying transaction worthless. The zero is a property of the presentation, not of the contract.'},
           {t:'It is wrong because the interest accretion makes the true total positive',why:'The interest is inside the reversals as well; the total is zero including it. The objection has to be about what the lines are <em>for</em>, not about the arithmetic.'}],
         cite:['66A','B119D']},fresh);
@@ -3601,9 +3613,9 @@ function endOverlay(){
   const grade=S.score>=100?'Full marks. The case is mastered.':S.score>=85?'A strong file, a few findings still open.':S.score>=60?'The shape is there; the audit file shows where to look.':'An honest first pass. The retake desk is open.';
   card.append(el('div','qk','Case closed · mastery '+S.score+'/100'));
   card.append(el('div','grade',grade));
-  card.append(el('p','','At Limmat you booked a loss the day you found it (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Clearbook Assurance you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries so the same amount was not deferred twice (paragraph 66A and 66(c)(ii)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
+  card.append(el('p','','At Limmat you booked a loss the day you found it (paragraph 47), refused to let it hide in a better group (paragraph 16), and priced the relief against its cost at the cession desk. At Clearbook Assurance you watched a CSM run out (paragraph 47–48), refused to book a recovery on a row linked to nothing, told the CFO why cover bought after a loss recovers none of it (B119C), worked out who the treaty covers and by how much (B119E), proved the mirrored income does not care who carried the loss (B119D), posted both entries, income and the loss-recovery component, and left the treaty\u2019s own CSM alone because this loss was never deferred in it (paragraph 66B and 66(c)), and ran both books off to exactly zero — knowing where the benefit of cover shows, where its cost shows, and that they are never the same line. Then you turned down the one treaty the mirror cannot measure. The cases stay open, every meeting can be replayed with nothing at stake, and the ⓘ case card indexes every paragraph.'));
   const rules=el('div','rules');
-  rules.innerHTML=['16','47–48','44','45','66A','66B','B119C','B119D','B119E','B119F','66(c)(ii)','86'].map(citeChip).join('');
+  rules.innerHTML=['16','47–48','44','45','66A','66B','B119C','B119D','B119E','B119F','66(c)','86'].map(citeChip).join('');
   card.append(rules);
   const R=(!S.drillDue)?retakeList():[];
   if(R.length)card.insertAdjacentHTML('beforeend','<p class="fy">The auditor offers a retake: answer the '+R.length+' question'+(R.length>1?'s':'')+' you missed, all right in one sitting, then walk through the numbers drill, and the mastery those findings carry, '+R.reduce((t,r)=>t+(r.p||QUESTION_PTS),0)+' points, is earned back.</p>');
