@@ -155,6 +155,9 @@
   .hs.done .ring{stroke:var(--green)} .hs.done text{fill:var(--green)}
   .hs.done .pulse{display:none}
   .hs .cap{font-size:10.5px;letter-spacing:1.6px;font-weight:600;paint-order:stroke;stroke:#0e141c;stroke-width:3px}
+  .hs:focus{outline:none}
+  .hs:focus-visible .halo{fill:var(--gold);opacity:.28}
+  .hs:focus-visible .ring{stroke:var(--gold);stroke-width:3}
   .hs .tick{display:none}
   .hs.done .glyph{display:none}
   .hs.done .tick{display:block}
@@ -604,6 +607,12 @@
     .dlg .pv{width:30px;height:30px;font-size:10px}
     .mwrap{padding:3vh 8px 40px}
     .mcard{padding:16px 15px}
+    /* a long option list must never push the action below the fold: the
+       question stays at the top of the card and the buttons at the bottom */
+    .mcard .q{position:sticky;top:-1px;z-index:2;background:var(--panel);
+      padding:8px 0 10px;margin-bottom:10px;box-shadow:0 6px 8px -8px #0008}
+    .mcard .mfoot{position:sticky;bottom:-1px;z-index:2;background:var(--panel);
+      padding:10px 0 2px;margin-top:12px;box-shadow:0 -6px 8px -8px #0008}
     .books-callout{width:min(300px,86vw)}
     /* on a phone you only ever see a slice of the room, so the header has to say
        where you are — but as ONE title bar, not three chips floating on the art */
@@ -636,6 +645,13 @@
     .mwrap{padding:2vh 10px 24px}
     .mcard{padding:15px 16px}
   }
+  /* the panner is only meaningful where the room overflows the screen */
+  .scenepan{display:none}
+  @media(max-width:740px) and (orientation:portrait){
+    .scenepan{display:block;position:absolute;right:9px;bottom:9px;z-index:6;
+      font-family:var(--mono);font-size:10.5px;letter-spacing:.6px;color:var(--gold);
+      background:var(--ink);border:1px solid #d9a64866;border-radius:7px;padding:6px 10px}
+  }
   #mobiletip{display:none;align-items:flex-start;gap:10px;margin:8px 8px 0;padding:9px 12px;border:1px solid #d9a64855;border-radius:10px;
     background:var(--gold-dim);color:var(--muted);font-size:12.5px;line-height:1.5}
   #mobiletip strong{color:var(--text)}
@@ -652,7 +668,7 @@
   <div id="ledgerchips"></div>
   <div id="audit" role="button" tabindex="0" title="Case mastery: earned one right first-try answer at a time. Click to open the audit file."><span>mastery</span><div class="bar"><i id="auditBar" style="width:0%"></i></div><b id="auditVal">0</b></div>
 </div>
-<div id="mobiletip"><span>📱 <strong>On a phone:</strong> swipe the room sideways; the glow marks your next step. Turn the phone for more of it.</span><button aria-label="Dismiss">×</button></div>
+<div id="mobiletip"><span>📱 <strong>On a phone:</strong> the room is wider than the screen — swipe it, or tap <strong>the data screen →</strong> at the bottom right. The glow marks your next step.</span><button aria-label="Dismiss">×</button></div>
 <div id="stage"></div>
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
@@ -825,15 +841,28 @@ function showMasteryCallout(){
   };
   setTimeout(attempt,700);
 }
-/* the gold speech bubble that hangs off a HUD element and points at it */
+/* the gold speech bubble that hangs off a HUD element and points at it.
+   Only one is ever on screen: a second arriving while one is open waits its
+   turn, so two tips can never cover each other or the interface. */
+let CO_QUEUE=[], CO_CURRENT=null;
 function callout(target,html,ms){
+  CO_QUEUE.push({target,html,ms});
+  drainCallouts();
+}
+function drainCallouts(){
+  if(CO_CURRENT&&CO_CURRENT.isConnected)return;
+  CO_CURRENT=null;
+  const next=CO_QUEUE.shift();
+  if(next)CO_CURRENT=renderCallout(next.target,next.html,next.ms);
+}
+function renderCallout(target,html,ms){
   const hud=document.getElementById('hud');
-  if(!target||!hud)return;
+  if(!target||!hud){drainCallouts();return null;}
   const c=el('div','books-callout','<button class="bc-x" aria-label="Dismiss">×</button>'+html);
   hud.append(c);
   const center=target.offsetLeft+target.offsetWidth/2;
   c.style.right=Math.max(8,hud.clientWidth-center-52)+'px';
-  const kill=()=>c.remove();
+  const kill=()=>{c.remove();drainCallouts();};
   /* ms 0 = sticky: it stays until the × is clicked, for popups that state a goal */
   if(ms===0){c.onclick=e=>{if(e.target.closest('.bc-x'))kill();};}
   else{c.onclick=kill;setTimeout(kill,ms||14000);}
@@ -1773,13 +1802,17 @@ function person(x,y,s,color,dark,kind){
   </g>`;
 }
 function hotspot(x,y,label,id,cls,cap){
-  return `<g class="hs ${cls||''}" data-hs="${id}" transform="translate(${x},${y})" tabindex="0" role="button">
+  /* the glyph and the tick are decoration: the accessible name is the caption
+     plus the state, kept in step by refreshNext(). Without aria-hidden the
+     hidden tick would read out as "completed" before anything is done. */
+  const name=(cap||label||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  return `<g class="hs ${cls||''}" data-hs="${id}" data-cap="${name}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${name}, not completed">
     <circle class="halo" r="24"/>
     <circle class="pulse" r="14" style="transform-origin:0 0"/>
     <circle class="ring" r="13"/>
-    <text class="glyph">${label}</text>
-    <text class="tick">✓</text>
-    ${cap?`<text class="cap" y="28">${cap}</text>`:''}
+    <text class="glyph" aria-hidden="true">${label}</text>
+    <text class="tick" aria-hidden="true">✓</text>
+    ${cap?`<text class="cap" aria-hidden="true" y="28">${cap}</text>`:''}
   </g>`;
 }
 function wallWindow(x,y,w,h,sky){
@@ -1801,7 +1834,9 @@ const stage=document.getElementById('stage');
 /* rebuilding the stage always releases the hotspot lock: a handler whose scene
    was torn down mid-await (walked out during a dialogue) must not freeze the next room */
 function clearStage(){stage.innerHTML='';HS_BUSY=false;}
+let CURRENT_ROOM=null;
 function sceneShell(roomId,objectiveHTML){
+  CURRENT_ROOM=roomId;
   clearStage();
   const wrap=el('div','fadein');
   const sc=el('div','scene');
@@ -1827,12 +1862,47 @@ function sceneShell(roomId,objectiveHTML){
   const obj=el('div','objective',objectiveHTML||'');
   obj.id='objective';
   top.append(obj);
-  return {sc,top,obj,mount(svg){sc.innerHTML='<div class="scenewrap">'+svg+'</div>';sc.append(top);}};
+  return {sc,top,obj,mount(svg){
+    sc.innerHTML='<div class="scenewrap">'+svg+'</div>';sc.append(top);
+    /* the SVG has no measured width until after layout, so ask twice and once
+       more late; scenePanner() replaces any panner it already made */
+    const pan=()=>scenePanner(sc);
+    requestAnimationFrame(()=>requestAnimationFrame(pan));
+    setTimeout(pan,300);
+  }};
+}
+/* On a phone the room is wider than the screen and the data screen sits off
+   the right edge, where nothing announces it. This is the announcement: one
+   button that says where it will take you and takes you there. */
+function scenePanner(sc){
+  const wrap=sc.querySelector('.scenewrap');
+  if(!wrap)return;
+  sc.querySelectorAll(':scope > .scenepan').forEach(n=>n.remove());
+  if(wrap.scrollWidth<=wrap.clientWidth+8)return;   /* it all fits: no panner */
+  const b=el('button','scenepan','');
+  const far=()=>wrap.scrollWidth-wrap.clientWidth;
+  const atData=()=>wrap.scrollLeft>far()/2;
+  const sync=()=>{b.textContent=atData()?'\u2190 The room':'The data screen \u2192';
+    b.setAttribute('aria-label',atData()?'Scroll back to the room':'Scroll to the data screen');};
+  b.onclick=()=>{
+    const to=atData()?0:far();
+    if(!RM){try{wrap.scrollTo({left:to,behavior:'smooth'});}catch(e){}}
+    /* some engines ignore a smooth scrollTo on this element, so land it either way */
+    setTimeout(()=>{if(Math.abs(wrap.scrollLeft-to)>2)wrap.scrollLeft=to;sync();},RM?0:420);
+  };
+  wrap.addEventListener('scroll',sync,{passive:true});
+  sync(); sc.append(b);
 }
 function setObjective(html){const o=document.getElementById('objective');if(o)o.innerHTML=html;}
 let HS_BUSY=false;
 function refreshNext(){
   const sc=document.getElementById('scene'); if(!sc)return;
+  /* the accessible name carries the state, so a screen reader hears which
+     steps are still open without relying on the decorative tick */
+  sc.querySelectorAll('.hs').forEach(h=>{
+    const n=h.dataset.cap||'';
+    h.setAttribute('aria-label',n+(h.classList.contains('done')?', completed':', not completed'));
+  });
   sc.querySelectorAll('.hs.next').forEach(h=>h.classList.remove('next'));
   const nxt=[...sc.querySelectorAll('.hs')].find(h=>!h.classList.contains('done')&&!h.classList.contains('hidden'));
   if(nxt){
@@ -1883,13 +1953,29 @@ function completeRoom(id){
   if(S.progress&&S.progress[id])delete S.progress[id];
   if(!S.done[id]){S.done[id]=true;save();}
 }
-/* the big button that takes a finished scene back to the map/line */
+/* the way out of a finished scene. The primary action goes straight to the
+   next meeting: routing every hand-off through the map made the player click
+   twice to continue, once on a button that already named where it was going.
+   The map stays available as the secondary action. */
 function doorOut(sc,label){
-  const prev=sc.querySelector(':scope > .cta.big'); if(prev)prev.remove();
-  const b=el('button','cta big',label||GAME.backLabel.replace('← ','Back to the ')+' →');
-  b.style.cssText='position:absolute;left:50%;transform:translateX(-50%);bottom:16px;z-index:5';
-  b.onclick=()=>renderMap();
-  sc.append(b);
+  sc.querySelectorAll(':scope > .cta.big, :scope > .doorrow').forEach(n=>n.remove());
+  const idx=ROOM_ORDER.indexOf(CURRENT_ROOM);
+  const next=idx>=0?ROOM_ORDER[idx+1]:null;
+  const row=el('div','doorrow');
+  row.style.cssText='position:absolute;left:50%;transform:translateX(-50%);bottom:16px;z-index:5;'
+    +'display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap';
+  if(next&&S.done[CURRENT_ROOM]){
+    const m=el('button','cta ghost',GAME.backLabel);
+    m.onclick=()=>{closeModal();renderMap();};
+    const b=el('button','cta big',label||('Next: '+ROOM_NAMES[next]+' →'));
+    b.onclick=()=>{closeModal();enterRoom(next);};
+    row.append(m,b);
+  } else {
+    const b=el('button','cta big',label||GAME.backLabel.replace('← ','Back to the ')+' →');
+    b.onclick=()=>{closeModal();renderMap();};
+    row.append(b);
+  }
+  sc.append(row);
 }
 /* ================= shell: HUD wiring, theme, restart, phone tip =================
    Everything in the top bar that is the same in every game on the kit. The host
@@ -1972,6 +2058,15 @@ function titleScreen(){
   } else if(done){const r=el('button','cta ghost','Start over');
     r.onclick=()=>{S=freshState();ledgerFromState();renderChips();setAudit();save();tokenAt='slip';renderMap();};btns.append(r);}
   h.append(btns);
+  /* what the player is signing up for, before they start: how long, whether it
+     saves, and where they are in it if they have started already */
+  if(!finished){
+    const n=Math.min(done,ROOM_ORDER.length);
+    const act=n<ACT_A.length?'Act One':'Act Two';
+    h.append(el('p','fy', done
+      ? 'You are on meeting '+Math.min(n+1,ROOM_ORDER.length)+' of '+ROOM_ORDER.length+', in '+act+'. Around '+Math.max(5,Math.round((ROOM_ORDER.length-n)*4.5))+' minutes left. Progress saves in this browser as you go, so you can stop whenever you like.'
+      : 'Ten meetings in two acts, about 45 minutes end to end. Progress saves in this browser as you go, so you can stop and pick it up later. Nothing is timed, and a wrong answer costs you nothing you cannot earn back.'));
+  }
   if(finished)h.append(el('p','fy','Your last case closed at mastery '+S.score+'/100'+(S.score>=100?', the case mastered':'')+'. Working it again opens a fresh set of books; revisiting keeps the old ones open.'));
   stage.append(h);
 }
@@ -2341,10 +2436,10 @@ async function stationSlip(){
           {t:'A negative CSM of −'+fmt(NA.lc)+', released over the two coverage years',why:'The CSM is floored at zero from the first day (paragraph 38, 47). A negative CSM would spread today’s known loss over tomorrow’s periods, which is exactly what the standard is built to prevent.'},
           {t:'Nothing yet: the loss is recognized as the claims actually arrive',why:'That is cash thinking. The measurement is of the contracts’ whole fulfilment cash flows, and they are deficient <em>now</em>. Recognition when identified, not when paid (paragraph 47).'}],
         cite:['47','16']},fresh);
-      if(fresh)applyDeltas({alc:NA.lc});
-      reveal();
       faced=true;P.gap=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: face the tariff <b>'+count()+'/3</b>');
+      if(fresh)applyDeltas({alc:NA.lc});
+      reveal();
       maybeEnd();},
     grouping:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2503,12 +2598,14 @@ async function stationDesk(){
           {t:'Yes: at 75% the day-one net is small enough to round away',why:'−'+fmt(Math.abs(NA.quote(.75).net))+' is smaller, not gone, and it costs '+fmt(NA.quote(.75).cost)+' of real margin to get there. Managing the optics with margin is a decision the board should see priced, which is what this desk is for.'},
           {t:'Yes: cede 100% and both lines net to zero',why:'They net to zero <em>as two visible lines</em>, gross loss and full recovery, while the cost of cover rises to '+fmt(NA.marginPer)+'. Paying Turicum Re six to make twelve of bad pricing legible is the most expensive way to publish the same fact.'}],
         cite:['B119F','B119E']},fresh);
+      signed=true;P.signed=1;save();g.classList.add('done');
+      if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
+      quoted=true;P.quote=1;save();g.classList.add('done');
+      if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
       await press(NA.signed);
       await talk(sc,[
         {w:'sys',t:'The desk settles at 50: relief of <b>'+fmt(A_LORC)+'</b> on the day, cost of <b>'+fmt(A_COST)+'</b> over the life. The board caps the spend at three thousand, and for once nobody argues with the actuary.'},
       ]);
-      quoted=true;P.quote=1;save();g.classList.add('done');
-      if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
       maybeEnd();},
     sign:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2518,8 +2615,6 @@ async function stationDesk(){
       ]);
       if(fresh)applyDeltas({alorc:A_LORC,apnl:A_LORC});
       lockAt50();
-      signed=true;P.signed=1;save();g.classList.add('done');
-      if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
       maybeEnd();},
     costwhere:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2636,7 +2731,7 @@ async function stationShortyear(){
     contrast:async(g)=>{
       if(g.classList.contains('done'))return;
       await quiz({kicker:'Two lines for the same kind of income',pts:QUESTION_PTS,
-        intro:'<div class="memo"><strong>Limmat’s recovery income went on the P&amp;L line “recovery of losses on onerous underlying contracts”.</strong> The chart of accounts has a second, almost identical line: “recovery of losses on contracts turning onerous”. Both mean “a reinsurer will pay back part of a loss we just booked”. One fact about the loss decides which line is used.</div>',
+        intro:'<div class="memo"><strong>Limmat\u2019s recovery income went on the P&amp;L line \u201crecovery of losses on onerous underlying contracts\u201d.</strong> The chart of accounts carries a second, almost identical line: \u201crecovery of losses on contracts turning onerous\u201d. Both mean \u201ca reinsurer will pay back part of a loss we just booked\u201d. One fact about the loss decides which line is used. These two names are a <b>house policy</b> at both companies, not a requirement of IFRS 17 \u2014 the standard asks only that the reinsurance result be shown separately.</div>',
         q:'What decides which of the two recovery lines the income is reported on?',
         options:[
           {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and turned loss-making later',ok:true,why:'A reader of the accounts wants to know <em>which kind of problem</em> the reinsurer is paying for. <strong>Recovery of losses on onerous underlying contracts</strong> points at the pricing desk: the contracts were already loss-making the day they were signed — Meier’s frozen tariff. <strong>Recovery of losses on contracts turning onerous</strong> points at the world: a book that was priced well and carried real profit was overtaken by events later — a claims shock, a court ruling, inflation. The arithmetic behind both lines is identical; the management conversations are opposites. One ends in a repricing, the other in a reserve review. Limmat’s whole case lived on the first; across town, a motor book that was priced perfectly well is about to write the second.'},
@@ -2946,11 +3041,11 @@ async function stationBooking(){
           {t:'It should show one: QS50 is a 50% quota share, so '+fmt(r2(FLIP_LC*0.5))+' comes back',why:'The cession percentage alone is not the recovery share. QS50 cedes 50% <em>of the contracts it covers</em>, and nothing on file says which those are. If the treaty covers only part of the group — and it does, M3 is excluded — then half of the whole '+fmt(FLIP_LC)+' overstates the recovery. The share must be built from the coverage, which is exactly the missing piece.'},
           {t:'Because no recovery cash has arrived: the reinsurer pays only when the claims are paid',why:'Cash timing never gates the loss-recovery component: it is recognized in the same period as the loss it mirrors (paragraph 66A), long before any claim is settled. The block here is missing information, not missing money.'}],
         cite:['66A','B119D']},fresh);
+      scanned=true;P.scan=1;save();g.classList.add('done');
+      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed,scoped].filter(Boolean).length+'/3</b>');
       await talk(sc,[{w:'sys',t:'You pull the signed treaty from the file and key the coverage in: QS50 covers M1 and M2. Rerun.'}]);
       await fixRow(true);
       await talk(sc,[{w:'chief',n:'V. Torres',t:'“Green on the first rerun. Now the number it was waiting to compute.”'}]);
-      scanned=true;P.scan=1;save();g.classList.add('done');
-      if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed,scoped].filter(Boolean).length+'/3</b>');
       maybeEnd();},
     timing:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3076,12 +3171,12 @@ async function stationWorkpaper(){
           {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.ratio.toFixed(2)+': the cession percentage is the answer',why:'That would be right only if the treaty covered the whole group. It covers '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'},
           {t:'ratio '+fmt(N.ceded)+' / '+fmt(N.groupClaims)+' = '+(N.ceded/N.groupClaims).toFixed(2)+', which is the share directly',why:'This reaches the right number, '+N.share.toFixed(2)+', by collapsing both dials at once, and that is why it is a trap: it only coincides because the ratio’s denominator cancels. Keep them apart. The ratio belongs to the <em>treaty</em> and blends claims-weighted across every group it touches; the allocation belongs to the <em>group</em>. Collapse them and a treaty over two groups gives the wrong share for both.'}],
         cite:['B119D','B119E']},fresh);
+      dialed=true;P.split=1;save();g.classList.add('done');
+      if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
       showSplit();
       await talk(sc,[
         {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>, and the treaty covers '+N.allocation.toFixed(2)+' of the group: <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on fleets it covers. Careful: that is not the recovery. QS50 cedes half of those fleets, so half of the '+fmt(r2(FLIP_LC*N.allocation))+' comes back — <b>'+fmt(RECOVERY)+'</b>. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> sits on M3, and Brandt signed nothing that covers it, so none of that comes back at all.'},
       ]);
-      dialed=true;P.split=1;save();g.classList.add('done');
-      if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
       maybeEnd();},
     fixture:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3099,15 +3194,15 @@ async function stationWorkpaper(){
     why:async(g)=>{
       if(g.classList.contains('done'))return;
       await teach('Why claims, and why one method for both kinds of loss',
-        `<p>A loss component can start in two ways, and the claims-proportional allocation is the one method that is sound for both. So it is the accounting policy for both.</p>
+        `<p>B119E requires the loss to be allocated on a <strong>systematic and rational</strong> basis. It does not name a method. Clearbook\u2019s accounting policy is to allocate by claims, and to use that one policy for both ways a loss component can start.</p>
          <table class="roll"><tr><th>Loss event</th><th>Owner of the loss</th><th>Allocation by claims</th></tr>
          <tr><td>Onerous at inception</td><td>Each contract</td><td>Permitted (B119E)</td></tr>
-         <tr><td>Group turns onerous later</td><td>The group</td><td>The only sound method</td></tr></table>
+         <tr><td>Group turns onerous later</td><td>The group</td><td>The policy Clearbook applies</td></tr></table>
          <p><strong>The group case decides it.</strong> A group flips when its CSM is exhausted, and the booking of the flip loss to contract rows is arbitrary. A covered fleet can stay profitable while an excluded one drives the group onerous. Book the same loss two ways and a per-contract mirror gives two different answers:</p>
          <table class="roll"><tr><th>Booking of the flip loss</th><th>Per-contract mirror</th><th>Allocated mirror</th></tr>
          <tr><td>On M1 (covered)</td><td class="td neg">5’000</td><td class="td pos">3’000</td></tr>
          <tr><td>On M3 (excluded)</td><td class="td neg">0</td><td class="td pos">3’000</td></tr></table>
-         <p><strong>At inception every loss does have a real owner</strong>, because the onerous test runs per contract. There the allocation is a method the standard permits (B119E), and it differs from the per-contract answer only when loss ratios differ inside one onerous group. One method for both keeps a single consistent policy, and matches loss components that are tracked at group level, where no per-contract decomposition exists at all.</p>`,
+         <p><strong>The other case is less forced, and the policy still holds.</strong> Where a group is onerous from the start, the claims allocation differs from a contract-by-contract answer only when loss ratios differ inside that group. Choosing it for both keeps one consistent policy and matches the level the loss component is actually tracked at \u2014 the group \u2014 where no per-contract split exists to fall back on. IFRS 17 measures at group level throughout; it looks at a single contract only where group-level information is not available.</p>`,
         ['B119E','47–48']);
       whyed=true;P.why=1;save();
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
@@ -3178,9 +3273,9 @@ async function stationMirror(){
           {t:fmt(FLIP_LC)+' × '+N.ratio.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.ratio))+', the cession percentage',why:'That skips the allocation. It assumes the treaty covers the whole group, but M3’s share of the loss is not covered by anyone.'},
           {t:fmt(FLIP_LC)+', the whole loss: that is what the treaty is for',why:'A 50% quota share over part of a group does not return the whole loss. Both dials apply.'}],
         cite:['66A','B119D']},fresh);
-      show();
       raised=true;P.raise=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: prove the number <b>'+count()+'/3</b>');
+      show();
       maybeEnd();},
     lever:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3212,7 +3307,7 @@ async function stationMirror(){
         intro:'<div class="memo"><strong>The cap (B119F)</strong> holds the loss-recovery component to no more than the portion of the underlying loss component the entity expects to recover. Here the mirror scales the loss component itself, movement by movement.</div>',
         q:'How is that cap enforced on this line?',
         options:[
-          {t:'No check is needed. The balance is built as '+N.share.toFixed(2)+' of the loss component, and '+N.share.toFixed(2)+' of the loss component is exactly the most the cap allows',ok:true,why:'Because every movement of the underlying loss component is multiplied by the same '+N.share.toFixed(2)+', the mirrored balance is always exactly '+N.share.toFixed(2)+' of the loss component — and '+N.share.toFixed(2)+' of the loss component is precisely the ceiling B119F sets. A balance glued to its own ceiling can never drift above it, so no explicit test is needed and none can be forgotten. Structure beating a check. This is also exactly what breaks for a non-proportional treaty, where the multiplier is no longer one fixed number, and then the cap must be tested explicitly (B119F). Remember that sentence when Odermatt comes back in year five.'},
+          {t:'While this case\u2019s proportional assumptions hold, the cap is satisfied by construction \u2014 but the recoverable proportion has to be reassessed whenever they change',ok:true,why:'Every movement of the underlying loss component is multiplied by the same '+N.share.toFixed(2)+', so the mirrored balance is always exactly '+N.share.toFixed(2)+' of the loss component \u2014 which is the ceiling B119F sets. A balance glued to its own ceiling cannot drift above it, so under <em>unchanged</em> assumptions no separate test can fail.<br><br>That is a statement about this case, not a permanent exemption. <strong>B119F is an ongoing cap.</strong> The expected recoverable proportion has to be reassessed when assumptions change, and the moment it moves \u2014 a treaty commuted, a reinsurer in doubt, a cover that is no longer proportional \u2014 the multiplier is no longer one fixed number and the cap must be tested explicitly. Remember that when Odermatt comes back in year five.'},
           {t:'A test runs each period and writes the balance down if it exceeds the cap',why:'That is what a remeasured design would need, and this one deliberately avoids it. A test that must be run is a test that can be skipped; scaling the loss component makes the cap structural.'},
           {t:'The cap only binds at initial recognition, so nothing is needed later',why:'The cap binds throughout (B119F). The mirror satisfies it throughout, not because of timing but because the balance is a fixed proportion of the thing that caps it.'}],
         cite:['B119F','B119D']},fresh);
@@ -3302,13 +3397,13 @@ async function stationPosting(){
         ctx:'<div class="memo"><strong>What the books show:</strong> <b>'+fmt(RECOVERY)+'</b> of income on the treaty held. Motor-2026 was <b>profitable at inception</b> and turned onerous in 2027 when its CSM was exhausted.</div>',
         q:'Which of the loss-recovery lines does it belong on?',
         options:[
-          {t:'Recovery of losses on contracts turning onerous',ok:true,why:'The disclosure splits the recovery by <strong>how the loss arose</strong>. This cohort was profitable when it was written and flipped later, when the CSM ran out. That is the <em>CSM to LC transfer</em> movement, presented as <strong>recovery of losses on contracts turning onerous</strong>. It matters because a reader can then see how much of the recovery came from business that was priced badly on day one versus business that went wrong afterwards. Two very different stories about underwriting, and Brandt only wants to tell one of them.'},
+          {t:'Recovery of losses on contracts turning onerous',ok:true,why:'Clearbook\u2019s chart of accounts splits the recovery by <strong>how the loss arose</strong>. This cohort was profitable when it was written and flipped later, when the CSM ran out, so the income goes on <strong>recovery of losses on contracts turning onerous</strong>. A reader can then see how much of the recovery came from business priced badly on day one versus business that went wrong afterwards \u2014 two very different stories about underwriting, and Brandt only wants to tell one of them.<br><br>To be exact about the authority: <strong>paragraph 86 does not require these two lines.</strong> It requires the reinsurance result to be presented separately from the issued-contract result. Splitting that result further, by how the underlying loss arose, is Clearbook\u2019s own accounting policy, chosen because it tells the reader something the standard\u2019s minimum would hide.'},
           {t:'Recovery of losses on onerous underlying contracts',why:'That line is for groups that were <strong>onerous at initial recognition</strong>, where the loss had a real per-contract owner from the start. Motor-2026 was profitable in 2026; it flipped in 2027.'},
           {t:'Changes in expected loss recoveries',why:'That is for movements in a recovery already recognized, which is where the 2028 top-up goes. This is the first recognition of the recovery, not a change to it.'}],
         cite:['66A','B119D']},fresh);
-      await punch('#die1'); lift('#copy1');
       one=true;P.one=1;save();g.classList.add('done');
       if(fresh&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
+      await punch('#die1'); lift('#copy1');
       maybeEnd();},
     stamp2:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3322,14 +3417,14 @@ async function stationPosting(){
           {t:'Against the treaty CSM, which gives up the same '+fmt(RECOVERY)+' so the recovery is not deferred twice',why:'That is the right instinct for a different case. It applies when a group is <strong>onerous at initial recognition</strong>: there the treaty is measured on day one with the recovery on that loss already inside its CSM, so paragraph 66A takes it out, or it would be recognized twice. Motor-2026 was profitable at inception. Nothing about this loss was ever inside the treaty CSM, so there is nothing to take out.'},
           {t:'Nowhere. Income is income and the entry is complete',why:'The books would not balance. Recognizing '+fmt(RECOVERY)+' of income means the reinsurance asset is worth '+fmt(RECOVERY)+' more; that increase has to be recorded, and it is recorded as the loss-recovery component.'}],
         cite:['66B','66(c)']},fresh);
+      two=true;P.stamped=1;save();g.classList.add('done');
+      if(fresh&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
       await punch('#die2'); lift('#copy2');
       if(fresh){applyDeltas({lorc:RECOVERY,pnl:RECOVERY});}
       await talk(sc,[
         {w:'sys',t:'The second entry posts to the balance sheet. The treaty CSM gauge does not move: <b>'+fmt(N.cededCsm0)+'</b> before, <b>'+fmt(N.cededCsm0)+'</b> after.'},
         {w:'aud',n:'Auditor',t:'“And that is the entry people get wrong. They reach for the CSM because it feels like the income has to come out of something. Here it comes out of nothing \u2014 it was never in there.”'},
       ]);
-      two=true;P.stamped=1;save();g.classList.add('done');
-      if(fresh&&count()<4)setObjective('Objective: post both entries <b>'+count()+'/4</b>');
       maybeEnd();},
     adjust:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3499,6 +3594,9 @@ async function stationAudit(){
   const {sc,mount}=sceneShell('audit', fresh?'Objective: close the case <b>0/3</b>':'Done · read it again');
   const income=ROLLS.filter(r=>r.lorc>0), out=ROLLS.filter(r=>r.lorc<0);
   const sumIn=r2(income.reduce((t,r)=>t+r.lorc,0)), sumOut=r2(out.reduce((t,r)=>t+r.lorc,0));
+  /* paragraph 86: the service result and the finance result are presented apart */
+  const svc=ROLLS.filter(r=>r.line!=='interest'), fin=ROLLS.filter(r=>r.line==='interest');
+  const svcSum=r2(svc.reduce((t,r)=>t+r.lorc,0)), finSum=r2(fin.reduce((t,r)=>t+r.lorc,0));
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('ONE LOSS, END TO END','#1e2a3e')}
     ${plate(90,140,580,290)}
@@ -3515,18 +3613,25 @@ async function stationAudit(){
       <path d="M282,392 L286,396 L295,386" stroke="#63b380" stroke-width="2.5" fill="none"/>
       <text x="312" y="397" font-family="var(--mono)" font-size="11" letter-spacing="1.6" fill="#63b380">SIGNED · GROUP AUDIT</text>
     </g>
-    ${rail('EVERY RECOVERY LINE, OVER THE WHOLE LIFE',`
-      ${income.map((r,i)=>`
-        <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+64+i*26}" font-family="var(--mono)" font-size="11.5" fill="#8b98aa">${r.yr}</text>
-        <text x="${FR.RAIL.x+70}" y="${FR.RAIL.y+64+i*26}" font-family="var(--mono)" font-size="11.5" fill="#63b380">${r.line}</text>
-        <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+64+i*26}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#63b380">+${fmt(r.lorc)}</text>`).join('')}
-      ${out.map((r,i)=>`
-        <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+64+(income.length+i)*26}" font-family="var(--mono)" font-size="11.5" fill="#8b98aa">${r.yr}</text>
-        <text x="${FR.RAIL.x+70}" y="${FR.RAIL.y+64+(income.length+i)*26}" font-family="var(--mono)" font-size="11.5" fill="#e06a5e">${r.line}</text>
-        <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+64+(income.length+i)*26}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#e06a5e">${fmt(r.lorc)}</text>`).join('')}
-      <line x1="${FR.RAIL.x+250}" y1="${FR.RAIL.y+64+(income.length+out.length)*26-16}" x2="${FR.RAIL.x+392}" y2="${FR.RAIL.y+64+(income.length+out.length)*26-16}" stroke="#2c394a"/>
-      <text x="${FR.RAIL.x+70}" y="${FR.RAIL.y+68+(income.length+out.length)*26}" font-family="var(--mono)" font-size="11.5" fill="#63b380">LIFETIME SUM</text>
-      <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+68+(income.length+out.length)*26}" text-anchor="end" font-family="var(--mono)" font-size="15" font-weight="700" fill="#63b380">${fmt(r2(sumIn+sumOut))}</text>`)}
+    ${rail('THE TREATY\u2019S LINES, OVER THE WHOLE LIFE',(()=>{
+      /* paragraph 86 keeps the service result and the finance result apart, so
+         the schedule foots in two sections and not one blended column */
+      const R=FR.RAIL; let y=R.y+50, out='';
+      const head=t=>{out+=`<text x="${R.x+20}" y="${y}" font-family="var(--mono)" font-size="8.5" letter-spacing="1.3" fill="#5d6b7e">${t}</text>`;y+=19;};
+      const row=r=>{const c=r.lorc<0?'#e06a5e':'#63b380';
+        out+=`<text x="${R.x+28}" y="${y}" font-family="var(--mono)" font-size="11" fill="#8b98aa">${r.yr}</text>`
+           + `<text x="${R.x+74}" y="${y}" font-family="var(--mono)" font-size="11" fill="${c}">${r.line}</text>`
+           + `<text x="${R.x+392}" y="${y}" text-anchor="end" font-family="var(--mono)" font-size="11.5" fill="${c}">${r.lorc>0?'+':''}${fmt(r.lorc)}</text>`;y+=22;};
+      const sub=(label,v)=>{
+        out+=`<line x1="${R.x+250}" y1="${y-15}" x2="${R.x+392}" y2="${y-15}" stroke="#2c394a"/>`
+           + `<text x="${R.x+74}" y="${y}" font-family="var(--mono)" font-size="10.5" fill="#8b98aa">${label}</text>`
+           + `<text x="${R.x+392}" y="${y}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#c9d3df">${v>0?'+':''}${fmt(v)}</text>`;y+=26;};
+      head('REINSURANCE SERVICE RESULT');svc.forEach(row);sub('subtotal',svcSum);
+      head('REINSURANCE FINANCE INCOME');fin.forEach(row);sub('subtotal',finSum);
+      out+=`<line x1="${R.x+250}" y1="${y-14}" x2="${R.x+392}" y2="${y-14}" stroke="#63b38066" stroke-width="1.5"/>`
+         + `<text x="${R.x+74}" y="${y+4}" font-family="var(--mono)" font-size="11" fill="#63b380">LIFETIME SUM</text>`
+         + `<text x="${R.x+392}" y="${y+4}" text-anchor="end" font-family="var(--mono)" font-size="14" font-weight="700" fill="#63b380">${fmt(r2(svcSum+finSum))}</text>`;
+      return out;})())}
     ${CAST.aud(540)}${CAST.you(624)}${CAST.brandt(712)}
     ${hotspot(380,444,'!','weigh','','CHECK IT ADDS UP')}
     ${hotspot(1118,430,'?','where','q','WHERE EACH ONE GOES')}
@@ -3551,13 +3656,13 @@ async function stationAudit(){
         ctx:'<div class="memo"><strong>Every recovery line this case produced.</strong> Recognized: '+income.map(r=>r.line+' '+fmt(r.lorc)).join(', ')+'. Reversed: '+out.map(r=>r.line+' '+fmt(r.lorc)).join(', ')+'.</div>',
         q:'Add them all up over the life of the case. What must the total be?',
         options:[
-          {t:'Exactly zero',ok:true,why:'<strong>'+fmt(sumIn)+' recognized, '+fmt(Math.abs(sumOut))+' reversed, and the difference is exactly zero.</strong> Every franc of recovery income that went into P&amp;L came back out as the service it related to was received. The recovery is a <em>timing</em> item: it puts income in the period the loss it covers is recognized, so the two meet, and then it undoes itself. Note that the interest of '+fmt(r2(ROLLS[1].lorc+ROLLS[4].lorc))+' is in the total too. It is not free profit either; it only funds the larger reversals that follow it.'},
+          {t:'Exactly zero',ok:true,why:'<strong>'+fmt(sumIn)+' recognized, '+fmt(Math.abs(sumOut))+' reversed, and the difference is exactly zero.</strong> Every franc of recovery income that went into P&amp;L came back out as the service it related to was received. The recovery is a <em>timing</em> item: it puts income in the period the loss it covers is recognized, so the two meet, and then it undoes itself. Read the two sections apart, as paragraph 86 asks: the <strong>service result</strong> nets to '+fmt(svcSum)+' and the <strong>finance income</strong> to +'+fmt(finSum)+'. The interest is not free profit; it is the unwind of discounting on a balance that is then fully released, so it exactly funds the larger reversals that follow it. Only the two together come to zero.'},
           {t:'The original recovery of '+fmt(RECOVERY)+', which is the profit on the treaty',why:'That amount was recognized and then fully reversed. The treaty\u2019s profit lives in its <em>own</em> CSM, which these lines never touched.'},
           {t:'The interest accreted, '+fmt(r2(ROLLS[1].lorc+ROLLS[4].lorc))+', since only that is genuinely earned',why:'Tempting, but the interest is inside the reversals as well. The balance it accreted on is fully released, so the interest is released with it. The sum is zero including the interest.'}],
         cite:['66A','66B']},fresh);
-      level();
       weighed=true;P.weigh=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: close the case <b>'+count()+'/3</b>');
+      level();
       maybeEnd();},
     where:async(g)=>{
       if(g.classList.contains('done'))return;
