@@ -703,7 +703,7 @@ const GAME={
   themeKey:'vfa-theme',   /* one theme choice across the whole series */
   tipKey:'tc-mobiletip',
   /* mastery economy: 30 station questions x 3 + 1 capstone case x 10 = 100 */
-  questionPts:3, capstonePts:13,
+  questionPts:3, capstonePts:16,
   where:'Two books, two companies, one standard: getting reinsurance to count',
   wherePrefix:'The Cession · ',
   /* which house a meeting belongs to, for the phone nameplate */
@@ -720,8 +720,8 @@ const GAME={
     pendingLine:'Your retake is cleared. Finish the numbers drill, eight quick questions with nothing at stake, and the mastery your findings carried comes back.',
     doneCopy:'All eight numbers walked through, from the day-one net of −6’000 to the lifetime sum of exactly zero.'},
   capstoneTitle:'Year five: the stop-loss on the renewal desk',
-  capstoneBlurb:'one treaty neither desk was built for, worth 13 mastery. The cases close only after you have made this call.',
-  capstoneIntro:'Ten meetings tested proportional treaties, where one recovery ratio scales every loss event exactly. This final case tests whether you know where that arrangement stops working. Odermatt is back at the renewal desk with a cheap stop-loss. Get the call right on your first attempt to earn <strong>13 mastery points</strong>. Get it wrong and a finding is recorded, just like before, with another attempt available later. Take your time with the memo.',
+  capstoneBlurb:'one treaty neither desk was built for, worth 16 mastery. The cases close only after you have made this call.',
+  capstoneIntro:'Ten meetings tested proportional treaties, where one recovery ratio scales every loss event exactly. This final case tests whether you know where that arrangement stops working. Odermatt is back at the renewal desk with a cheap stop-loss. Get the call right on your first attempt to earn <strong>16 mastery points</strong>. Get it wrong and a finding is recorded, just like before, with another attempt available later. Take your time with the memo.',
 };
 /* the cast: which figure kind animates for each dialogue slot, and its chip */
 const SPEAKERS={chief:'actuary',aud:'auditor',bro:'ana',re:'ana',cfo:'staff2',cuo:'staff2',you:'staff'};
@@ -3221,7 +3221,7 @@ async function stationWorkpaper(){
    you like, and the printed income does not change. */
 async function stationMirror(){
   const fresh=!S.done.mirror;
-  const {sc,mount}=sceneShell('mirror', fresh?'Objective: prove the number <b>0/3</b>':'Done · read it again');
+  const {sc,mount}=sceneShell('mirror', fresh?'Objective: prove the number <b>0/2</b>':'Done · read it again');
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('CLEARBOOK ASSURANCE · THE MIRROR RUN','#1e2a3e')}
     ${plate(80,148,600,286,'#141d2e')}
@@ -3247,17 +3247,16 @@ async function stationMirror(){
       <text x="${FR.RAIL.x+206}" y="${FR.RAIL.y+274}" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="#5d6b7e">change who carries the loss</text>`)}
     ${CAST.torres(560)}${CAST.you(688)}
     ${hotspot(380,448,'!','raise','','RUN THE MIRROR')}
-    <circle cx="560" cy="421" r="2.5" fill="#8b98aa"/><circle cx="560" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(560,376,'?','lever','q','RE-BOOK THE LOSS')}
     ${hotspot(1118,430,'?','cap','q','THE CEILING')}
   </svg>`);
   const twin=sc.querySelector('#twin'), needleval=sc.querySelector('#needleval');
   const P=prog('mirror');
-  let raised=!!P.raise||!fresh, levered=!!P.lever||!fresh, capped=!!P.cap||!fresh;
-  const count=()=>[raised,levered,capped].filter(Boolean).length;
+  let raised=!!P.raise||!fresh, capped=!!P.cap||!fresh;
+  const count=()=>[raised,capped].filter(Boolean).length;
   const show=()=>{twin.style.transition='opacity .8s';twin.style.opacity=1;needleval.textContent=fmt(RECOVERY);
     const m=sc.querySelector('#mmult'),mc=sc.querySelector('#mmultcap');
     if(m)m.textContent='×'+N.share.toFixed(2); if(mc)mc.textContent='THE ALLOCATED SHARE';};
-  const maybeEnd=()=>{ if(count()<3||S.done.mirror)return; completeRoom('mirror');
+  const maybeEnd=()=>{ if(count()<2||S.done.mirror)return; completeRoom('mirror');
     setObjective('Meeting closed · measured, not yet booked');doorOut(sc,'Take it to posting →'); };
   bindHotspots(sc,{
     raise:async(g)=>{
@@ -3274,32 +3273,8 @@ async function stationMirror(){
           {t:fmt(FLIP_LC)+', the whole loss: that is what the treaty is for',why:'A 50% quota share over part of a group does not return the whole loss. Both dials apply.'}],
         cite:['66A','B119D']},fresh);
       raised=true;P.raise=1;save();g.classList.add('done');
-      if(fresh&&count()<3)setObjective('Objective: prove the number <b>'+count()+'/3</b>');
+      if(fresh&&count()<2)setObjective('Objective: prove the number <b>'+count()+'/2</b>');
       show();
-      maybeEnd();},
-    lever:async(g)=>{
-      if(g.classList.contains('done'))return;
-      await talk(sc,[
-        {w:'chief',n:'V. Torres',t:'“Now the test the auditor will run in March. The claims system wants the worsening written against individual fleets, but the loss of <span class="num">'+fmt(FLIP_LC)+'</span> belongs to the cohort, not to whichever fleet the claims hit. Watch the printed income while I write it down three different ways.”'},
-      ]);
-      /* the output is nailed down: however the loss is booked, the print is the same */
-      const cap=sc.querySelector('#railcap');
-      for(const label of ['ALL ON M1','ALL ON M3','SPREAD EVENLY']){
-        if(cap)cap.textContent=label;
-        needleval.animate([{opacity:1},{opacity:.45},{opacity:1}],{duration:420});
-        await new Promise(r=>setTimeout(r,RM?0:460));
-      }
-      if(cap)cap.textContent='INCOME ON THE TREATY HELD';
-      await quiz({kicker:'Re-book the loss',pts:QUESTION_PTS,
-        intro:'<div class="memo"><strong>The same loss, written down three ways.</strong> In the claims system, the worsening of '+fmt(FLIP_LC)+' has to be attributed to individual fleets. Version one writes all of it against M1, a fleet the treaty covers. Version two writes all of it against M3, the fleet Turicum Re excluded. Version three spreads it evenly across all three. The income printed on the treaty comes out the same every time.</div>',
-        q:'Why is the income the same in all three cases?',
-        options:[
-          {t:'Because every contract of the group carries the same allocated share, so the total is the loss times '+N.share.toFixed(2)+' however it is booked',ok:true,why:'This is the whole reason the method is an allocation and not a lookup. The share belongs to the <strong>group</strong>, so each row of the loss event carries '+N.share.toFixed(2)+' and the sum is <strong>'+fmt(FLIP_LC)+' × '+N.share.toFixed(2)+'</strong> no matter how the rows were split. Under a per-contract mirror the same loss would give '+fmt(r2(FLIP_LC*N.ratio))+' booked on M1 and 0 booked on M3, and the accounts would depend on an arbitrary internal choice. Booking independence is the property that makes the number auditable.'},
-          {t:'Because M1 and M3 have equal claims, so the two bookings happen to coincide',why:'They do have equal claims here, but that is a coincidence of this cohort and not the reason. Change M3 to '+fmt(10000)+' and the print still would not move: the share is applied per row, so the total is loss × share regardless.'},
-          {t:'Because the system quietly re-books the loss to the covered fleets first',why:'It does not touch the booking at all. It scales every row by the same group share, which is what makes the booking irrelevant rather than corrected.'}],
-        cite:['B119E','B119D']},fresh);
-      levered=true;P.lever=1;save();
-      if(fresh&&count()<3)setObjective('Objective: prove the number <b>'+count()+'/3</b>');
       maybeEnd();},
     cap:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3312,13 +3287,13 @@ async function stationMirror(){
           {t:'The cap only binds at initial recognition, so nothing is needed later',why:'The cap binds throughout (B119F). The mirror satisfies it throughout, not because of timing but because the balance is a fixed proportion of the thing that caps it.'}],
         cite:['B119F','B119D']},fresh);
       capped=true;P.cap=1;save();
-      if(fresh&&count()<3)setObjective('Objective: prove the number <b>'+count()+'/3</b>');
+      if(fresh&&count()<2)setObjective('Objective: prove the number <b>'+count()+'/2</b>');
       maybeEnd();},
   });
   if(fresh){
     const mk=id=>{const g=[...sc.querySelectorAll('.hs')].find(h=>h.dataset.hs===id);if(g)g.classList.add('done');};
-    if(raised){mk('raise');show();} if(levered)mk('lever'); if(capped)mk('cap');
-    if(count()&&count()<3)setObjective('Objective: prove the number <b>'+count()+'/3</b>');
+    if(raised){mk('raise');show();} if(capped)mk('cap');
+    if(count()&&count()<2)setObjective('Objective: prove the number <b>'+count()+'/2</b>');
   } else {show();doorOut(sc,'Take it to posting →');}
 }
 /* ================= MEETING 5: THE TWO ENTRIES =================
@@ -3711,7 +3686,7 @@ function endOverlay(){
     const card=el('div','mcard');
     card.append(el('div','qk','Case almost closed · mastery '+S.score+'/100'));
     card.append(el('div','grade','Last thing: the offer on the renewal desk.'));
-    card.insertAdjacentHTML('beforeend','<p>You took both cases through all ten meetings and both lifetime schedules footed to zero. For the final challenge, year five brings a treaty <strong>this desk was never built for</strong>: a cheap stop-loss, and Odermatt is very pleased with the price. One call, worth 13 mastery points, to close the case.</p>');
+    card.insertAdjacentHTML('beforeend','<p>You took both cases through all ten meetings and both lifetime schedules footed to zero. For the final challenge, year five brings a treaty <strong>this desk was never built for</strong>: a cheap stop-loss, and Odermatt is very pleased with the price. One call, worth 16 mastery points, to close the case.</p>');
     const f=el('div','mfoot');
     const later=el('button','cta ghost','Back to the case file');later.onclick=()=>{closeModal();renderMap();};
     const go=el('button','cta big','Hear the offer');go.onclick=()=>{closeModal();runCapstones();};
