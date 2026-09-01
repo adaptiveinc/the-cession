@@ -3164,8 +3164,8 @@ async function stationWorkpaper(){
         cite:['B119E','B119D']},fresh);
       setDial('#dAlloc',N.allocation.toFixed(2));
       await quiz({kicker:'The second question · how much comes back',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Inside the cover:</strong> QS50 takes <b>50%</b> of M1 and M2. Covered claims <b>'+fmt(N.covered)+'</b>, expected recoveries <b>'+fmt(N.ceded)+'</b>.</div>',
-        q:'How much comes back on the claims QS50 covers, and what share does that give the group as a whole?',
+        ctx:'<div class="memo"><strong>Inside the cover:</strong> QS50 takes <b>50%</b> of every claim on M1 and M2. Covered claims <b>'+fmt(N.covered)+'</b>, expected recoveries <b>'+fmt(N.ceded)+'</b>.<br><br><strong>Already worked out:</strong> the treaty covers <b>'+N.allocation.toFixed(2)+'</b> of the cohort ('+fmt(N.covered)+' / '+fmt(N.groupClaims)+').</div>',
+        q:'QS50 pays back half of every claim it covers. Combined with the '+N.allocation.toFixed(2)+' you just worked out, what is the blended share used to calculate the loss recovery for the cohort?',
         options:[
           {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.allocation.toFixed(2)+' × '+N.ratio.toFixed(2)+' = '+N.share.toFixed(2),ok:true,why:'The recovery ratio is <strong>expected claim recoveries over the corresponding covered claims</strong> (B119D): '+fmt(N.ceded)+' / '+fmt(N.covered)+' = '+N.ratio.toFixed(2)+'. The recovery share is the two dials multiplied, <strong>'+N.share.toFixed(2)+'</strong>, and every contract of the group carries it. A proportional treaty over every period of its group reproduces its cession percentage exactly, which is the sanity check: '+N.ratio.toFixed(2)+' is the cession.'},
           {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.ratio.toFixed(2)+': the cession percentage is the answer',why:'That would be right only if the treaty covered the whole group. It covers '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'},
