@@ -610,11 +610,22 @@
     .mwrap{padding:3vh 8px 40px}
     .mcard{padding:16px 15px}
     /* a long option list must never push the action below the fold: the
-       question stays at the top of the card and the buttons at the bottom */
-    .mcard .q{position:sticky;top:-1px;z-index:2;background:var(--panel);
-      padding:8px 0 10px;margin-bottom:10px;box-shadow:0 6px 8px -8px #0008}
-    .mcard .mfoot{position:sticky;bottom:-1px;z-index:2;background:var(--panel);
-      padding:10px 0 2px;margin-top:12px;box-shadow:0 -6px 8px -8px #0008}
+       question stays at the top of the card and the buttons at the bottom.
+       Only a card that ASKS something gets this: on a long reading card the
+       sticky footer just floats over the middle of the prose. The bands bleed
+       out to the card's edges, or text scrolls through the side gutters. */
+    .mcard:has(.opts) .q{position:sticky;top:-1px;z-index:2;background:var(--panel);
+      margin-left:-15px;margin-right:-15px;padding:8px 15px 10px;margin-bottom:10px;
+      box-shadow:0 6px 8px -8px #0008}
+    .mcard:has(.opts) .mfoot{position:sticky;bottom:-1px;z-index:2;background:var(--panel);
+      margin-left:-15px;margin-right:-15px;padding:10px 15px 2px;margin-top:12px;
+      box-shadow:0 -6px 8px -8px #0008}
+    /* the close sits on the card, which on a long card scrolls off the top and
+       takes the only quick way out with it */
+    .mclose{position:fixed;top:6px;right:8px;z-index:4;
+      width:32px;height:32px;padding:0;display:grid;place-items:center;
+      border-radius:50%;background:var(--panel);border:1px solid var(--line);
+      box-shadow:0 2px 8px #0003}
     .books-callout{width:min(300px,86vw)}
     /* on a phone you only ever see a slice of the room, so the header has to say
        where you are — but as ONE title bar, not three chips floating on the art */
@@ -677,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 09:46Z";
+const BUILD="2026-09-02 09:52Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
