@@ -2440,7 +2440,7 @@ async function stationSlip(){
       await talk(sc,[
         {w:'sys',t:'Limmat Assurance, two floors above a chocolatier on Bahnhofstrasse. You are not on the payroll here: they brought you in last week as an outside actuary, precisely because you had nothing to do with the tariff. You run January’s new business against it twice, because the first answer looked like a typo.'},
         {w:'cuo',n:'D. Meier · chief underwriting officer',t:'“You are the consultant. Before you say anything: the distribution deal is signed, the volume target is met, and the board photograph was very cheerful. How bad?”'},
-        {w:'you',n:'You',t:'“Premiums of <span class="num">'+fmt(NA.prem)+'</span> against fulfilment cash flows of <span class="num">'+fmt(NA.fcf)+'</span>. The tariff is still on the 2023 table. Every contract in the tranche is underwater the day it signs.”'},
+        {w:'you',n:'You',t:'“Premiums of <span class="num">'+fmt(NA.prem)+'</span> against fulfilment cash flows of <span class="num">'+fmt(NA.fcf)+'</span>. The tariff is still on the 2023 table. Every contract in the cohort is underwater the day it signs.”'},
       ]);
       await quiz({kicker:'Onerous at initial recognition',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Cohort PA-2026 signs today.</strong> Premiums <b>'+fmt(NA.prem)+'</b>, fulfilment cash flows <b>'+fmt(NA.fcf)+'</b>. The tariff cannot be repriced: the distribution deal locks it.</div>',
@@ -2458,10 +2458,10 @@ async function stationSlip(){
     grouping:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'cuo',n:'D. Meier',t:'“Fine. But we write plenty of profitable accident business. Put this tranche in the same group as the Q3 book and the group as a whole is still fine. No loss, no headline.”'},
+        {w:'cuo',n:'D. Meier',t:'“Fine. But we write plenty of profitable accident business. Put this cohort in the same group as the Q3 book and the group as a whole is still fine. No loss, no headline.”'},
       ]);
       await quiz({kicker:'Meier’s idea',pts:QUESTION_PTS,
-        intro:'<div class="memo"><strong>The proposal:</strong> pool the onerous PA-2026 tranche with profitable business written the same year, so the combined group shows no loss.</div>',
+        intro:'<div class="memo"><strong>The proposal:</strong> pool the onerous PA-2026 cohort with profitable business written the same year, so the combined group shows no loss.</div>',
         q:'Can the loss be absorbed by grouping?',
         options:[
           {t:'No. Contracts onerous at initial recognition go into their own group, by design',ok:true,why:'Paragraph 16 splits a portfolio into at least three buckets: contracts <strong>onerous at initial recognition</strong>, contracts with no significant possibility of becoming onerous, and the rest. Paragraph 22 adds the annual cohort requirement on top. The onerous bucket exists so a known day-one loss cannot be netted into someone else’s profit.'},
@@ -2474,7 +2474,7 @@ async function stationSlip(){
     when:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'bro',n:'K. Odermatt · broker',t:'“I heard. Half of Bahnhofstrasse heard, Meier was not quiet. Turicum Re would quote a quota share on the tranche. One question decides everything: when do you want it signed?”'},
+        {w:'bro',n:'K. Odermatt · broker',t:'“I heard. Half of Bahnhofstrasse heard, Meier was not quiet. Turicum Re would quote a quota share on the cohort. One question decides everything: when do you want it signed?”'},
       ]);
       await quiz({kicker:'The only window',pts:QUESTION_PTS,
         intro:'<div class="memo"><strong>The timing condition (B119C):</strong> a loss-recovery component only arises where the reinsurance contract held was entered into <b>before or at the same time as</b> the onerous underlying contracts were recognized.</div>',
@@ -2578,7 +2578,7 @@ async function stationDesk(){
     quote:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'re',n:'A. Keller · Turicum Re',t:'“Ja, Keller. Odermatt sent the tranche over an hour ago. I will take any share of PA-2026 you like, priced at expected claims plus <span class="num">six per hundred</span> of cover. Your slip stays yours; what you are buying from me is certainty.”'},
+        {w:'re',n:'A. Keller · Turicum Re',t:'“Ja, Keller. Odermatt sent the cohort over an hour ago. I will take any share of PA-2026 you like, priced at expected claims plus <span class="num">six per hundred</span> of cover. Your slip stays yours; what you are buying from me is certainty.”'},
         {w:'cuo',n:'D. Meier',t:'“Certainty is not the headline I need, an acceptable day-one number is. Work the buttons. Find me one.”'},
       ]);
       /* the quote is walked on the desk, not narrated: press every button once */
@@ -2592,7 +2592,7 @@ async function stationDesk(){
         {w:'sys',t:'The gross loss never moves. The recovery climbs in steps of three thousand; the cost climbs with it, fifteen hundred at a time. At half the book the desk reads: relief <b>'+fmt(A_LORC)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.5).net))+'</b>, cost <b>'+fmt(A_COST)+'</b>.'},
       ]);
       await quiz({kicker:'The quote at 50%',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Half the tranche:</strong> expected recoveries <b>'+fmt(NA.quote(.5).rec)+'</b> on the cohort’s expected claims of <b>'+fmt(NA.fcf)+'</b>, premium <b>'+fmt(NA.quote(.5).prem)+'</b>. The treaty covers the <b>whole cohort</b>. Loss on the file <b>'+fmt(NA.lc)+'</b>.</div>',
+        ctx:'<div class="memo"><strong>Signing at 50%:</strong> Turicum Re takes half of every claim on this cohort. Expected claims are <b>'+fmt(NA.fcf)+'</b>, so it expects to pay back <b>'+fmt(NA.quote(.5).rec)+'</b>, and it charges <b>'+fmt(NA.quote(.5).prem)+'</b> for the cover. Every contract in the cohort is covered. The loss already on the file is <b>'+fmt(NA.lc)+'</b>.</div>',
         q:'How much loss-recovery income does signing at 50% put on day one?',
         options:[
           {t:fmt(NA.lc)+' × 0.50 = '+fmt(A_LORC)+'. The treaty covers the whole cohort, so the share is the cession',ok:true,why:'The recovery ratio (B119D) is expected recoveries over the claims of the covered contracts: '+fmt(NA.quote(.5).rec)+' / '+fmt(NA.fcf)+' = 0.50. The allocation share (B119E) is 1.00, because every contract of the group is covered. So the multiplier is simply the cession, and the income is <strong>'+fmt(A_LORC)+'</strong>, recognized the same day as the loss (paragraph 66A), as <strong>recovery of losses on onerous underlying contracts</strong>, the line for groups that were loss-making from the very start. Keep the two dials in mind anyway: across town there is a treaty that covers only part of a group, and there the allocation stops being 1.00.'},
