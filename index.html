@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 21:10Z";
+const BUILD="2026-09-02 21:11Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3193,7 +3193,7 @@ async function stationWorkpaper(){
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
       showSplit();
       await talk(sc,[
-        {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>. The treaty covers '+N.allocation.toFixed(2)+' of the group, so <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on the covered fleets. That is not the recovery yet. QS50 pays back half of it: <b>'+fmt(RECOVERY)+'</b>. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> sits on M3, which has no cover, so none of it comes back.'},
+        {w:'sys',t:'Look at the whiteboard to see how much of the loss the treaty covers from the cohort. The whole loss is <b>'+fmt(FLIP_LC)+'</b>. The treaty covers '+N.allocation.toFixed(2)+' of the group, so <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on the covered fleets. But this is not the recovery yet. QS50 pays back half of it: <b>'+fmt(RECOVERY)+'</b>. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> sits on M3, which has no cover.'},
       ]);
       maybeEnd();},
     fixture:async(g)=>{
