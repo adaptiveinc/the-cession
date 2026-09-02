@@ -2605,7 +2605,7 @@ async function stationDesk(){
         {w:'cuo',n:'D. Meier · pointing at the 75% button',t:'“Higher. Make the loss disappear before the board sees it.”'},
       ]);
       await quiz({kicker:'Meier wants 75',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>The desk at 75%:</strong> recovery <b>'+fmt(NA.quote(.75).lorc)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.75).net))+'</b>, cost of cover <b>'+fmt(NA.quote(.75).cost)+'</b> — and the gross loss unchanged at <b>−'+fmt(NA.lc)+'</b>.</div>',
+        ctx:'<div class="memo"><strong>The desk at 75%:</strong> recovery <b>'+fmt(NA.quote(.75).lorc)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.75).net))+'</b>, cost of cover <b>'+fmt(NA.quote(.75).cost)+'</b>, and the gross loss unchanged at <b>−'+fmt(NA.lc)+'</b>.</div>',
         q:'Can a bigger cession make the loss disappear?',
         options:[
           {t:'No. The gross loss stands on its own line at every cession; the recovery is capped at the ceded share of it; and each step of relief costs more margin',ok:true,why:'Three separate walls. The loss of '+fmt(NA.lc)+' is recognized gross, whatever is ceded: the reader of the accounts sees the loss <em>and</em> its cover, never a blended nothing. The loss-recovery component can never exceed the portion of the loss the entity expects to recover (B119F), so even at 100% the two lines net to zero without the loss ever leaving the page. And the walk from 50 to 75 buys '+fmt(r2(NA.quote(.75).lorc-A_LORC))+' more day-one relief for '+fmt(r2(NA.quote(.75).cost-A_COST))+' more certain cost. That is a price, not a magic trick, and the board caps the spend at '+fmt(A_COST)+'.'},
@@ -3175,7 +3175,7 @@ async function stationWorkpaper(){
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
       showSplit();
       await talk(sc,[
-        {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>, and the treaty covers '+N.allocation.toFixed(2)+' of the group: <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on fleets it covers. Careful: that is not the recovery. QS50 cedes half of those fleets, so half of the '+fmt(r2(FLIP_LC*N.allocation))+' comes back — <b>'+fmt(RECOVERY)+'</b>. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> sits on M3, and Brandt signed nothing that covers it, so none of that comes back at all.'},
+        {w:'sys',t:'The sheet splits the loss where the treaty stops. The whole loss is <b>'+fmt(FLIP_LC)+'</b>, and the treaty covers '+N.allocation.toFixed(2)+' of the group: <b>'+fmt(FLIP_LC)+' × '+N.allocation.toFixed(2)+' = '+fmt(r2(FLIP_LC*N.allocation))+'</b> sits on fleets it covers. Careful: that is not the recovery. QS50 cedes half of those fleets, so half of the '+fmt(r2(FLIP_LC*N.allocation))+' comes back: <b>'+fmt(RECOVERY)+'</b>. The other <b>'+fmt(r2(FLIP_LC*(1-N.allocation)))+'</b> sits on M3, and Brandt signed nothing that covers it, so none of that comes back at all.'},
       ]);
       maybeEnd();},
     fixture:async(g)=>{
