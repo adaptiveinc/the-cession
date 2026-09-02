@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 19:08Z";
+const BUILD="2026-09-02 19:11Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2610,7 +2610,7 @@ async function stationDesk(){
       for(const x of NA.steps)await press(x);
       await press(NA.signed);
       await talk(sc,[
-        {w:'sys',t:'The gross loss stays at '+fmt(NA.lc)+' whatever you cede. Every extra quarter of the book buys '+fmt(r2(NA.lc*.25))+' more relief and costs '+fmt(r2(NA.marginPer*.25))+' more. At half the book the desk reads: relief <b>'+fmt(A_LORC)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.5).net))+'</b>, cost <b>'+fmt(A_COST)+'</b>.'},
+        {w:'sys',t:'You can cede '+NA.steps.map(x=>(x*100)+'%').join(', ').replace(/, ([^,]*)$/,' or $1')+'. Each extra 25% recovers '+fmt(r2(NA.lc*.25))+' more of the loss and costs '+fmt(r2(NA.marginPer*.25))+' more. The '+fmt(NA.lc)+' loss itself stays on the books whatever you choose. At 50%: relief <b>'+fmt(A_LORC)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.5).net))+'</b>, cost <b>'+fmt(A_COST)+'</b>.'},
       ]);
       await quiz({kicker:'The quote at 50%',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Signing at 50%:</strong> Turicum Re takes half of every claim on this cohort. Expected claims are <b>'+fmt(NA.fcf)+'</b>, so it expects to pay back <b>'+fmt(NA.quote(.5).rec)+'</b>, and it charges <b>'+fmt(NA.quote(.5).prem)+'</b> for the cover. Every contract in the cohort is covered. The loss already on the file is <b>'+fmt(NA.lc)+'</b>.</div>',
