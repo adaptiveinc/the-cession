@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 19:03Z";
+const BUILD="2026-09-02 19:08Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2196,7 +2196,7 @@ const ICONS={
     <g transform="rotate(-8 ${x+136} ${y+100})">
       <rect x="${x+64}" y="${y+86}" width="144" height="28" rx="4" fill="none" stroke="#ad3d31" stroke-width="2.5"/>
       <text x="${x+136}" y="${y+105}" text-anchor="middle" font-family="var(--mono)" font-size="10" font-weight="700" letter-spacing="1.5" fill="#ad3d31">ONEROUS DAY 1</text></g>
-    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">THE TARIFF SLIPPED · ¶47</text></g>`,
+    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">PRICED TOO LOW · ¶47</text></g>`,
   /* the cession desk: four buttons, one live day-one number */
   desk:(x,y,w,h,d)=>`<g opacity="${d?.35:1}">
     ${[0,25,50,75].map((p,i)=>`<rect x="${x+34+i*54}" y="${y+34}" width="46" height="26" rx="5" fill="${p===50?'#33290f':'#26354c'}" stroke="${p===50?'#8b6f36':'#4a5d78'}" stroke-width="1.5"/>
@@ -2319,7 +2319,7 @@ function renderMap(){
       <ellipse cx="330" cy="24" rx="56" ry="10"/><circle cx="308" cy="15" r="11"/><circle cx="344" cy="12" r="13"/>
       <ellipse cx="810" cy="20" rx="60" ry="10"/><circle cx="788" cy="11" r="11"/><circle cx="824" cy="9" r="13"/><circle cx="852" cy="15" r="9"/>
     </g>
-    ${building(156,1060,66,TRAIL[0]+40,'LIMMAT ASSURANCE','ACT ONE · THE TARIFF SLIPPED, ONEROUS THE DAY IT SIGNS',44,true)}
+    ${building(156,1060,66,TRAIL[0]+40,'LIMMAT ASSURANCE','ACT ONE · PRICED TOO LOW, ONEROUS THE DAY IT SIGNS',44,true)}
     ${building(8,1208,560,TRAIL[2]+40,'CLEARBOOK ASSURANCE','ACT TWO · PRICED RIGHT, THEN THE CLAIMS SHOCK',62,false,true)}
     <rect x="0" y="432" width="${LINE_W}" height="28" fill="#0d1420"/>
     <path d="M0,446 H${LINE_W}" stroke="#4a586b" stroke-width="2" stroke-dasharray="18 16"/>
@@ -2407,7 +2407,7 @@ async function rideTo(id,sc){
    one. The other lesson is that it cannot be hidden inside a better group. */
 async function stationSlip(){
   const fresh=!S.done.slip;
-  const {sc,mount}=sceneShell('slip', fresh?'Objective: face the tariff <b>0/3</b>':'Done · read it again');
+  const {sc,mount}=sceneShell('slip', fresh?'Objective: face the pricing <b>0/3</b>':'Done · read it again');
   mount(`<svg viewBox="0 0 ${FR.W} ${FR.H}">
     ${frame('LIMMAT ASSURANCE · COHORT PA-2026')}
     ${plate(90,140,580,250)}
@@ -2428,7 +2428,7 @@ async function stationSlip(){
         <text x="508" y="344" text-anchor="middle" font-family="var(--mono)" font-size="16" font-weight="700" letter-spacing="3" fill="#e06a5e">ONEROUS AT INCEPTION</text>
       </g>
     </g>
-    ${rail('HOW THE TARIFF SLIPPED',`
+    ${rail('HOW THE PRICING WENT WRONG',`
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+72}" font-family="var(--mono)" font-size="11.5" fill="#8b98aa">mortality/morbidity table</text>
       <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+72}" text-anchor="end" font-family="var(--mono)" font-size="11.5" fill="#e0865e">frozen 2023</text>
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+104}" font-family="var(--mono)" font-size="11.5" fill="#8b98aa">distribution deal</text>
@@ -2442,7 +2442,7 @@ async function stationSlip(){
       <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+254}" font-family="var(--mono)" font-size="11" fill="#8b98aa">discounting</text>
       <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+254}" text-anchor="end" font-family="var(--mono)" font-size="11.5" fill="#c9d3df">none: too short a book to matter</text>`)}
     ${CAST.you(596)}${CAST.novak(716)}
-    ${hotspot(380,404,'!','gap','','FACE THE TARIFF')}
+    ${hotspot(380,404,'!','gap','','FACE THE PRICING')}
     <circle cx="716" cy="421" r="2.5" fill="#8b98aa"/><circle cx="716" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(716,376,'?','grouping','q','MEIER’S IDEA')}
     ${hotspot(610,64,'?','when','q','THE ONLY WINDOW')}
   </svg>`);
@@ -2459,12 +2459,12 @@ async function stationSlip(){
     gap:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'sys',t:'Limmat Assurance, Bahnhofstrasse. You are the outside actuary they brought in last week, chosen because you had nothing to do with the tariff. You run January’s new business against it twice, because the first answer looked like a typo.'},
+        {w:'sys',t:'Limmat Assurance, Bahnhofstrasse. You are the outside actuary they brought in last week, chosen because you had nothing to do with the pricing. You run January’s new business against it twice, because the first answer looked like a typo.'},
         {w:'cuo',n:'D. Meier · chief underwriting officer',t:'“Before you say anything: the distribution deal is signed, the volume target is met, and the board was very pleased. How bad?”'},
-        {w:'you',n:'You',t:'“Premiums of <span class="num">'+fmt(NA.prem)+'</span> against fulfilment cash flows of <span class="num">'+fmt(NA.fcf)+'</span>. The tariff is still on the 2023 table. Every contract in the cohort loses money from the day it signs.”'},
+        {w:'you',n:'You',t:'“Premiums of <span class="num">'+fmt(NA.prem)+'</span> against fulfilment cash flows of <span class="num">'+fmt(NA.fcf)+'</span>. The premium rates still use the 2023 table. Every contract in the cohort loses money from the day it signs.”'},
       ]);
       await quiz({kicker:'Onerous at initial recognition',pts:QUESTION_PTS,
-        ctx:'<div class="memo"><strong>Cohort PA-2026 signs today.</strong> Premiums <b>'+fmt(NA.prem)+'</b>, fulfilment cash flows <b>'+fmt(NA.fcf)+'</b>. The tariff cannot be repriced: the distribution deal locks it.</div>',
+        ctx:'<div class="memo"><strong>Cohort PA-2026 signs today.</strong> Premiums <b>'+fmt(NA.prem)+'</b>, fulfilment cash flows <b>'+fmt(NA.fcf)+'</b>. The premiums cannot be raised: the distribution deal locks them.</div>',
         q:'What goes in the accounts on the day the cohort is recognized?',
         options:[
           {t:'A loss of '+fmt(NA.lc)+' in P&L today, recorded by a loss component. No CSM exists',ok:true,why:'A group that is onerous at initial recognition books its loss <strong>at once</strong> (paragraph 47). The fulfilment cash flows exceed the premiums by '+fmt(NA.lc)+'. That amount goes to P&amp;L on day one, and a loss component of the same amount is set up in the liability for remaining coverage.'},
@@ -2472,7 +2472,7 @@ async function stationSlip(){
           {t:'Nothing yet: the loss is recognized as the claims actually arrive',why:'The loss is measured on expected cash flows, not on cash paid. Those cash flows are already short today. The loss is recognized when it is identified, not when claims are paid (paragraph 47).'}],
         cite:['47','16']},fresh);
       faced=true;P.gap=1;save();g.classList.add('done');
-      if(fresh&&count()<3)setObjective('Objective: face the tariff <b>'+count()+'/3</b>');
+      if(fresh&&count()<3)setObjective('Objective: face the pricing <b>'+count()+'/3</b>');
       if(fresh)applyDeltas({alc:NA.lc});
       reveal();
       maybeEnd();},
@@ -2490,7 +2490,7 @@ async function stationSlip(){
           {t:'Yes, at portfolio level: losses net against expected profits of similar risks',why:'Measurement happens at group level, not portfolio level. The onerous group is measured on its own (paragraphs 16 and 24).'}],
         cite:['16','22']},fresh);
       grouped=true;P.grouping=1;save();
-      if(fresh&&count()<3)setObjective('Objective: face the tariff <b>'+count()+'/3</b>');
+      if(fresh&&count()<3)setObjective('Objective: face the pricing <b>'+count()+'/3</b>');
       maybeEnd();},
     when:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2506,13 +2506,13 @@ async function stationSlip(){
           {t:'Before the annual close, since recognition is a year-end event',why:'Contracts are recognized when they are issued, not at the year-end close. The cut-off is today.'}],
         cite:['B119C','66A']},fresh);
       timed=true;P.when=1;save();
-      if(fresh&&count()<3)setObjective('Objective: face the tariff <b>'+count()+'/3</b>');
+      if(fresh&&count()<3)setObjective('Objective: face the pricing <b>'+count()+'/3</b>');
       maybeEnd();},
   });
   if(fresh){
     const mk=id=>{const g=[...sc.querySelectorAll('.hs')].find(h=>h.dataset.hs===id);if(g)g.classList.add('done');};
     if(faced){mk('gap');reveal();} if(grouped)mk('grouping'); if(timed)mk('when');
-    if(count()&&count()<3)setObjective('Objective: face the tariff <b>'+count()+'/3</b>');
+    if(count()&&count()<3)setObjective('Objective: face the pricing <b>'+count()+'/3</b>');
   } else {reveal();doorOut(sc,'To the cession desk →');}
 }
 /* ================= ACT ONE · MEETING 2: THE CESSION DESK =================
@@ -2742,7 +2742,7 @@ async function stationShortyear(){
     close:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'cuo',n:'D. Meier · a year later',t:'“The claims came in on your numbers, almost to the franc. Please note that somewhere, given whose numbers the tariff used.”'},
+        {w:'cuo',n:'D. Meier · a year later',t:'“The claims came in on your numbers, almost to the franc. Please note that somewhere, given whose numbers the pricing used.”'},
         {w:'you',n:'You',t:'“Noted. Now watch the two balances go down together. Half the cover was given in 2026, half in 2027. Each time, the recovery follows the loss. It has no schedule of its own.”'},
       ]);
       await quiz({kicker:'The two closes',pts:QUESTION_PTS,
@@ -2769,7 +2769,7 @@ async function stationShortyear(){
         intro:'<div class="memo"><strong>Limmat\u2019s recovery income went on the line \u201crecovery of losses on onerous underlying contracts\u201d.</strong> There is a second, similar line: \u201crecovery of losses on contracts turning onerous\u201d. Both mean a reinsurer will pay back part of a loss just booked. One fact about the loss decides which line is used. The two names are a <b>house policy</b> at both companies, not an IFRS 17 requirement. The standard only asks that the reinsurance result be shown separately.</div>',
         q:'What decides which of the two recovery lines the income is reported on?',
         options:[
-          {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and turned loss-making later',ok:true,why:'A reader wants to know <em>what kind of problem</em> the reinsurer is paying for. <strong>Onerous underlying contracts</strong> means the pricing was wrong: loss-making the day they were signed, like Meier’s tariff. <strong>Contracts turning onerous</strong> means the pricing was right and the market moved: a claims shock, or inflation. Same arithmetic, different cause.'},
+          {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and turned loss-making later',ok:true,why:'A reader wants to know <em>what kind of problem</em> the reinsurer is paying for. <strong>Onerous underlying contracts</strong> means the pricing was wrong: loss-making the day they were signed, like Meier’s pricing. <strong>Contracts turning onerous</strong> means the pricing was right and the market moved: a claims shock, or inflation. Same arithmetic, different cause.'},
           {t:'The size of the recovery: large amounts on one line, smaller ones on the other',why:'There is no size rule. A one-franc recovery on a mispriced book still counts as a recovery on onerous underlying contracts.'},
           {t:'The type of treaty: quota shares on one line, other covers on the other',why:'The type of treaty does not decide the line. What matters is how the underlying loss came about.'}],
         cite:['47','B119D']},fresh);
@@ -2962,7 +2962,7 @@ async function stationRenewal(){
   /* the hand-over between the acts: new company, new cast, the clock rewound */
   if(fresh&&step===0&&!P.act2){
     await teach('Act Two · Across town at Clearbook Assurance',
-      `<p><strong>Limmat’s case is closed.</strong> The tariff was too low, so those contracts lost money from the day they were signed. You put the loss on the books at once, booked back the half the treaty covers, kept the price of the cover on its own line, and ran both down to zero.</p>
+      `<p><strong>Limmat’s case is closed.</strong> The premiums were too low, so those contracts lost money from the day they were signed. You put the loss on the books at once, booked back the half the treaty covers, kept the price of the cover on its own line, and ran both down to zero.</p>
        <p><strong>Odermatt sends you across town to Clearbook Assurance</strong>, a motor insurer that wants the same outside review of its reinsurance accounting. Both cases started in January 2026. New people: <strong>V. Torres</strong>, the chief actuary, and <strong>M. Brandt</strong>, the CFO, who pays for the cover. Your role is the same: the consultant who gets the cover into the books. Odermatt brokers both accounts, and Turicum Re is the reinsurer on both.</p>
        <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money. Two years later a claims shock hits it anyway. Act Two asks: what does a treaty do for a loss that was not a pricing mistake? That recovery is reported on the other line, <strong>recovery of losses on contracts turning onerous</strong>.</p>`,
       ['47–48','B119C']);
