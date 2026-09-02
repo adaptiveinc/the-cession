@@ -1283,7 +1283,7 @@ function teach(title,html,cites){
   return new Promise(res=>{
     const card=el('div','mcard');
     card.append(el('div','qk','Teaching point'));
-    card.append(el('h4','',title));
+    if(title)card.append(el('h4','',title));   /* a card can go straight into its point */
     card.insertAdjacentHTML('beforeend',html);
     if(cites)card.append(el('div','',cites.map(citeChip).join('')));
     const f=el('div','mfoot');const b=el('button','cta','Got it');
@@ -2851,7 +2851,7 @@ async function stationRenewal(){
   }
   bindHotspots(sc,{
     unit:async()=>{
-      await teach('Why the cohort, and not the fleet',
+      await teach('',
         `<p><strong>1 · The unit of account is the group.</strong> A contract is measured inside a group of contracts, and the CSM belongs to the group, not to any one member of it. M1, M2 and M3 sit in one file because they were written in the same cohort.</p>
          <p><strong>2 · A group turns onerous when its CSM is exhausted.</strong> Bad news is set against the group's CSM. While there is CSM left, nothing hits P&amp;L. Once the CSM reaches zero, the excess is a loss recognized immediately, and a loss component records it (paragraph 47-48).</p>
          <p><strong>3 · No single fleet turns the cohort onerous alone.</strong> M3 is not covered by the treaty, and M3 alone could drive the whole group onerous while M1 and M2 are still comfortably profitable. The loss is a fact about the cohort, not about whichever account the claims hit.</p>
