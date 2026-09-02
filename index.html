@@ -2614,12 +2614,10 @@ async function stationDesk(){
         ctx:'<div class="memo"><strong>The desk at 75%:</strong> recovery <b>'+fmt(NA.quote(.75).lorc)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.75).net))+'</b>, cost of cover <b>'+fmt(NA.quote(.75).cost)+'</b>, and the gross loss unchanged at <b>−'+fmt(NA.lc)+'</b>.</div>',
         q:'Can a bigger cession make the loss disappear?',
         options:[
-          {t:'No. The gross loss stands on its own line at every cession; the recovery is capped at the ceded share of it; and each step of relief costs more margin',ok:true,why:'Three separate rules. The loss of '+fmt(NA.lc)+' is recognized gross, whatever is ceded: the reader of the accounts sees the loss <em>and</em> its cover, never a blended nothing. The loss-recovery component can never exceed the portion of the loss the entity expects to recover (B119F), so even at 100% the two lines net to zero without the loss ever leaving the page. And the walk from 50 to 75 buys '+fmt(r2(NA.quote(.75).lorc-A_LORC))+' more day-one relief for '+fmt(r2(NA.quote(.75).cost-A_COST))+' more certain cost. That is a price, not a magic trick, and the board caps the spend at '+fmt(A_COST)+'.'},
+          {t:'No. The gross loss stands on its own line at every cession; the recovery is capped at the ceded share of it; and each step of relief costs more margin',ok:true,why:'The '+fmt(NA.lc)+' loss is recognized in full and shows up in <strong>insurance service expenses</strong>, whatever is ceded. It is never netted against the recovery.'},
           {t:'Yes: at 75% the day-one net is small enough to round away',why:'−'+fmt(Math.abs(NA.quote(.75).net))+' is smaller, not gone, and it costs '+fmt(NA.quote(.75).cost)+' of real margin to get there. Managing the optics with margin is a decision the board should see priced, which is what this desk is for.'},
           {t:'Yes: cede 100% and both lines net to zero',why:'They net to zero <em>as two visible lines</em>, gross loss and full recovery, while the cost of cover rises to '+fmt(NA.marginPer)+'. Paying Turicum Re six to make twelve of bad pricing legible is the most expensive way to publish the same fact.'}],
-        cite:['B119F','B119E']},fresh);
-      signed=true;P.signed=1;save();g.classList.add('done');
-      if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
+        cite:['47–48','86']},fresh);
       quoted=true;P.quote=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
       await press(NA.signed);
@@ -2635,6 +2633,8 @@ async function stationDesk(){
       ]);
       if(fresh)applyDeltas({alorc:A_LORC,apnl:A_LORC});
       lockAt50();
+      signed=true;P.signed=1;save();g.classList.add('done');
+      if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
       maybeEnd();},
     costwhere:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -2642,7 +2642,7 @@ async function stationDesk(){
         intro:'<div class="memo"><strong>The lifetime economics at 50%:</strong> premium <b>'+fmt(NA.quote(.5).prem)+'</b> paid for expected recoveries of <b>'+fmt(NA.quote(.5).rec)+'</b>: a net cost of <b>'+fmt(A_COST)+'</b>. Separately, the recovery lines will recognize <b>'+fmt(A_LORC)+'</b> and reverse <b>'+fmt(A_LORC)+'</b>.</div>',
         q:'Where does the cost of the reinsurance show up in the accounts?',
         options:[
-          {t:'Not in the recovery lines, which sum to zero. The net cost is spread over the coverage period inside net expense from reinsurance held',ok:true,why:'Two ledgers, two jobs. The recovery lines are a <strong>timing</strong> device: they put income beside the loss it covers, and over the life they undo themselves to exactly zero. The <strong>price</strong> of the treaty, premium over expected recoveries, is its own story: '+fmt(A_COST)+' of certain cost, recognized across the coverage period as part of the net expense from reinsurance contracts held (paragraph 86 presentation). When someone asks “what did the cover cost”, the answer is never in the recovery lines. When someone asks “did the cover do its accounting job”, the answer is never in the cost. Managing a book means reading both.'},
+          {t:'Not in the recovery lines, which sum to zero. The net cost is spread over the coverage period inside net expense from reinsurance held',ok:true,why:'The recovery lines are a <strong>timing</strong> device. They put income beside the loss it covers and undo themselves to zero over the life. The price of the treaty is separate: premium less expected recoveries, '+fmt(A_COST)+', spread across the coverage period in net expense from reinsurance contracts held (paragraph 86). The cost is never in the recovery lines.'},
           {t:'In the loss-recovery component, which is why it is smaller than the loss',why:'The LoRC is smaller because the cession is 50%, not because of the price. Cost never enters the mirror (B119D).'},
           {t:'It nets against the day-one recovery income, leaving '+fmt(r2(A_LORC-A_COST))+' of true income',why:'Netting a two-year expense stream against a day-one timing credit would misstate both periods. The lines are kept apart precisely so the reader can see the relief and its price separately.'}],
         cite:['86','B119D']},fresh);
