@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 21:09Z";
+const BUILD="2026-09-02 21:10Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3170,7 +3170,7 @@ async function stationWorkpaper(){
       if(g.classList.contains('done'))return;
       await talk(sc,[
         {w:'chief',n:'V. Torres',t:'“To know exactly how much of the loss on this cohort (M1, M2 and M3) we can recover, there are two ratios. First: <em>how much of the cohort does the treaty cover?</em> M1 and M2 are in, M3 is not. So compare the claims of the covered fleets with the claims of the whole group, M3 included.”'},
-        {w:'chief',n:'V. Torres',t:'“Second: <em>on the fleets it does cover, how much of each claim comes back?</em> QS50 is a 50% quota share, so half of every covered claim. Expected recoveries over covered claims gives that half.”'},
+        {w:'chief',n:'V. Torres',t:'“Second: <em>on the fleets it does cover, what is the ratio of the treaty itself?</em> For example, QS50 is a 50% quota share, so half of every covered claim comes back. Expected recoveries over covered claims gives that half.”'},
       ]);
       await quiz({kicker:'The first question · how much the treaty covers',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Claims:</strong> M1 <b>'+fmt(N.claims.M1)+'</b> and M2 <b>'+fmt(N.claims.M2)+'</b> are covered by QS50; M3 <b>'+fmt(N.claims.M3)+'</b> is not. Group total <b>'+fmt(N.groupClaims)+'</b>.</div>',
