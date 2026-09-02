@@ -138,8 +138,10 @@
   @media(prefers-reduced-motion:reduce){.dlg .next{animation:none;background:var(--gold-dim)}}
   /* while a conversation is open, the door button steps aside and the hotspots stop
      pulsing: the flashing thing on screen is the Next button */
-  .scene:has(.dlg) > .cta.big{opacity:0;pointer-events:none}
-  .scene > .cta.big{transition:opacity .25s}
+  .scene:has(.dlg) > .cta.big,
+  .scene:has(.dlg) > .doorrow,
+  .scene:has(.dlg) > .scenepan{opacity:0;pointer-events:none}
+  .scene > .cta.big,.scene > .doorrow{transition:opacity .25s}
   .scene:has(.dlg) .hs .pulse{display:none}
   .scene:has(.dlg) .hs.next .ring,.scene:has(.dlg) .hs.next .halo{animation:none}
   .scene:has(.dlg) .hs.next .halo{opacity:0}
@@ -651,6 +653,8 @@
     .scenepan{display:block;position:absolute;right:9px;bottom:9px;z-index:6;
       font-family:var(--mono);font-size:10.5px;letter-spacing:.6px;color:var(--gold);
       background:var(--ink);border:1px solid #d9a64866;border-radius:7px;padding:6px 10px}
+    /* the panner owns the bottom-right corner, so the doors sit above it */
+    .scene:has(.scenepan) > .doorrow{bottom:48px}
   }
   #mobiletip{display:none;align-items:flex-start;gap:10px;margin:8px 8px 0;padding:9px 12px;border:1px solid #d9a64855;border-radius:10px;
     background:var(--gold-dim);color:var(--muted);font-size:12.5px;line-height:1.5}
@@ -1975,7 +1979,10 @@ function doorOut(sc,label){
   const idx=ROOM_ORDER.indexOf(CURRENT_ROOM);
   const next=idx>=0?ROOM_ORDER[idx+1]:null;
   const row=el('div','doorrow');
-  row.style.cssText='position:absolute;left:50%;transform:translateX(-50%);bottom:16px;z-index:5;'
+  /* full width, not left:50%: a shrink-wrapped row anchored at the midpoint only
+     has half the scene to lay out in, which wrapped the two buttons onto two lines
+     and pushed the row up over the furniture */
+  row.style.cssText='position:absolute;left:0;right:0;bottom:16px;z-index:5;padding:0 14px;'
     +'display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap';
   if(next&&S.done[CURRENT_ROOM]){
     const m=el('button','cta ghost',GAME.backLabel);
@@ -3038,7 +3045,7 @@ async function stationBooking(){
       if(g.classList.contains('done'))return;
       klaxon.style.transition='opacity .3s';klaxon.style.opacity=1;
       await talk(sc,[
-        {w:'sys',t:'You queue the recovery entry and go home. At 06:12 the overnight run mails you a rejection, and by 08:00 it has been forwarded to you four times, once with just a question mark.'},
+        {w:'sys',t:'You queue the recovery entry and go home. At 06:12 the overnight run mails you a rejection, and by 08:00 it has been forwarded to you four times.'},
         {w:'cfo',n:'M. Brandt · CFO',t:'“The treaty is signed, filed and paid for. Why is our own system refusing my income?”'},
         {w:'chief',n:'V. Torres',t:'“It knows we <em>have</em> cover. It does not know <em>who</em> the cover is on. A treaty has to name the contracts it covers. Without that list there is nothing to measure against: no claims to compare the cover with, and no loss to apply it to.”'},
       ]);
@@ -3191,16 +3198,13 @@ async function stationWorkpaper(){
       maybeEnd();},
     why:async(g)=>{
       if(g.classList.contains('done'))return;
-      await teach('Why claims, and why one method for both kinds of loss',
-        `<p>B119E requires the loss to be allocated on a <strong>systematic and rational</strong> basis. It does not name a method. Clearbook\u2019s accounting policy is to allocate by claims, and to use that one policy for both ways a loss component can start.</p>
-         <table class="roll"><tr><th>Loss event</th><th>Owner of the loss</th><th>Allocation by claims</th></tr>
-         <tr><td>Onerous at inception</td><td>Each contract</td><td>Permitted (B119E)</td></tr>
-         <tr><td>Group turns onerous later</td><td>The group</td><td>The policy Clearbook applies</td></tr></table>
-         <p><strong>The group case decides it.</strong> A group flips when its CSM is exhausted, and the booking of the flip loss to contract rows is arbitrary. A covered fleet can stay profitable while an excluded one drives the group onerous. Book the same loss two ways and a per-contract mirror gives two different answers:</p>
-         <table class="roll"><tr><th>Booking of the flip loss</th><th>Per-contract mirror</th><th>Allocated mirror</th></tr>
+      await teach('Why the loss is spread by claims',
+        `<p>B119E says the loss has to be spread on a <strong>systematic and rational</strong> basis. It does not say how. Clearbook spreads it by claims, and uses that one policy however the loss started.</p>
+         <p><strong>Why it matters.</strong> When a group turns onerous it is the group that carries the loss, so pinning it on single contracts is arbitrary: a covered fleet can be profitable while an excluded one drags the group under. Book the same loss on two different contracts and a per-contract mirror gives two different answers.</p>
+         <table class="roll"><tr><th>Where the loss is booked</th><th>Per-contract mirror</th><th>Allocated mirror</th></tr>
          <tr><td>On M1 (covered)</td><td class="td neg">5’000</td><td class="td pos">3’000</td></tr>
          <tr><td>On M3 (excluded)</td><td class="td neg">0</td><td class="td pos">3’000</td></tr></table>
-         <p><strong>The other case is less forced, and the policy still holds.</strong> Where a group is onerous from the start, the claims allocation differs from a contract-by-contract answer only when loss ratios differ inside that group. Choosing it for both keeps one consistent policy and matches the level the loss component is actually tracked at \u2014 the group \u2014 where no per-contract split exists to fall back on. IFRS 17 measures at group level throughout; it looks at a single contract only where group-level information is not available.</p>`,
+         <p>Spreading by claims gives the same answer either way, at the level the loss component is actually tracked: the group.</p>`,
         ['B119E','47–48']);
       whyed=true;P.why=1;save();
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
