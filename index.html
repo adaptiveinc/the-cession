@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 19:16Z";
+const BUILD="2026-09-02 19:59Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2874,8 +2874,8 @@ async function stationRenewal(){
   bindHotspots(sc,{
     unit:async()=>{
       await teach('',
-        `<p><strong>1 · The unit of account is the group.</strong> Contracts are measured as a group, and the CSM belongs to the group, not to any one contract. M1, M2 and M3 are one group because they were written in the same cohort.</p>
-         <p><strong>2 · A group turns onerous when its CSM runs out.</strong> Worse estimates reduce the group's CSM first. While CSM is left, nothing goes to P&amp;L. Once it reaches zero, the excess is a loss recognized at once, and a loss component records it (paragraphs 47 to 48).</p>
+        `<p><strong>1 · The unit of account is the group.</strong> Contracts are measured as a group, and the CSM belongs to the group, not to any one contract. M1, M2 and M3 are one group.</p>
+         <p><strong>2 · A group turns onerous when its CSM runs out.</strong> Worse estimates reduce the group's CSM first. When there is CSM left, nothing goes to P&amp;L. Once it reaches zero, the excess is a loss recognized immediately, and a loss component records it (paragraphs 47 to 48).</p>
          <p><strong>3 · No single fleet turns the group onerous.</strong> M3 alone could push the whole group into loss while M1 and M2 are still profitable. The loss belongs to the group, not to whichever fleet the claims hit.</p>
          <p><strong>4 · So it does not matter which fleet the claims hit.</strong> This decides the method later in the case: the loss has no owner among the three fleets, so the recovery cannot be worked out one fleet at a time.</p>`,
         ['47–48','B119C']);
