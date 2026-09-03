@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 09:18Z";
+const BUILD="2026-09-03 09:20Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2035,7 +2035,7 @@ function doorOut(sc,label){
     b.onclick=()=>{closeModal();enterRoom(next);};
     row.append(m,b);
   } else {
-    const b=el('button','cta big',label||GAME.backLabel.replace('← ','Back to the ')+' →');
+    const b=el('button','cta big',label||GAME.backLabel.replace('← ','')+' →');
     b.onclick=()=>{closeModal();renderMap();};
     row.append(b);
   }
