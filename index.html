@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 07:18Z";
+const BUILD="2026-09-03 07:19Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2644,7 +2644,7 @@ async function stationDesk(){
       if(g.classList.contains('done'))return;
       if(!quoted){await teach('The quote first','<p>Call Turicum Re first. You need the price before you sign.</p>');return;}
       await talk(sc,[
-        {w:'re',n:'A. Keller · Turicum Re',t:'“Signed at 50%, effective today, the same day as recognition. Turicum Re is on risk from the first franc. And tell Meier the 2023 table was a choice, not bad luck.”'},
+        {w:'re',n:'A. Keller · Turicum Re',t:'“Signed at 50%, effective today, the same day as recognition. Turicum Re is on risk from the first franc.”'},
       ]);
       if(fresh)applyDeltas({alorc:A_LORC,apnl:A_LORC});
       lockAt50();
