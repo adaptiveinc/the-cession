@@ -99,7 +99,14 @@
   @media(max-width:740px) and (orientation:portrait){
     .scenewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .scenewrap::-webkit-scrollbar{display:none}
-    .scenewrap svg{height:62vh;width:auto;max-width:none}
+    .scenewrap svg{height:56vh;height:56dvh;width:auto;max-width:none}
+  }
+  /* a phone held sideways: fit the room to the height that is left under the HUD,
+     not to the width. Width-fitting made the room taller than the screen and
+     pushed the dialogue below the fold. */
+  @media(max-height:540px) and (orientation:landscape){
+    .scenewrap{display:flex;justify-content:center}
+    .scenewrap svg{height:calc(100vh - 88px);height:calc(100dvh - 88px);width:auto;max-width:100%}
   }
   .scene-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:12px 14px;pointer-events:none}
   .scene-top>*{pointer-events:auto}
@@ -600,11 +607,15 @@
     #hud .where{display:none}
     #audit{position:static;margin-left:auto}
     .dirbtn{padding:2px 8px;font-size:9.5px}
-    #ledgerchips{order:9;width:100%;margin-left:0;gap:9px}
+    /* the books on one line that scrolls sideways: a wrapped row costs the room height */
+    #ledgerchips{order:9;width:100%;margin-left:0;gap:9px;flex-wrap:nowrap;overflow-x:auto;
+      scrollbar-width:none;padding-bottom:1px}
+    #ledgerchips::-webkit-scrollbar{display:none}
+    .chip{white-space:nowrap}
     #stage{padding:10px 8px 40px}
     .hero{padding:34px 6px 20px}
     .hero p{font-size:14.5px}
-    .dlg{left:6px;right:6px;bottom:6px;padding:9px 10px;gap:8px}
+    .dlg{left:6px;right:6px;bottom:6px;padding:9px 10px;gap:8px;max-height:46%;overflow-y:auto}
     .dlg p{font-size:12.5px}
     .dlg .pv{width:30px;height:30px;font-size:10px}
     .mwrap{padding:3vh 8px 40px}
@@ -650,11 +661,23 @@
   @media(max-height:540px) and (orientation:landscape){
     #mobiletip{display:none!important}
     /* the right padding is the room the absolutely-placed mastery block needs */
-    #hud{padding:5px 200px 5px 12px;gap:7px}
-    #audit{top:8px}
-    #stage{padding:6px 10px 16px}
-    .dlg{left:8px;right:8px;bottom:6px;padding:8px 10px}
-    .dlg p{font-size:12.5px}
+    #hud{padding:4px 190px 4px 10px;gap:5px 10px}
+    #hud .brand{font-size:14px}
+    #hud .where{display:none}
+    .dirbtn{padding:1px 7px;font-size:9px}
+    /* the books on one line that scrolls sideways, instead of a second row that
+       costs the room its height */
+    #ledgerchips{order:9;width:100%;margin-left:0;gap:9px;flex-wrap:nowrap;overflow-x:auto;
+      scrollbar-width:none;padding-bottom:1px}
+    #ledgerchips::-webkit-scrollbar{display:none}
+    .chip{font-size:10px;white-space:nowrap} .chip b{font-size:11px}
+    #audit{top:5px}
+    #stage{padding:4px 8px 8px}
+    .dlg{left:8px;right:8px;bottom:6px;padding:7px 10px;gap:8px;max-height:46%;overflow-y:auto}
+    .dlg p{font-size:12px;line-height:1.35}
+    .dlg .pv{width:26px;height:26px;font-size:9px}
+    .scene-top{padding:8px 10px}
+    .scene-top .objective{font-size:9px;padding:4px 9px}
     .mwrap{padding:2vh 10px 24px}
     .mcard{padding:15px 16px}
   }
@@ -683,12 +706,12 @@
   <div id="ledgerchips"></div>
   <div id="audit" role="button" tabindex="0" title="Case mastery: earned one right first-try answer at a time. Click to open the audit file."><span>mastery</span><div class="bar"><i id="auditBar" style="width:0%"></i></div><b id="auditVal">0</b></div>
 </div>
-<div id="mobiletip"><span>📱 <strong>On a phone:</strong> the room is wider than the screen. Swipe it, or tap <strong>the data screen →</strong> at the bottom right. The glow marks your next step.</span><button aria-label="Dismiss">×</button></div>
+<div id="mobiletip"><span>📱 <strong>On a phone:</strong> turn it sideways to see the whole room. Upright, the room is wider than the screen: swipe it, or tap <strong>the data screen →</strong> at the bottom right. The glow marks your next step.</span><button aria-label="Dismiss">×</button></div>
 <div id="stage"></div>
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 21:08Z";
+const BUILD="2026-09-03 21:23Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
