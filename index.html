@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:25Z";
+const BUILD="2026-09-03 08:27Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2485,7 +2485,7 @@ async function stationSlip(){
         intro:'<div class="memo"><strong>The proposal:</strong> pool the onerous PA-2026 cohort with profitable business written the same year, so the combined group shows no loss.</div>',
         q:'Can the loss be absorbed by grouping?',
         options:[
-          {t:'No. Contracts onerous at initial recognition go into their own group, by design',ok:true,why:'Paragraph 16 splits a portfolio into at least three groups: contracts <strong>onerous at initial recognition</strong>, contracts with no significant chance of becoming onerous, and the rest. Paragraph 22 adds a split by underwriting year. The onerous group exists so a known day-one loss cannot be hidden in another group’s profit.'},
+          {t:'No. Contracts onerous at initial recognition go into their own group',ok:true,why:'Paragraph 16 splits a portfolio into at least three groups: contracts <strong>onerous at initial recognition</strong>, contracts with no significant chance of becoming onerous, and the rest. Paragraph 22 adds a split by underwriting year. The onerous group exists so a known day-one loss cannot be hidden in another group’s profit.'},
           {t:'Yes, if the profitable business is in the same annual cohort',why:'The annual cohort (paragraph 22) only splits groups further, by underwriting year. It never merges an onerous group into a profitable one.'},
           {t:'Yes, at portfolio level: losses net against expected profits of similar risks',why:'Measurement happens at group level, not portfolio level. The onerous group is measured on its own (paragraphs 16 and 24).'}],
         cite:['16','22']},fresh);
