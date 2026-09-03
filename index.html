@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 09:13Z";
+const BUILD="2026-09-03 09:14Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -1335,6 +1335,35 @@ function actOneRecap(){
       </ol>
       <div class="rule"><b>The rule to take to Clearbook.</b> The loss and the recovery are two separate figures, booked in the same period. The cost of reinsurance is a different line item, reinsurance CSM.</div>`);
     card.append(el('div','',['47','16','66A','86'].map(citeChip).join('')));
+    const f=el('div','mfoot'), b=el('button','cta','Close the case →');
+    b.onclick=()=>closeModal(); f.append(b); card.append(f);
+    openModal(card,true,res);
+  });
+}
+
+/* Act Two closes at the sign-off, so the look back at Clearbook is shown there,
+   before the closing screen */
+function actTwoRecap(){
+  return new Promise(res=>{
+    const card=el('div','mcard recap');
+    card.append(el('div','qk','Act Two · case closed'));
+    card.append(el('h4','','What you did at Clearbook'));
+    card.insertAdjacentHTML('beforeend',`
+      <div class="score">
+        <div class="sc loss"><b>−${fmt(FLIP_LC)}</b><span>THE LOSS</span></div>
+        <div class="sc back"><b>+${fmt(RECOVERY)}</b><span>COMES BACK</span></div>
+        <div class="sc left"><b>−${fmt(r2(FLIP_LC-RECOVERY))}</b><span>CLEARBOOK KEEPS</span></div>
+      </div>
+      <ol class="beats">
+        <li><b>The book was priced right.</b> Cohort Motor-2026 was written with a CSM of ${fmt(N.csm0)}. Treaty QS50 was signed the same day, before the cohort was recognized, so a later loss can be recovered (B119C).</li>
+        <li><b>The CSM ran out.</b> In 2027 the reserve review made future claims worse by ${fmt(N.det2027)}. The CSM absorbed ${fmt(CSM_2027)} and stopped at zero. The excess, ${fmt(FLIP_LC)}, is a loss component recognized immediately.</li>
+        <li><b>The treaty had to name what it covers.</b> Without the list of covered contracts no recovery could be calculated. QS50 covers M1 and M2, not M3.</li>
+        <li><b>The recovery ratio is by cohort.</b> The treaty covers ${N.allocation.toFixed(2)} of the cohort's claims and pays back half of those: ${N.allocation.toFixed(2)} × ${N.ratio.toFixed(2)} = ${N.share.toFixed(2)}.</li>
+        <li><b>Two entries, one amount.</b> ${fmt(FLIP_LC)} × ${N.share.toFixed(2)} = ${fmt(RECOVERY)}: income in P&amp;L on <strong>recovery of losses on contracts turning onerous</strong>, and the <strong>loss-recovery component</strong> of the reinsurance asset on the balance sheet. The treaty CSM does not move.</li>
+        <li><b>Both sides run off together.</b> The loss component and the loss-recovery component are mirrored and run off at the same speed. Over the life of the treaty the recovery lines add up to zero.</li>
+      </ol>
+      <div class="rule"><b>The rule to take away.</b> The recovery is calculated by cohort, not by single contract, and it is booked in the same period as the loss. The cost of reinsurance is a different line item, reinsurance CSM.</div>`);
+    card.append(el('div','',['47–48','B119C','B119E','66A','66B','66(c)'].map(citeChip).join('')));
     const f=el('div','mfoot'), b=el('button','cta','Close the case →');
     b.onclick=()=>closeModal(); f.append(b); card.append(f);
     openModal(card,true,res);
@@ -3634,8 +3663,10 @@ async function stationAudit(){
   /* the schedule foots, and the sign-off goes on the file */
   const level=()=>{verdict.textContent='NET  '+fmt(r2(sumIn+sumOut));verdict.setAttribute('fill','#63b380');
     signoff.style.transition='opacity .6s';signoff.style.opacity=1;};
-  const maybeEnd=()=>{ if(count()<3||S.done.audit)return; completeRoom('audit');
-    setObjective('The case is closed');endOverlay(); };
+  const maybeEnd=async()=>{ if(count()<3||S.done.audit)return; completeRoom('audit');
+    setObjective('The case is closed');
+    await actTwoRecap();
+    endOverlay(); };
   bindHotspots(sc,{
     weigh:async(g)=>{
       if(g.classList.contains('done'))return;
