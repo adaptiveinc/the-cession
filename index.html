@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:57Z";
+const BUILD="2026-09-03 09:02Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3214,7 +3214,7 @@ async function stationWorkpaper(){
       await teach('Why the covered share is measured by claims',
         `<p>Clearbook measured how much of the cohort the treaty covers by using claims: expected claims on M1 and M2, <span class="num">${fmt(N.covered)}</span>, over the expected claims of the whole cohort, <span class="num">${fmt(N.groupClaims)}</span>, gives <span class="num">${N.allocation.toFixed(2)}</span>.</p>
          <p><strong>Why claims are a reasonable basis.</strong> B119E requires a systematic and rational allocation, but does not say which one. The treaty pays a share of claims, so expected claims measure how much of the group's risk the treaty actually takes. A fleet with more claims carries more of the group's loss and more of the treaty's cover.</p>
-         <p><strong>Why it matters.</strong> When a group turns onerous, the loss belongs to the group, not to any one fleet. Working out the recovery fleet by fleet would give a different answer depending on which fleet the loss is booked against:</p>
+         <p><strong>Why it matters.</strong> A CSM turns into a loss component by cohort, so the recovery has to be calculated by cohort, not by single underlying contract. Within a cohort, one contract can be profitable while the others are very negative and turn the whole cohort onerous. If the treaty covers the profitable contract and the recovery is calculated by applying the quota share only to that contract, there is no recovery income for the cohort at all:</p>
          <table class="roll"><tr><th>Where the loss is booked</th><th>Fleet by fleet</th><th>Weighted by claims</th></tr>
          <tr><td>On M1 (covered)</td><td class="td neg">5’000</td><td class="td pos">3’000</td></tr>
          <tr><td>On M3 (excluded)</td><td class="td neg">0</td><td class="td pos">3’000</td></tr></table>
