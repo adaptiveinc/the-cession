@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 09:03Z";
+const BUILD="2026-09-03 09:09Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3411,7 +3411,7 @@ async function stationPosting(){
         ctx:'<div class="memo"><strong>Booked so far:</strong> income of <b>'+fmt(RECOVERY)+'</b> as recovery of losses. The 2027 review was <b>'+fmt(N.det2027)+'</b> adverse; the group\u2019s own CSM absorbed <b>'+fmt(CSM_2027)+'</b> of it and the excess <b>'+fmt(FLIP_LC)+'</b> became the loss component. The treaty CSM has already taken <b>'+fmt(CEDED_CSM_ADJ)+'</b>, mirroring the absorbed part.</div>',
         q:'Income was the first entry. Where does the matching second entry go?',
         options:[
-          {t:'On the balance sheet, as the loss-recovery component of the reinsurance asset. It is the part of the review that does <em>not</em> go to the treaty CSM',ok:true,why:'Both entries are real: the income in P&amp;L, and the same <strong>'+fmt(RECOVERY)+'</strong> on the balance sheet as the <strong>loss-recovery component</strong> of the asset for remaining coverage (paragraph 66B).<br><br>Follow the whole review. '+fmt(N.det2027)+' of worse claims, mirrored at '+N.share.toFixed(2)+', is <strong>'+fmt(r2(N.det2027*N.share))+'</strong> of change on the treaty. Of that, '+fmt(CSM_2027)+' \u00d7 '+N.share.toFixed(2)+' = <strong>'+fmt(CEDED_CSM_ADJ)+'</strong> mirrors what the group\u2019s own CSM absorbed, and adjusts the treaty CSM in the normal way. The rest, '+fmt(FLIP_LC)+' \u00d7 '+N.share.toFixed(2)+' = <strong>'+fmt(RECOVERY)+'</strong>, mirrors the loss component. That is the amount in front of you. It goes to P&amp;L and to the <strong>loss-recovery component</strong>.'},
+          {t:'On the balance sheet, as the loss-recovery component of the reinsurance asset. It is the part of the review that does <em>not</em> go to the treaty CSM',ok:true,why:'Both entries are real: the income in P&amp;L, and the same <strong>'+fmt(RECOVERY)+'</strong> on the balance sheet as the <strong>loss-recovery component</strong> of the asset for remaining coverage (paragraph 66B).'},
           {t:'Against the treaty CSM, on top of the '+fmt(CEDED_CSM_ADJ)+' it already took',why:'Then the treaty CSM would move by the whole '+fmt(r2(N.det2027*N.share))+', and the '+fmt(RECOVERY)+' would count twice: as income now and as margin still to be earned. Paragraph 66(c) splits the change to stop that. The part matching what the underlying CSM absorbed goes to the treaty CSM. The part matching the loss component is excluded.'},
           {t:'Nowhere. Income is income and the entry is complete',why:'The books would not balance. '+fmt(RECOVERY)+' of income means the reinsurance asset is worth '+fmt(RECOVERY)+' more. That increase is recorded as the loss-recovery component.'}],
         cite:['66B','66(c)']},fresh);
