@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 07:29Z";
+const BUILD="2026-09-03 07:32Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2766,7 +2766,7 @@ async function stationShortyear(){
     contrast:async(g)=>{
       if(g.classList.contains('done'))return;
       await quiz({kicker:'Two lines for the same kind of income',pts:QUESTION_PTS,
-        intro:'<div class="memo"><strong>Limmat\u2019s recovery income went on the line \u201crecovery of losses on onerous underlying contracts\u201d.</strong> There is a similar line item called \u201crecovery of losses on contracts turning onerous\u201d. Both mean a reinsurer will pay back part of a loss just booked. One fact about the loss decides which line is used. The two names are a <b>house policy</b> at both companies, not an IFRS 17 requirement. The standard only asks that the reinsurance result be shown separately.</div>',
+        intro:'<div class="memo"><strong>Limmat\u2019s recovery income went on the line \u201crecovery of losses on onerous underlying contracts\u201d.</strong> There is a similar line item called \u201crecovery of losses on contracts turning onerous\u201d. The separate line items are defined by the company\u2019s <b>accounting policy</b>. IFRS 17 only requires that the reinsurance result is shown separately from the insurance service result.</div>',
         q:'What decides which of the two recovery lines the income is reported on?',
         options:[
           {t:'Whether the contracts were loss-making from the start. Onerous underlying contracts: sold at a loss-making price, like PA-2026. Turning onerous: priced right, and turned loss-making later',ok:true,why:'A reader wants to know <em>what kind of problem</em> the reinsurer is paying for. <strong>Onerous underlying contracts</strong> means the pricing was wrong: loss-making the day they were signed, like Meier’s pricing. <strong>Contracts turning onerous</strong> means the pricing was right and the market moved: a claims shock, or inflation. Same arithmetic, different cause.'},
