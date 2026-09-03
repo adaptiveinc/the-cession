@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 07:12Z";
+const BUILD="2026-09-03 07:16Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2657,7 +2657,7 @@ async function stationDesk(){
         intro:'<div class="memo"><strong>The lifetime economics at 50%:</strong> premium <b>'+fmt(NA.quote(.5).prem)+'</b> paid for expected recoveries of <b>'+fmt(NA.quote(.5).rec)+'</b>: a net cost of <b>'+fmt(A_COST)+'</b>. Separately, the recovery lines will recognize <b>'+fmt(A_LORC)+'</b> and reverse <b>'+fmt(A_LORC)+'</b>.</div>',
         q:'Where does the cost of the reinsurance show up in the accounts?',
         options:[
-          {t:'Not in the recovery lines, which sum to zero. The net cost is spread over the coverage period inside net expense from reinsurance held',ok:true,why:'The recovery lines are a <strong>timing</strong> device. They put income beside the loss it covers and undo themselves to zero over the life. The price of the treaty is separate: premium less expected recoveries, '+fmt(A_COST)+', spread across the coverage period in net expense from reinsurance contracts held (paragraph 86). The cost is never in the recovery lines.'},
+          {t:'Not in the recovery lines, which sum to zero. The net cost is spread over the coverage period inside net expense from reinsurance held',ok:true,why:'The recovery lines are a <strong>timing</strong> device. They put the recovery income in the same period as the loss. Over the coverage period the same amount is reversed, so the recovery lines add up to zero over the life of the treaty. The price of the treaty is separate: premium less expected recoveries, '+fmt(A_COST)+', spread across the coverage period in net expense from reinsurance contracts held (paragraph 86). The cost is never in the recovery lines.'},
           {t:'In the loss-recovery component, which is why it is smaller than the loss',why:'The loss-recovery component is smaller because the cession is 50%, not because of the price. The price never enters it (B119D).'},
           {t:'It nets against the day-one recovery income, leaving '+fmt(r2(A_LORC-A_COST))+' of true income',why:'The cost is spread over two years. The income is booked on day one. Netting them would misstate both years. They stay on separate lines so a reader sees the recovery and its price.'}],
         cite:['86','B119D']},fresh);
