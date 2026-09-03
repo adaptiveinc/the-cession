@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:32Z";
+const BUILD="2026-09-03 08:33Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -1331,7 +1331,7 @@ function actOneRecap(){
         <li><b>You keep it visible.</b> Mixing these contracts in with profitable ones would have buried the loss. That is not allowed: they are grouped on their own, where the loss can be seen.</li>
         <li><b>Half of it comes back.</b> Turicum Re carries half the book, so ${fmt(A_LORC)} of the loss is recovered, and it goes on the books in the <em>same period</em> as the loss, not when the cash arrives.</li>
         <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. The ${fmt(A_COST)} difference is what certainty costs, and it is <em>not</em> an expense on day one: it sits in the CSM of the cover you hold. Paragraph 66A then <em>adds</em> the ${fmt(A_LORC)} recovery to that CSM, so it starts at ${fmt(A_CSM_END)}. The ${fmt(A_CSM_END)} comes off across the two covered years in <strong>net expense from reinsurance contracts held</strong>.</li>
-        <li><b>Both sides run off together.</b> Half the cover is given in 2026 and half in 2027. The loss and the recovery come down side by side, and both finish at zero.</li>
+        <li><b>Both sides run off together.</b> The loss component and the loss-recovery component are mirrored and run off at the same speed.</li>
       </ol>
       <div class="rule"><b>The rule to take to Clearbook.</b> The loss and the recovery are two separate figures, booked in the same period. The cost of reinsurance is a different line item, reinsurance CSM.</div>`);
     card.append(el('div','',['47','16','66A','86'].map(citeChip).join('')));
