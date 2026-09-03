@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:49Z";
+const BUILD="2026-09-03 08:54Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3183,11 +3183,11 @@ async function stationWorkpaper(){
       setDial('#dAlloc',N.allocation.toFixed(2));
       await quiz({kicker:'The second question · how much comes back',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>Inside the cover:</strong> QS50 takes <b>50%</b> of every claim on M1 and M2. Covered claims <b>'+fmt(N.covered)+'</b>, expected recoveries <b>'+fmt(N.ceded)+'</b>.<br><br><strong>Already worked out:</strong> the treaty covers <b>'+N.allocation.toFixed(2)+'</b> of the cohort ('+fmt(N.covered)+' / '+fmt(N.groupClaims)+').</div>',
-        q:'QS50 pays back half of every claim it covers. Multiply that by the '+N.allocation.toFixed(2)+' from the first question. What share of the loss does the treaty recover?',
+        q:'QS50 pays back half of every claim it covers. Previously we calculated that the treaty covers '+(N.allocation*100).toFixed(0)+'% of the whole cohort. What is the final recovery ratio on the underlying loss-making cohort?',
         options:[
-          {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.allocation.toFixed(2)+' × '+N.ratio.toFixed(2)+' = '+N.share.toFixed(2),ok:true,why:'The recovery ratio is <strong>expected recoveries over covered claims</strong> (B119D): '+fmt(N.ceded)+' / '+fmt(N.covered)+' = '+N.ratio.toFixed(2)+'. The recovery share is the two factors multiplied: <strong>'+N.share.toFixed(2)+'</strong>. Every contract in the group carries it. Check: for a quota share the ratio equals the cession, and '+N.ratio.toFixed(2)+' is the cession.'},
-          {t:'ratio '+N.ratio.toFixed(2)+', so share = '+N.ratio.toFixed(2)+': the cession percentage is the answer',why:'That would be right only if the treaty covered the whole group. It covers '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'},
-          {t:'ratio '+fmt(N.ceded)+' / '+fmt(N.groupClaims)+' = '+(N.ceded/N.groupClaims).toFixed(2)+', which is the share directly',why:'This gives the right number, '+N.share.toFixed(2)+', but only by chance: the covered claims cancel out. Keep the two factors apart. The ratio belongs to the <em>treaty</em> and is the same for every group it covers. The allocation belongs to the <em>group</em>. Merge them and a treaty over two groups gives the wrong share for both.'}],
+          {t:N.allocation.toFixed(2)+', since the underlying cohort is '+(N.allocation*100).toFixed(0)+'% covered',why:''+(N.allocation*100).toFixed(0)+'% is how much of the cohort the treaty covers. Only half of that comes back, so the ratio is '+N.allocation.toFixed(2)+' × '+N.ratio.toFixed(2)+' = '+N.share.toFixed(2)+'.'},
+          {t:N.share.toFixed(2)+' ('+N.allocation.toFixed(2)+' × '+N.ratio.toFixed(2)+'), since half of the covered part of the underlying cohort is recoverable',ok:true,why:'The recovery ratio is <strong>expected recoveries over covered claims</strong> (B119D): '+fmt(N.ceded)+' / '+fmt(N.covered)+' = '+N.ratio.toFixed(2)+'. The recovery share is the two factors multiplied: <strong>'+N.share.toFixed(2)+'</strong>. Every contract in the group carries it. Check: for a quota share the ratio equals the cession, and '+N.ratio.toFixed(2)+' is the cession.'},
+          {t:N.ratio.toFixed(2)+', since the treaty covers half of M1 and M2 in the underlying cohort',why:'That would be right only if the treaty covered the whole group. It covers '+(N.allocation*100).toFixed(0)+'% of it, so the cession has to be scaled by the allocation as well.'}],
         cite:['B119D','B119E']},fresh);
       dialed=true;P.split=1;save();g.classList.add('done');
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
