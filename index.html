@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:43Z";
+const BUILD="2026-09-03 08:44Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2912,7 +2912,7 @@ async function stationRenewal(){
           ctx:'<div class="memo"><strong>2026:</strong> opening CSM <b>'+fmt(N.csm0)+'</b>, interest <b>10%</b>, then half the remaining balance released for service given.</div>',
           q:'Interest, then changes, then release. Why does the release come last?',
           options:[
-            {t:'The release measures service given in the period, so it works on the fully updated balance',ok:true,why:'Paragraphs 44 to 45 require a fixed order of roll forward: interest, then changes in <em>future</em> service, then the release for service given <em>in the period</em>. Release first and you release from a balance that has not yet been corrected for this year’s changes. That order matters in 2027: the adjustment uses up the whole CSM, so nothing is left to release.'},
+            {t:'The release measures service given in the period, so it works on the fully updated balance',ok:true,why:'Paragraphs 44 to 45 require a fixed order of roll forward: interest, then changes in <em>future</em> service, then the release for service given <em>in the period</em>. Release first and you release from a balance that has not yet been corrected for this year’s changes.'},
             {t:'It does not matter: addition is commutative',why:'It matters once the CSM hits zero. The order decides how much is left to release and whether a loss comes out (paragraph 48). That is what happens in 2027.'},
             {t:'Because interest is a financing item and must be isolated first',why:'Interest does come first, but that is not why the release is last. The release is last because it is measured on the balance after all future-service changes (paragraph 44).'}],
           cite:['44','45']},fresh);
