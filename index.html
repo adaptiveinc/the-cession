@@ -675,7 +675,7 @@
 
 <div id="hud">
   <span class="brand">The <em>Cession</em></span>
-  <span class="where" id="whereLabel">Getting one reinsurance deal done, and accounted for, at Clearbook Assurance</span>
+  <span class="where" id="whereLabel">Two books, two companies, one standard: getting reinsurance to count</span>
   <button id="dirBtn" class="dirbtn" title="Case card: the paragraphs behind each meeting">ⓘ case card</button>
   <button id="themeBtn" class="dirbtn" title="Switch between light and dark mode">☀ light</button>
   <button id="restartBtn" class="dirbtn" title="Restart the case from the beginning">↺ restart</button>
@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 09:20Z";
+const BUILD="2026-09-03 21:08Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -731,13 +731,13 @@ const GAME={
   booksCallout:'<b>Your books just opened.</b>You can view the movement of your balances here. Click any one to open its full history.',
   masteryCallout:'<b>That answer just went in your file.</b>The bar collects points as you answer the quiz questions. Get them all right and you finish on 100. Click it any time to see the ones you missed and try them again.',
   drill:{
-    retakeIntro:'Every missed question answered right. Before the points come back, one pass through the numbers of both cases: eight quick questions. Wrong answers cost nothing here. You only have to finish.',
-    libLine:'eight quick questions on the numbers of both cases. Practice only, nothing at stake.',
-    pendingLine:'Retake cleared. Finish the numbers drill, eight quick questions with nothing at stake, and the points come back.',
-    doneCopy:'All eight numbers walked through, from the day-one net of −6’000 to the lifetime sum of exactly zero.'},
+    retakeIntro:'You have answered every missed question correctly. Before the points come back, work through the numbers of both cases once: seven quick questions. Wrong answers cost nothing here. You only have to finish.',
+    libLine:'seven quick questions on the numbers of both cases. Practice only, nothing at stake.',
+    pendingLine:'Retake cleared. Finish the numbers drill, seven quick questions with nothing at stake, and the points come back.',
+    doneCopy:'You walked through all seven numbers, from the day-one net of −6’000 to the lifetime sum of exactly zero.'},
   capstoneTitle:'Year five: the stop-loss on the renewal desk',
-  capstoneBlurb:'one treaty the mirror was not built for, worth 16 mastery. The cases close after this call.',
-  capstoneIntro:'Ten meetings used proportional treaties, where one recovery ratio scales every loss exactly. This final case asks whether you know where that stops working. Odermatt is back with a cheap stop-loss. Get the call right first time for <strong>16 mastery points</strong>. Get it wrong and a finding is recorded, with another attempt later. Take your time with the memo.',
+  capstoneBlurb:'one treaty the mirror cannot measure, worth 16 mastery points. The cases close after this call.',
+  capstoneIntro:'Ten meetings used proportional treaties, where one recovery ratio scales every loss exactly. In this final case you decide where that stops working. Odermatt is back with a cheap stop-loss. Get the call right first time for <strong>16 mastery points</strong>. Get it wrong and a finding is recorded, with another attempt later. Take your time with the memo.',
 };
 /* the cast: which figure kind animates for each dialogue slot, and its chip */
 const SPEAKERS={chief:'actuary',aud:'auditor',bro:'ana',re:'ana',cfo:'staff2',cuo:'staff2',you:'staff'};
@@ -1210,12 +1210,12 @@ const COMP_NAMES={
   ccsm:'CSM of the treaty held (QS50, Turicum Re)',
   pnl:'The Clearbook recovery lines in P&L, booked to date'};
 const COMP_NOTES={
-  alc:'Loss-making from the first day, not after a CSM ran out: premiums of '+fmt(NA.prem)+' against fulfilment cash flows of '+fmt(NA.fcf)+' (paragraph 47). No CSM ever existed on this cohort.',
+  alc:'This cohort was loss-making from the first day, not after a CSM ran out: premiums of '+fmt(NA.prem)+' against fulfilment cash flows of '+fmt(NA.fcf)+' (paragraph 47). No CSM ever existed on this cohort.',
   alorc:'The underlying loss scaled by the recovery share. The treaty covers the whole cohort, so the allocation is 1.00 and the share <em>is</em> the cession.',
   apnl:'Recognized as <strong>recovery of losses on onerous underlying contracts</strong>, reversed through <strong>reversal of loss recoveries</strong> as the two coverage years run. Sums to exactly zero over the life.',
   lorc:'Every movement of the underlying loss component, scaled by the recovery share of 0.3. Because the mirror scales the loss component itself, this balance can never exceed the recoverable part of it (B119F).',
   ccsm:'The treaty\u2019s own CSM. The 2027 review moves it by <strong>'+fmt(CEDED_CSM_ADJ)+'</strong>: the part of the change that mirrors what the group\u2019s own CSM absorbed. The other '+fmt(RECOVERY)+' mirrors the loss component, is excluded by paragraph 66(c), and goes to P&L. Later deteriorations do not move it, because the group has no CSM left.',
-  pnl:'Recovery income is timing, not profit. Over the life of the case these lines sum to <strong>exactly zero</strong>.'};
+  pnl:'Recovery income is a timing item, not profit. Over the life of the case these lines sum to <strong>exactly zero</strong>.'};
 
 /* what the books look like once each meeting is closed (merged in room order) */
 const CHECK={
@@ -1328,9 +1328,9 @@ function actOneRecap(){
       <ol class="beats">
         <li><b>The price was wrong.</b> Limmat sold the cover for ${fmt(NA.prem)} and expects to pay ${fmt(NA.fcf)}. The gap is ${fmt(NA.lc)}, and it is there the day the contracts are signed.</li>
         <li><b>You book it straight away.</b> When a contract has a negative present value on day one, it is a loss that has to be recognized immediately. The whole ${fmt(NA.lc)} goes on the P&amp;L on day one.</li>
-        <li><b>You keep it visible.</b> Mixing these contracts in with profitable ones would have buried the loss. That is not allowed: they are grouped on their own, where the loss can be seen.</li>
+        <li><b>You keep it visible.</b> Mixing these contracts in with profitable ones would have hidden the loss. That is not allowed: they are grouped on their own, where the loss can be seen.</li>
         <li><b>Half of it comes back.</b> Turicum Re carries half the book, so ${fmt(A_LORC)} of the loss is recovered, and it goes on the books in the <em>same period</em> as the loss, not when the cash arrives.</li>
-        <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. The ${fmt(A_COST)} difference is what certainty costs, and it is <em>not</em> an expense on day one: it sits in the CSM of the cover you hold. Paragraph 66A then <em>adds</em> the ${fmt(A_LORC)} recovery to that CSM, so it starts at ${fmt(A_CSM_END)}. The ${fmt(A_CSM_END)} comes off across the two covered years in <strong>net expense from reinsurance contracts held</strong>.</li>
+        <li><b>The cover has a price.</b> Turicum charges ${fmt(q.prem)} for cover worth ${fmt(q.rec)}. The ${fmt(A_COST)} difference is the price of the cover, and it is <em>not</em> an expense on day one: it sits in the CSM of the cover you hold. Paragraph 66A then <em>adds</em> the ${fmt(A_LORC)} recovery to that CSM, so it starts at ${fmt(A_CSM_END)}. The ${fmt(A_CSM_END)} comes off across the two covered years in <strong>net expense from reinsurance contracts held</strong>.</li>
         <li><b>Both sides run off together.</b> The loss component and the loss-recovery component are mirrored and run off at the same speed.</li>
       </ol>
       <div class="rule"><b>The rule to take to Clearbook.</b> The loss and the recovery are two separate figures, booked in the same period. The cost of reinsurance is a different line item, reinsurance CSM.</div>`);
@@ -1382,13 +1382,13 @@ function showDirectory(){
      <strong>7 · The Mirror Run</strong>: the income is the loss times the share (B119D); the cap on the loss-recovery component holds by construction (B119F).<br>
      <strong>8 · The Two Entries</strong>: the income line, and the loss-recovery component of the reinsurance asset that carries it on the balance sheet (paragraph 66B).<br>
      <strong>9 · The Run-Off</strong>: every movement of the loss component is mirrored, so the recovery runs off with it (B119F).<br>
-     <strong>10 · The Sign-Off</strong>: the recovery lines are a timing device and sum to zero over a life. The cost of cover is on its own line.</p>
+     <strong>10 · The Sign-Off</strong>: the recovery lines only shift timing and sum to zero over the life of the treaty. The cost of cover is on its own line.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
      <p><strong>How to read the references.</strong> The gold tags point to the IFRS 17 paragraph behind each rule. A plain number is a paragraph of the standard (paragraph 66A). A number starting with B is in Appendix B, the application guidance (paragraph B119D). Letters in brackets, as in 66(c), are subparagraphs. Click any tag for its full reference.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
      <p><strong>The P&amp;L lines these cases produce.</strong> Recovery of losses on onerous underlying contracts · changes in expected loss recoveries · reversal of loss recoveries · recovery of losses on contracts turning onerous · interest accretion on loss recovery · and, on the balance sheet inside the reinsurance CSM, the loss recovery adjustment.</p>
      <hr style="border:none;border-top:1px solid #2c394a;margin:14px 0">
-     <p><strong>Assumptions of these cases.</strong> Act Two's numbers follow this module's standard worked example, restated in whole francs: one cohort of three fleet contracts, three annual periods at a flat 10%, half the remaining balance released each year. Act One is a companion case built to the same conventions: premiums <span class="num">100’000</span> against fulfilment cash flows of <span class="num">112’000</span>, two coverage years with half the service in each, discounting immaterial, and Turicum Re quoting any cession at expected claims plus a margin of 6% of the original premium. <strong>Proportional treaties only</strong>: the mirror multiplies every loss event by one recovery ratio, which is exact when recoveries track claims proportionally. The timing condition (B119C) is met in both acts because both treaties signed with, or before, their cohorts; cover is non-overlapping; and a recovery is only booked on cover bought for business the company wrote itself. <strong>The Clearbook treaty's own CSM moves once</strong>, and the split is the point. The 2027 review of <span class="num">${fmt(N.det2027)}</span> mirrors onto the treaty as <span class="num">${fmt(r2(N.det2027*N.share))}</span> of eligible change. The part matching what the group's own CSM absorbed, <span class="num">${fmt(CSM_2027)}</span> × ${N.share.toFixed(2)} = <span class="num">${fmt(CEDED_CSM_ADJ)}</span>, adjusts the treaty CSM in the ordinary way, taking it from <span class="num">${fmt(N.cededCsm0)}</span> to <span class="num">${fmt(CEDED_CSM_END)}</span>. The part matching the loss component, <span class="num">${fmt(RECOVERY)}</span>, is excluded by paragraph 66(c) and goes to profit or loss. Later deteriorations move it by nothing: by then the group has no CSM to absorb anything. Limmat is the other mechanic: onerous at inception, so paragraph 66A <em>adds</em> the recovery to the treaty's net cost, <span class="num">${fmt(A_CSM0)}</span> to <span class="num">${fmt(A_CSM_END)}</span>. Limmat's treaty is summarized by its expected net cost. Out of scope: the premium allocation approach, transition, and the disclosure requirements themselves. The year-five offer is where the proportional assumption breaks.</p>
+     <p><strong>Assumptions of these cases.</strong> Act Two's numbers follow this module's standard worked example, restated in whole francs: one cohort of three fleet contracts, three annual periods at a flat 10%, half the remaining balance released each year. Act One is a companion case built to the same conventions: premiums <span class="num">100’000</span> against fulfilment cash flows of <span class="num">112’000</span>, two coverage years with half the service in each, discounting immaterial, and Turicum Re quoting any cession at expected claims plus a margin of 6% of the original premium. <strong>Proportional treaties only</strong>: the mirror multiplies every loss event by one recovery ratio, which is exact when recoveries track claims proportionally. The timing condition (B119C) is met in both acts because both treaties signed with, or before, their cohorts; cover is non-overlapping; and a recovery is only booked on cover bought for business the company wrote itself. <strong>The Clearbook treaty's own CSM moves once</strong>, and the split is what matters. The 2027 review of <span class="num">${fmt(N.det2027)}</span> mirrors onto the treaty as <span class="num">${fmt(r2(N.det2027*N.share))}</span> of eligible change. The part matching what the group's own CSM absorbed, <span class="num">${fmt(CSM_2027)}</span> × ${N.share.toFixed(2)} = <span class="num">${fmt(CEDED_CSM_ADJ)}</span>, adjusts the treaty CSM in the ordinary way, taking it from <span class="num">${fmt(N.cededCsm0)}</span> to <span class="num">${fmt(CEDED_CSM_END)}</span>. The part matching the loss component, <span class="num">${fmt(RECOVERY)}</span>, is excluded by paragraph 66(c) and goes to profit or loss. Later deteriorations move it by nothing: by then the group has no CSM to absorb anything. Limmat works the other way round: onerous at inception, so paragraph 66A <em>adds</em> the recovery to the treaty's net cost, <span class="num">${fmt(A_CSM0)}</span> to <span class="num">${fmt(A_CSM_END)}</span>. Limmat's treaty is summarized by its expected net cost. Out of scope: the premium allocation approach, transition, and the disclosure requirements themselves. The year-five offer is where the proportional assumption breaks.</p>
      <p style="color:var(--faint);font-family:var(--mono);font-size:10.5px;margin-top:14px">Build ${BUILD}</p>`,
     ['16','47','66A','66B','B119C','B119D','B119E','B119F','66(c)','86']);
 }
@@ -1450,7 +1450,7 @@ function showAudit(){
   const f=el('div','mfoot');const b=el('button','cta','Close');b.onclick=closeModal;f.append(b);card.append(f);
   openModal(card,true);
 }
-/* ================= the numbers drill: eight, nothing at stake ================= */
+/* ================= the numbers drill: seven, nothing at stake ================= */
 const NUMQ=[
  {kicker:'The day-one net',q:'Limmat: loss at signing '+fmt(NA.lc)+', quota share signed at 50%. What is the day-one net of loss and recovery?',
   options:[{t:'−'+fmt(Math.abs(NA.quote(.5).net)),ok:true,why:'Loss −'+fmt(NA.lc)+' plus recovery +'+fmt(A_LORC)+'. Both lines stay visible. Only the net is smaller.'},
@@ -1476,10 +1476,6 @@ const NUMQ=[
   options:[{t:fmt(Math.abs(ROLLS[3].lorc)),ok:true,why:'Balance before release '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc))+'. Half of it is '+fmt(Math.abs(ROLLS[3].lorc))+', leaving '+fmt(r2(RECOVERY+ROLLS[1].lorc+ROLLS[2].lorc+ROLLS[3].lorc))+'.'},
            {t:fmt(r2(RECOVERY*0.5)),why:'That releases against the opening balance, before this year’s interest and deterioration.'},
            {t:'0',why:'The loss component is running off, and the mirror copies every movement.'}]},
- {kicker:'The treaty CSM',q:'The treaty’s own CSM starts at '+fmt(N.cededCsm0)+'. The 2027 review is '+fmt(N.det2027)+' adverse, of which the group’s own CSM absorbs '+fmt(CSM_2027)+'. Where does the treaty CSM end?',
-  options:[{t:fmt(CEDED_CSM_END)+', taking the '+fmt(CEDED_CSM_ADJ)+' that mirrors the absorbed part and nothing else',ok:true,why:fmt(CSM_2027)+' \u00d7 '+N.share.toFixed(2)+' = <strong>'+fmt(CEDED_CSM_ADJ)+'</strong> adjusts the treaty CSM, because that part of the review did adjust the group’s own CSM. The other '+fmt(FLIP_LC)+' \u00d7 '+N.share.toFixed(2)+' = '+fmt(RECOVERY)+' mirrors the loss component and paragraph 66(c) excludes it. '+fmt(N.cededCsm0)+' + '+fmt(CEDED_CSM_ADJ)+' = '+fmt(CEDED_CSM_END)+'.'},
-           {t:fmt(r2(N.cededCsm0+r2(N.det2027*N.share)))+', taking the whole eligible change of '+fmt(r2(N.det2027*N.share)),why:'That excludes nothing. The '+fmt(RECOVERY)+' mirroring the loss component has to be kept out, or it counts as income now and as margin still to be earned.'},
-           {t:fmt(N.cededCsm0)+', because a loss component never adjusts the treaty CSM',why:'True for the '+fmt(RECOVERY)+' that mirrors the loss component, not for the rest of the review. The '+fmt(CSM_2027)+' the group’s CSM absorbed is mirrored into the treaty CSM in the normal way.'}]},
  {kicker:'The lifetime',q:'Add every recovery line the case produced, across its whole life. What is the total?',
   options:[{t:'0',ok:true,why:'Everything recognized was reversed as the cover was received. The recovery is a timing item. The treaty’s profit is in its own CSM.'},
            {t:fmt(RECOVERY),why:'That amount was recognized and then fully reversed.'},
@@ -1736,14 +1732,14 @@ const SL=(()=>{const s=N.stopLoss;
 const CAPSTONES=[
  {pts:CAPSTONE_PTS,kicker:'Year five · the stop-loss on the renewal desk',
   ctx:'<div class="memo"><strong>The offer.</strong> Odermatt is back at the renewal desk with a cheap <b>stop-loss</b> on the motor book. It pays nothing until claims pass an attachment of <b>'+fmt(N.stopLoss.attach)+'</b>, then everything above it.<br><br>'
-     +'<strong>The projection.</strong> Two probability-weighted scenarios, <b>60%</b> / <b>40%</b>. Claims come in at <b>'+fmt(N.stopLoss.base[0])+'</b> or <b>'+fmt(N.stopLoss.base[1])+'</b>, so expected recoveries are <b>'+fmt(SL.er0)+'</b> on expected claims of <b>'+fmt(SL.ec0)+'</b>. The recovery ratio the desk would compute: <b>'+(SL.avg*100).toFixed(1)+'%</b>.<br><br>'
+     +'<strong>The projection.</strong> Two probability-weighted scenarios, <b>60%</b> / <b>40%</b>. Claims come in at <b>'+fmt(N.stopLoss.base[0])+'</b> or <b>'+fmt(N.stopLoss.base[1])+'</b>, so expected recoveries are <b>'+fmt(SL.er0)+'</b> on expected claims of <b>'+fmt(SL.ec0)+'</b>. The recovery ratio you would compute at the desk: <b>'+(SL.avg*100).toFixed(1)+'%</b>.<br><br>'
      +'<strong>The deterioration.</strong> Now suppose the group turns onerous and the same scenarios worsen to <b>'+fmt(N.stopLoss.deteriorated[0])+'</b> and <b>'+fmt(N.stopLoss.deteriorated[1])+'</b>. Expected recoveries rise to <b>'+fmt(SL.er1)+'</b> on expected claims of <b>'+fmt(SL.ec1)+'</b>. The <em>extra</em> claims of '+fmt(SL.ec1-SL.ec0)+' brought <b>'+fmt(SL.er1-SL.er0)+'</b> of extra recovery: a marginal ratio of <b>'+(SL.marg*100).toFixed(0)+'%</b>.</div>',
   q:'Take this treaty to the mirror. What happens, and what do you tell Odermatt?',
   options:[
    {t:'The mirror understates the recovery: it would scale the loss event by '+(SL.avg*100).toFixed(1)+'% when the deterioration actually recovers at '+(SL.marg*100).toFixed(0)+'%. This treaty needs a remeasured balance, not the mirror',ok:true,
     why:'The whole case rests on one assumption: that <strong>the marginal recovery equals the average ratio</strong>. For a proportional treaty that is true, because every extra unit of claim is ceded at the same percentage. A stop-loss breaks it. The first '+fmt(N.stopLoss.attach)+' of claims recover nothing, so the average ratio is only '+(SL.avg*100).toFixed(1)+'%. But the deterioration that <em>creates</em> the loss component sits above the attachment and recovers at '+(SL.marg*100).toFixed(0)+'%. Multiply the loss by the average and you book about a sixth of the recovery you expect. Three things follow. The cap (B119F) no longer holds by construction and must be tested. The reversals need the paragraph 66(bb) split. And the loss-recovery component has to be <strong>remeasured each period</strong>, not mirrored. Refusing the mirror is the right call.'},
    {t:'The mirror handles it: '+(SL.avg*100).toFixed(1)+'% is the correctly computed ratio from the projection, so scaling by it is right',
-    why:'The ratio is right and still the wrong multiplier. It answers: what share of <em>total</em> claims does this treaty recover? The loss event asks: what share of <em>this deterioration</em>? For a proportional treaty those are the same, so the desk never had to tell them apart. For a stop-loss they are '+(SL.avg*100).toFixed(1)+'% and '+(SL.marg*100).toFixed(0)+'%.'},
+    why:'The ratio is computed correctly, but it is the wrong multiplier. It answers: what share of <em>total</em> claims does this treaty recover? The loss event asks: what share of <em>this deterioration</em>? For a proportional treaty those are the same, so the desk never had to tell them apart. For a stop-loss they are '+(SL.avg*100).toFixed(1)+'% and '+(SL.marg*100).toFixed(0)+'%.'},
    {t:'Use the marginal ratio of '+(SL.marg*100).toFixed(0)+'% at the mirror instead, and the mirror works again',
     why:'Closer, but it fails at the next loss event. The marginal ratio is not constant. It depends on where the claims sit against the attachment, so it moves with every change in the projection. A treaty whose multiplier moves needs a remeasured balance, not a better fixed number.'},
    {t:'Refuse the treaty: a cover the accounting system cannot model should not be bought',
@@ -2129,7 +2125,7 @@ function titleScreen(){
     const act=n<ACT_A.length?'Act One':'Act Two';
     h.append(el('p','fy', done
       ? 'You are on meeting '+Math.min(n+1,ROOM_ORDER.length)+' of '+ROOM_ORDER.length+', in '+act+'. Around '+Math.max(5,Math.round((ROOM_ORDER.length-n)*4.5))+' minutes left. Progress saves in this browser as you go, so you can stop whenever you like.'
-      : 'Ten meetings in two acts, about 45 minutes. Progress saves in this browser, so you can stop and come back. Nothing is timed. A wrong answer costs nothing you cannot earn back.'));
+      : 'Ten meetings in two acts, about 45 minutes. Progress saves in this browser, so you can stop and come back. Nothing is timed. Points lost on a wrong answer can be earned back.'));
   }
   if(finished)h.append(el('p','fy','Your last case closed at mastery '+S.score+'/100'+(S.score>=100?', the case mastered':'')+'. Working it again starts fresh. Revisiting keeps your old books.'));
   stage.append(h);
@@ -2233,7 +2229,7 @@ const ICONS={
     <text x="${x+90}" y="${y+100}" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="#276942">+${fmt(A_LORC)} recovery</text>
     <text x="${x+186}" y="${y+100}" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="#a8532c">${fmt(A_COST)} cost</text>
     <text x="${x+136}" y="${y+126}" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="#8b6f36">day-one net −${fmt(Math.abs(NA.quote(.5).net))}</text>
-    <text x="${x+136}" y="${y+154}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">PLAY THE CESSION, SEE THE PRICE</text></g>`,
+    <text x="${x+136}" y="${y+154}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">CHOOSE THE CESSION, SEE THE PRICE</text></g>`,
   /* the short book: three column pairs stepping to zero */
   shortyear:(x,y,w,h,d)=>`<g opacity="${d?.35:1}">
     ${[0,1,2].map(i=>{const lcv=[12,6,0][i],cx=x+64+i*74;
@@ -2242,7 +2238,7 @@ const ICONS={
       <rect x="${cx+2}" y="${y+112-rh}" width="16" height="${rh}" rx="2" fill="#d9a648"/>
       <text x="${cx}" y="${y+130}" text-anchor="middle" font-family="var(--mono)" font-size="8" fill="#8b98aa">${['SIGN','2026','2027'][i]}</text>`;}).join('')}
     <path d="M${x+30},${y+112} H${x+242}" stroke="#4a5d78" stroke-width="1.5"/>
-    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">RECOGNIZED IN, REVERSED OUT, ZERO</text></g>`,
+    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">RECOGNIZED, THEN REVERSED TO ZERO</text></g>`,
   /* the underwriting file: three fleet rows, a treaty ribbon, a signature */
   renewal:(x,y,w,h,d)=>`<g opacity="${d?.35:1}">
     <rect x="${x+36}" y="${y+16}" width="200" height="120" rx="4" fill="#e9eef5" stroke="#8b98aa"/>
@@ -2281,7 +2277,7 @@ const ICONS={
     <rect x="${x+170}" y="${y+44}" width="80" height="54" rx="4" fill="#26354c" stroke="#8b6f36"/>
     <text x="${x+210}" y="${y+68}" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="#d9a648">${fmt(RECOVERY)}</text>
     <text x="${x+210}" y="${y+86}" text-anchor="middle" font-family="var(--mono)" font-size="7.5" fill="#8b98aa">INCOME · 66A</text>
-    <text x="${x+136}" y="${y+136}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="#5d6b7e">SAME LOSS, SCALED, NEVER RE-MEASURED</text></g>`,
+    <text x="${x+136}" y="${y+136}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.2" fill="#5d6b7e">THE LOSS SCALED BY THE SHARE</text></g>`,
   /* posting day: two vouchers, two stamps */
   posting:(x,y,w,h,d)=>`<g opacity="${d?.35:1}">
     <rect x="${x+44}" y="${y+70}" width="184" height="58" fill="#26354c" stroke="#4a5d78"/>
@@ -2292,7 +2288,7 @@ const ICONS={
     <rect x="${x+72}" y="${y+30}" width="36" height="26" rx="4" fill="#4a5d78"/>
     <rect x="${x+168}" y="${y+30}" width="36" height="26" rx="4" fill="#4a5d78"/>
     <text x="${x+88}" y="${y+146}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="#63b380">INCOME · P&amp;L</text>
-    <text x="${x+184}" y="${y+146}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="#72b7cc">ADJUSTMENT · CSM</text></g>`,
+    <text x="${x+184}" y="${y+146}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" fill="#72b7cc">COMPONENT · BALANCE SHEET</text></g>`,
   /* the run-off: two bars a year, stepping down in lockstep */
   runoff:(x,y,w,h,d)=>`<g opacity="${d?.35:1}">
     ${[0,1,2].map(i=>{const lcv=[FLIP_LC,ROLLS[3].bal,0][i],cx=x+64+i*74;
@@ -2312,7 +2308,7 @@ const ICONS={
     <circle cx="${x+110}" cy="${y+114}" r="8" fill="none" stroke="#276942" stroke-width="2"/>
     <path d="M${x+106},${y+114} L${x+109},${y+117} L${x+115},${y+110}" stroke="#276942" stroke-width="2" fill="none"/>
     <text x="${x+160}" y="${y+118}" text-anchor="middle" font-family="var(--mono)" font-size="8" fill="#276942">SIGNED</text>
-    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">TIMING, NOT PROFIT</text></g>`,
+    <text x="${x+136}" y="${y+156}" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#5d6b7e">THE LINES SUM TO ZERO</text></g>`,
 };
 
 function renderMap(){
@@ -2483,12 +2479,12 @@ async function stationSlip(){
   let faced=!!P.gap||!fresh, grouped=!!P.grouping||!fresh, timed=!!P.when||!fresh;
   const count=()=>[faced,grouped,timed].filter(Boolean).length;
   const maybeEnd=()=>{ if(count()<3||S.done.slip)return; completeRoom('slip');
-    setObjective('Meeting closed · the loss is real, and it is today’s');doorOut(sc,'To the cession desk →'); };
+    setObjective('Meeting closed · the loss is booked today');doorOut(sc,'To the cession desk →'); };
   bindHotspots(sc,{
     gap:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'sys',t:'Limmat Assurance, Bahnhofstrasse. You are the outside actuary they brought in last week, chosen because you had nothing to do with the pricing. You run January’s new business against it twice, because the first answer looked like a typo.'},
+        {w:'sys',t:'Limmat Assurance, Bahnhofstrasse. You are the outside actuary they brought in last week, chosen because you had nothing to do with the pricing. You run January’s new business through the tariff twice, and get the same answer both times.'},
         {w:'cuo',n:'D. Meier · chief underwriting officer',t:'“Before you say anything: the distribution deal is signed, the volume target is met, and the board was very pleased. How bad?”'},
         {w:'you',n:'You',t:'“Premiums of <span class="num">'+fmt(NA.prem)+'</span> against fulfilment cash flows of <span class="num">'+fmt(NA.fcf)+'</span>. The premium rates still use the 2023 table. Every contract in the cohort loses money from the day it signs.”'},
       ]);
@@ -2524,7 +2520,7 @@ async function stationSlip(){
     when:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'bro',n:'K. Odermatt · broker',t:'“I heard. Half of Bahnhofstrasse heard, Meier was not quiet. Turicum Re would quote a quota share on the cohort. One question: when do you want it signed?”'},
+        {w:'bro',n:'K. Odermatt · broker',t:'“I heard. Meier was not quiet about it. Turicum Re would quote a quota share on the cohort. One question: when do you want it signed?”'},
       ]);
       await quiz({kicker:'The only window',pts:QUESTION_PTS,
         intro:'<div class="memo"><strong>The timing condition (B119C):</strong> a loss-recovery component only arises where the reinsurance contract held was entered into <b>before or at the same time as</b> the onerous underlying contracts were recognized.</div>',
@@ -2558,12 +2554,12 @@ async function stationDesk(){
     ${frame('LIMMAT ASSURANCE · THE CESSION DESK')}
     ${plate(96,170,568,150)}
     <text x="200" y="238" text-anchor="middle" font-family="var(--mono)" font-size="25" font-weight="700" fill="#e06a5e">−${fmt(NA.lc)}</text>
-    <text x="200" y="262" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#8b98aa">GROSS LOSS · STANDS REGARDLESS</text>
+    <text x="200" y="262" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#8b98aa">GROSS LOSS · UNCHANGED BY THE CESSION</text>
     <text id="recval" x="380" y="238" text-anchor="middle" font-family="var(--mono)" font-size="25" font-weight="700" fill="#d9a648">+0</text>
     <text x="380" y="262" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#8b98aa">RECOVERY OF LOSSES</text>
     <text id="netval" x="560" y="238" text-anchor="middle" font-family="var(--mono)" font-size="25" font-weight="700" fill="#c9d3df">−${fmt(NA.lc)}</text>
     <text x="560" y="262" text-anchor="middle" font-family="var(--mono)" font-size="8.5" letter-spacing="1.4" fill="#8b98aa">DAY-ONE NET</text>
-    <text x="${FR.FOCUS.cx}" y="356" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">CLICK A CESSION · EVERY NUMBER ON THIS DESK FOLLOWS</text>
+    <text x="${FR.FOCUS.cx}" y="356" text-anchor="middle" font-family="var(--mono)" font-size="9.5" letter-spacing="1.8" fill="#5d6b7e">CLICK A CESSION · EVERY NUMBER ON THIS DESK UPDATES</text>
     ${plate(96,362,568,74,'#141d2e')}
     ${NA.steps.map((x,i)=>`<g class="cedebtn" data-x="${x}" style="cursor:pointer" role="button" tabindex="0" aria-label="cede ${x*100} percent">
       <rect id="cbr${i}" x="${BX[i]-52}" y="376" width="104" height="44" rx="8" fill="#141d2e" stroke="#2c394a" stroke-width="2"/>
@@ -2628,8 +2624,8 @@ async function stationDesk(){
     quote:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'re',n:'A. Keller · Turicum Re',t:'“Keller. Odermatt sent the cohort over an hour ago. I will take any share of PA-2026 you like, priced at expected claims plus a margin of <span class="num">6%</span> of your premium. The loss stays yours. What you buy from me is certainty.”'},
-        {w:'cuo',n:'D. Meier',t:'“I do not need certainty. I need a day-one number the board can accept. Work the buttons. Find me one.”'},
+        {w:'re',n:'A. Keller · Turicum Re',t:'“Keller. Odermatt sent the cohort over an hour ago. I will take any share of PA-2026 you like, priced at expected claims plus a margin of <span class="num">6%</span> of your premium. The loss stays yours either way. What you buy from me is a share of every claim paid back.”'},
+        {w:'cuo',n:'D. Meier',t:'“I am not interested in the claims. I need a day-one number the board can accept. Work the buttons and find me one.”'},
       ]);
       /* the quote is walked on the desk, not narrated: press every button once */
       const press=async x=>{setCede(x);
@@ -2666,7 +2662,7 @@ async function stationDesk(){
       if(fresh&&count()<3)setObjective('Objective: work the quote <b>'+count()+'/3</b>');
       await press(NA.signed);
       await talk(sc,[
-        {w:'sys',t:'The desk settles at 50: recovery of <b>'+fmt(A_LORC)+'</b> on the day, cost of <b>'+fmt(A_COST)+'</b> over the life. The board caps the spend at '+fmt(A_COST)+'.'},
+        {w:'sys',t:'You go back to 50%: recovery of <b>'+fmt(A_LORC)+'</b> on the day, cost of <b>'+fmt(A_COST)+'</b> over the life. The board caps the spend at '+fmt(A_COST)+'.'},
       ]);
       maybeEnd();},
     sign:async(g)=>{
@@ -2760,18 +2756,18 @@ async function stationShortyear(){
     arolllines.innerHTML=out;
     for(let i=0;i<3;i++){const g=sc.querySelector('#ayr'+i);
       if(g){g.style.transition='opacity .9s';g.style.opacity=(i===0||closed)?1:.22;}}
-    if(closed)ayearlabel.textContent='2027 · THE SHORT BOOK IS OFF THE PAGE';
+    if(closed)ayearlabel.textContent='2027 · BOTH BALANCES ARE ZERO';
   }
   /* the act closes here, so the look back at it belongs here too */
   const maybeEnd=async()=>{ if(!(closed&&contrasted)||S.done.shortyear)return; completeRoom('shortyear');
-    setObjective('Act One closed · Limmat’s books read zero');
+    setObjective('Act One closed · both Limmat balances are zero');
     await actOneRecap();
     doorOut(sc,'Cross town to Clearbook Assurance →'); };
   bindHotspots(sc,{
     close:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'cuo',n:'D. Meier · a year later',t:'“The claims came in on your numbers, almost to the franc. Please note that somewhere, given whose numbers the pricing used.”'},
+        {w:'cuo',n:'D. Meier · a year later',t:'“The claims came in on your numbers, almost to the franc. I wish the pricing had used them.”'},
         {w:'you',n:'You',t:'“Noted. Now watch the two balances go down together. The loss runs off evenly over the two years, half in 2026 and half in 2027. The recovery follows the loss run-off.”'},
       ]);
       await quiz({kicker:'The two closes',pts:QUESTION_PTS,
@@ -2788,7 +2784,7 @@ async function stationShortyear(){
         applyDeltas({alc:A_ROLLS[2].alc,alorc:A_ROLLS[2].alorc,apnl:A_ROLLS[2].alorc});}
       g.classList.add('done');
       await talk(sc,[
-        {w:'sys',t:'Both bars come down to zero. Lifetime recovery lines: +'+fmt(A_LORC)+' recognized, −'+fmt(A_LORC)+' reversed, sum <b>exactly zero</b>. The cost of the cover, <b>'+fmt(A_COST)+'</b>, sits in net expense from reinsurance held.'},
+        {w:'sys',t:'Both bars come down to zero. Over the two years the recovery lines recognized +'+fmt(A_LORC)+' and reversed −'+fmt(A_LORC)+', so they sum to <b>exactly zero</b>. The cost of the cover, <b>'+fmt(A_COST)+'</b>, sits in net expense from reinsurance held.'},
       ]);
       if(fresh&&!contrasted)setObjective('Objective: <b>read THE TWO LINES</b> before you leave Limmat');
       await maybeEnd();},
@@ -2798,7 +2794,7 @@ async function stationShortyear(){
         intro:'<div class="memo"><strong>Limmat\u2019s recovery income went on the line \u201crecovery of losses on onerous underlying contracts\u201d.</strong> There is a similar line item called \u201crecovery of losses on contracts turning onerous\u201d. The separate line items are defined by the company\u2019s <b>accounting policy</b>. IFRS 17 only requires that the reinsurance result is shown separately from the insurance service result.</div>',
         q:'What decides which of the two recovery lines the income is reported on?',
         options:[
-          {t:'Whether the contracts were loss-making from the start',ok:true,why:'A reader wants to know <em>what kind of problem</em> the reinsurer is paying for. <strong>Onerous underlying contracts</strong> means the pricing was wrong: loss-making the day they were signed, like Meier’s pricing. <strong>Contracts turning onerous</strong> means the pricing was right and the market moved: a claims shock, or inflation. Same arithmetic, different cause.'},
+          {t:'Whether the contracts were loss-making from the start',ok:true,why:'A reader wants to know <em>what kind of problem</em> the reinsurer is paying for. <strong>Onerous underlying contracts</strong> means the pricing was wrong: loss-making the day they were signed, like Meier’s pricing. <strong>Contracts turning onerous</strong> means the pricing was right and the market moved: a claims shock, or inflation. The arithmetic is the same, only the cause differs.'},
           {t:'The size of the recovery: large amounts on one line, smaller ones on the other',why:'There is no size rule. A one-franc recovery on a mispriced book still counts as a recovery on onerous underlying contracts.'},
           {t:'The type of treaty: quota shares on one line, other covers on the other',why:'The type of treaty does not decide the line. What matters is how the underlying loss came about.'}],
         cite:['47','B119D']},fresh);
@@ -2917,7 +2913,7 @@ async function stationRenewal(){
           {w:'cfo',n:'M. Brandt · CFO',t:'“Half the margin on our two best fleets, paid away in a year we expect to be good. Remind me why I am signing this.”'},
           {w:'chief',n:'V. Torres',t:'“Because cover bought <em>after</em> a loss is recognized can never recover it. So the treaty has to be signed before we put the cohort on the books. Today.”'},
           {w:'re',n:'A. Keller · Turicum Re',t:'“We are on risk from January first. Send the slip back signed and I will book it on our side this afternoon.”'},
-          {w:'sys',t:'Two signatures, ten minutes apart. The cohort is recognized, and the treaty already covers it.'},
+          {w:'sys',t:'Both are signed ten minutes apart. The cohort is recognized, and the treaty already covers it.'},
         ]);
         await quiz({kicker:'Inception',pts:QUESTION_PTS,
           ctx:'<div class="memo"><strong>Cohort Motor-2026:</strong> three fleets in one file. Expected claims <b>'+fmt(N.claims.M1)+'</b> / <b>'+fmt(N.claims.M2)+'</b> / <b>'+fmt(N.claims.M3)+'</b>. Treaty <b>QS50</b> cedes 50% of M1 and M2; M3 is excluded. Group CSM <b>'+fmt(N.csm0)+'</b>.</div>',
@@ -2925,7 +2921,7 @@ async function stationRenewal(){
           options:[
             {t:'No. There is no loss yet, and the recovery is income on a loss',ok:true,why:'Paragraph 66A gives income on the reinsurance held <strong>when a loss is recognized</strong> on the underlying contracts. There is no loss: the cohort is profitable and its CSM is intact. The treaty and its own CSM are on the books, but there is nothing to recover yet.'},
             {t:'Yes. The treaty covers half the claims, so half the CSM mirrors across',why:'The recovery mirrors <em>losses</em>, not profit. A profitable group has no loss component, so there is nothing to mirror. The treaty CSM and the group’s own CSM are measured separately and do not offset.'},
-            {t:'Yes, but only for M1 and M2, the two fleets the treaty covers',why:'Still nothing to recover. Cover decides how much of a loss comes back, not whether there is a loss. Today there is none.'}],
+            {t:'Yes, but only for M1 and M2, the two fleets the treaty covers',why:'Still nothing to recover. How much of a loss comes back depends on the cover. Whether there is a loss does not, and today there is none.'}],
           cite:['66A','B119C']},fresh);
         if(fresh)applyDeltas({csm:N.csm0,ccsm:N.cededCsm0});
         sign();setTank(N.csm0);
@@ -2952,7 +2948,7 @@ async function stationRenewal(){
       } else {
         await talk(sc,[
           {w:'chief',n:'V. Torres · 2027',t:'“Interest again: <span class="num">'+fmt(FILE_STEPS[1].csm)+'</span> × 1.1 = <span class="num">'+fmt(CSM_2027)+'</span>.”'},
-          {w:'sys',t:'Then the Q3 reserve review arrives, and it is bad. Repair inflation, two large injury files reopened, a court table revised. Future claims on the cohort: worse by <b>'+fmt(N.det2027)+'</b>.'},
+          {w:'sys',t:'Then the Q3 reserve review arrives, and it is bad: repair inflation, two large injury files reopened, and a revised court table. Future claims on the cohort are worse by <b>'+fmt(N.det2027)+'</b>.'},
           {w:'cfo',n:'M. Brandt · CFO',t:'“Tell me the CSM absorbs it.”'},
           {w:'chief',n:'V. Torres',t:'“It absorbs <span class="num">'+fmt(CSM_2027)+'</span> of it. That is all there is.”'},
         ]);
@@ -2991,7 +2987,7 @@ async function stationRenewal(){
     await teach('Act Two · Across town at Clearbook Assurance',
       `<p><strong>Limmat’s case is closed.</strong> The premiums were too low, so those contracts lost money from the day they were signed. You put the loss on the books immediately and booked back the half the treaty covers.</p>
        <p><strong>Odermatt sends you across town to Clearbook Assurance</strong>, a motor insurer that wants the same outside review of its reinsurance accounting. The books to review are incepted from January 2026. New people: V. Torres, the chief actuary, and M. Brandt, the CFO. Your role is the same: the consultant who advises on reinsurance coverage. Odermatt brokers this account, and Turicum Re is the reinsurer.</p>
-       <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money. Two years later a claims shock hits it anyway. <strong>Act Two asks: what does a treaty do for a loss that was not a pricing mistake?</strong></p>`,
+       <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money. Two years later a claims shock hits it anyway. <strong>In Act Two you find out what a treaty does for a loss that was not a pricing mistake.</strong></p>`,
       ['47–48','B119C']);
     P.act2=1;save();
   }
@@ -3087,7 +3083,7 @@ async function stationBooking(){
       if(g.classList.contains('done'))return;
       klaxon.style.transition='opacity .3s';klaxon.style.opacity=1;
       await talk(sc,[
-        {w:'sys',t:'You queue the recovery entry and go home. At 06:12 the overnight run mails you a rejection, and by 08:00 it has been forwarded to you four times.'},
+        {w:'sys',t:'You queue the recovery entry and go home. At 06:12 the overnight run rejects it, and by 08:00 Brandt has forwarded the rejection to you.'},
         {w:'cfo',n:'M. Brandt · CFO',t:'“The treaty is signed, filed and paid for. Why is our own system refusing to book a recovery income?”'},
         {w:'chief',n:'V. Torres',t:'“It knows we <em>have</em> cover. It does not know <em>what</em> the cover is on. A treaty has to name the contracts it covers. Without that list there are no claims to compare the cover with, and no loss to apply it to.”'},
       ]);
@@ -3105,7 +3101,7 @@ async function stationBooking(){
       if(fresh)setObjective('Objective: clear the booking check <b>'+[scanned,timed].filter(Boolean).length+'/2</b>');
       await talk(sc,[{w:'sys',t:'You pull the signed treaty from the file and key the coverage in: QS50 covers M1 and M2. Rerun.'}]);
       await fixRow(true);
-      await talk(sc,[{w:'chief',n:'V. Torres',t:'“Green on the first rerun. Now the number it was waiting to compute.”'}]);
+      await talk(sc,[{w:'chief',n:'V. Torres',t:'“Green on the first rerun. Now it can compute the number it was waiting for.”'}]);
       maybeEnd();},
     timing:async(g)=>{
       if(g.classList.contains('done'))return;
@@ -3310,7 +3306,7 @@ async function stationMirror(){
     raise:async(g)=>{
       if(g.classList.contains('done'))return;
       await talk(sc,[
-        {w:'chief',n:'V. Torres',t:'“Nothing here gets re-measured. The system takes every movement of the underlying loss component and writes the same movement on the treaty, scaled by the share. A mirror, nothing more.”'},
+        {w:'chief',n:'V. Torres',t:'“Nothing here gets re-measured. The system takes every movement of the underlying loss component and writes the same movement on the treaty, scaled by the share. It is a mirror, nothing more.”'},
       ]);
       await quiz({kicker:'What the mirror gives',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>In:</strong> loss component <b>'+fmt(FLIP_LC)+'</b>, allocation <b>'+N.allocation.toFixed(2)+'</b>, ratio <b>'+N.ratio.toFixed(2)+'</b>, share <b>'+N.share.toFixed(2)+'</b>.</div>',
@@ -3568,13 +3564,13 @@ async function stationRunoff(){
           options:[
             {t:'Reversal of the whole '+fmt(Math.abs(ROLLS[5].lorc))+', closing at 0',ok:true,why:'The last of the cover is received, so the last of the recovery is reversed: '+fmt(OPEN29)+' + '+fmt(ROLLS[4].lorc)+' = <strong>'+fmt(Math.abs(ROLLS[5].lorc))+'</strong>, all of it. The loss-recovery component closes at <strong>zero</strong>, the same as the loss component. Nothing is left on the balance sheet, because the mirror runs off <em>with</em> the loss component, not on its own schedule.'},
             {t:'Half again: reversal of '+fmt(r2(PRE29/2))+', leaving the rest to write off later',why:'Halving was the pattern, not a rule. In the final year all remaining cover is received, so all the remaining balance is reversed.'},
-            {t:'It stays at '+fmt(Math.abs(ROLLS[5].lorc))+' until the treaty is commuted',why:'The recovery relates to cover. When the cover ends, nothing is left for it to relate to. It cannot outlive the loss component.'}],
+            {t:'It stays at '+fmt(Math.abs(ROLLS[5].lorc))+' until the treaty is commuted',why:'The recovery relates to cover. When the cover ends, nothing is left for it to relate to. It cannot stay on the books after the loss component is gone.'}],
           cite:['B119F','66A']},fresh);
         if(fresh)for(const i of LAPS[1]){const r=ROLLS[i];
           applyDeltas({lc:r.lc,lorc:r.lorc,pnl:r.lorc});}
         lap=2;P.lap=2;save();paint();g.classList.add('done');
         await talk(sc,[
-          {w:'sys',t:'The 2029 close posts and both columns come down to zero together. Loss component zero, loss-recovery component zero. The case has nothing left to carry.'},
+          {w:'sys',t:'The 2029 close posts and both columns come down to zero together. The loss component and the loss-recovery component are both zero. Nothing is left on the balance sheet.'},
           {w:'cfo',n:'M. Brandt · CFO',t:'“Three years of entries and it all nets to nothing? Someone will have to explain to me what I paid Turicum Re for.”'},
           {w:'chief',n:'V. Torres',t:'“Someone will. At the sign-off, with the auditor in the room.”'},
         ]);
@@ -3677,7 +3673,7 @@ async function stationAudit(){
         ctx:'<div class="memo"><strong>Every recovery line this case produced.</strong> Recognized: '+income.map(r=>r.line+' '+fmt(r.lorc)).join(', ')+'. Reversed: '+out.map(r=>r.line+' '+fmt(r.lorc)).join(', ')+'.</div>',
         q:'Add them all up over the life of the case. What must the total be?',
         options:[
-          {t:'Exactly zero',ok:true,why:'<strong>'+fmt(sumIn)+' recognized, '+fmt(Math.abs(sumOut))+' reversed, difference exactly zero.</strong> Every franc of recovery income that went into P&amp;L came back out as the cover was received. The recovery is a <em>timing</em> item: it puts income in the same period as the loss, then undoes itself. Paragraph 86 shows the two parts separately: the <strong>service result</strong> nets to '+fmt(svcSum)+' and the <strong>finance income</strong> to +'+fmt(finSum)+'. The interest is not extra profit. It is the unwind of discounting on a balance that is then fully released, so it is reversed with everything else. Only the two together come to zero.'},
+          {t:'Exactly zero',ok:true,why:'<strong>'+fmt(sumIn)+' recognized, '+fmt(Math.abs(sumOut))+' reversed, difference exactly zero.</strong> Every franc of recovery income that went into P&amp;L came back out as the cover was received. The recovery is a <em>timing</em> item: it puts income in the same period as the loss, and that income is reversed as the cover is received. Paragraph 86 shows the two parts separately: the <strong>service result</strong> nets to '+fmt(svcSum)+' and the <strong>finance income</strong> to +'+fmt(finSum)+'. The interest is not extra profit. It is the unwind of discounting on a balance that is then fully released, so it is reversed with everything else. Only the two together come to zero.'},
           {t:'The original recovery of '+fmt(RECOVERY)+', which is the profit on the treaty',why:'That amount was recognized and then fully reversed. The treaty\u2019s profit is in its <em>own</em> CSM, which these lines never touched.'},
           {t:'The interest accreted, '+fmt(r2(ROLLS[1].lorc+ROLLS[4].lorc))+', since only that is genuinely earned',why:'The interest is inside the reversals as well. The balance it was added to is fully released, so the interest is released with it. The sum is zero including the interest.'}],
         cite:['66A','66B']},fresh);
@@ -3707,7 +3703,7 @@ async function stationAudit(){
         ctx:'<div class="memo"><strong>What this treaty actually did.</strong> The recovery lines recognized <b>'+fmt(sumIn)+'</b> and reversed <b>'+fmt(Math.abs(sumOut))+'</b>, so they sum to <b>zero</b> over the life of the case. Separately, the treaty CSM stands at <b>'+fmt(CEDED_CSM_END)+'</b>, none of it put there by these lines, and it pays real claim recoveries when the claims arrive.</div>',
         q:'Brandt says the lifetime zero shows the reinsurance was worthless. What is wrong with that?',
         options:[
-          {t:'It confuses the recovery lines with the treaty’s profit. The zero is about timing; the value of the cover is elsewhere',ok:true,why:'The recovery lines put the recovery in the <strong>same period</strong> as the loss. Without them the benefit would only come through the treaty CSM, spread across the cover, and the books would show the loss in one year and the recovery in another. Preventing that mismatch is the whole job, and a timing device sums to zero over a life. What the cover is worth sits elsewhere: '+fmt(CEDED_CSM_END)+' of treaty CSM, and the real recoveries paid when the claims arrive.'},
+          {t:'It confuses the recovery lines with the treaty’s profit. The zero is about timing; the value of the cover is elsewhere',ok:true,why:'The recovery lines put the recovery in the <strong>same period</strong> as the loss. Without them the benefit would only come through the treaty CSM, spread across the cover, and the books would show the loss in one year and the recovery in another. The lines exist to prevent that mismatch, and lines that only shift timing sum to zero over the life of the treaty. What the cover is worth sits elsewhere: '+fmt(CEDED_CSM_END)+' of treaty CSM, and the real recoveries paid when the claims arrive.'},
           {t:'Nothing is wrong: a lifetime zero does mean no economic benefit',why:'By that logic every accrual would be worthless. The zero is about presentation, not about the contract.'},
           {t:'It is wrong because the interest accretion makes the true total positive',why:'The interest is inside the reversals as well. The total is zero including it. The answer is about what the lines are <em>for</em>, not the arithmetic.'}],
         cite:['66A','B119D']},fresh);
@@ -3736,7 +3732,7 @@ function endOverlay(){
     openModal(card,true);save();return;
   }
   const card=el('div','mcard');
-  const grade=S.score>=100?'Full marks. The case is mastered.':S.score>=85?'A strong file, with a few findings still open.':S.score>=60?'Most of it is there. The audit file shows where to look.':'A first pass. The retake is open.';
+  const grade=S.score>=100?'Full marks. The case is mastered.':S.score>=85?'You scored well, with a few findings still open.':S.score>=60?'Most of it is there. The audit file shows where to look.':'You made a first pass. The retake is open.';
   card.append(el('div','qk','Case closed · mastery '+S.score+'/100'));
   card.append(el('div','grade',grade));
   card.append(el('p','','At Limmat you booked a loss the day you found it (paragraph 47), kept it out of a better group (paragraph 16), and priced the recovery against its cost. At Clearbook you watched a CSM run out (paragraphs 47 to 48), refused to book a recovery on a treaty linked to nothing, explained why cover bought after a loss recovers none of it (B119C), worked out what the treaty covers and by how much (B119E), showed the mirrored income does not depend on which fleet carried the loss (B119D), posted both entries, split the 2027 review the way the standard does (paragraphs 66B and 66(c)), and ran both books off to zero. Then you turned down the one treaty the mirror cannot measure. Every meeting can be replayed with nothing at stake, and the ⓘ case card lists every paragraph.'));
