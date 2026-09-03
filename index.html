@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 07:01Z";
+const BUILD="2026-09-03 07:09Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2616,7 +2616,7 @@ async function stationDesk(){
         ctx:'<div class="memo"><strong>Signing at 50%:</strong> Turicum Re takes half of every claim on this cohort. Expected claims are <b>'+fmt(NA.fcf)+'</b>, so it expects to pay back <b>'+fmt(NA.quote(.5).rec)+'</b>, and it charges <b>'+fmt(NA.quote(.5).prem)+'</b> for the cover. Every contract in the cohort is covered. The loss already on the file is <b>'+fmt(NA.lc)+'</b>.</div>',
         q:'How much loss-recovery income does signing at 50% put on day one?',
         options:[
-          {t:fmt(NA.lc)+' × 0.50 = '+fmt(A_LORC)+'. The treaty covers the whole cohort, so the share is the cession',ok:true,why:'The recovery ratio (B119D) is expected recoveries over the claims of the covered contracts: '+fmt(NA.quote(.5).rec)+' / '+fmt(NA.fcf)+' = 0.50. The allocation share (B119E) is 1.00, because every contract of the group is covered. So the income is <strong>'+fmt(A_LORC)+'</strong>, booked the same day as the loss (paragraph 66A) on the line <strong>recovery of losses on onerous underlying contracts</strong>. Remember both factors: at Clearbook the treaty covers only part of a group, and the allocation share is below 1.00.'},
+          {t:fmt(NA.lc)+' × 0.50 = '+fmt(A_LORC)+'. The treaty covers the whole cohort, so the share is the cession',ok:true,why:'The quota share covers 50% of every contract in the group. So the recovery income in the income statement is the total loss × 50%: '+fmt(NA.lc)+' × 0.50 = <strong>'+fmt(A_LORC)+'</strong>. It is booked the same day as the loss (paragraph 66A), on the line <strong>recovery of losses on onerous underlying contracts</strong>.'},
           {t:fmt(NA.quote(.5).rec)+' / '+fmt(NA.quote(.5).prem)+' × '+fmt(NA.lc)+' = '+fmt(r2(NA.quote(.5).rec/NA.quote(.5).prem*NA.lc))+', recoveries over premium',why:'The price of the treaty does not enter the loss-recovery component. The ratio is recoveries over covered <em>claims</em> (B119D). The premium is dealt with in the treaty’s own result.'},
           {t:fmt(A_LORC)+' less the margin of '+fmt(A_COST)+' = '+fmt(r2(A_LORC-A_COST))+', the net benefit',why:'The recovery and the cost of cover go on different lines. The income is the full '+fmt(A_LORC)+'. The margin is spread over the coverage period on its own line. Netting them would hide both.'}],
         cite:['B119D','66A']},fresh);
