@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:54Z";
+const BUILD="2026-09-03 08:57Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3211,13 +3211,14 @@ async function stationWorkpaper(){
       maybeEnd();},
     why:async(g)=>{
       if(g.classList.contains('done'))return;
-      await teach('Why the loss is spread by claims',
-        `<p>B119E says the loss has to be spread on a <strong>systematic and rational</strong> basis. It does not say how. Clearbook spreads it by claims, and uses that one policy however the loss started.</p>
-         <p><strong>Why it matters.</strong> When a group turns onerous it is the group that carries the loss, so pinning it on single contracts is arbitrary: a covered fleet can be profitable while an excluded one drags the group under. Book the same loss on two different contracts and a per-contract mirror gives two different answers.</p>
-         <table class="roll"><tr><th>Where the loss is booked</th><th>Per-contract mirror</th><th>Allocated mirror</th></tr>
+      await teach('Why the covered share is measured by claims',
+        `<p>Clearbook measured how much of the cohort the treaty covers by using claims: expected claims on M1 and M2, <span class="num">${fmt(N.covered)}</span>, over the expected claims of the whole cohort, <span class="num">${fmt(N.groupClaims)}</span>, gives <span class="num">${N.allocation.toFixed(2)}</span>.</p>
+         <p><strong>Why claims are a reasonable basis.</strong> B119E requires a systematic and rational allocation, but does not say which one. The treaty pays a share of claims, so expected claims measure how much of the group's risk the treaty actually takes. A fleet with more claims carries more of the group's loss and more of the treaty's cover.</p>
+         <p><strong>Why it matters.</strong> When a group turns onerous, the loss belongs to the group, not to any one fleet. Working out the recovery fleet by fleet would give a different answer depending on which fleet the loss is booked against:</p>
+         <table class="roll"><tr><th>Where the loss is booked</th><th>Fleet by fleet</th><th>Weighted by claims</th></tr>
          <tr><td>On M1 (covered)</td><td class="td neg">5’000</td><td class="td pos">3’000</td></tr>
          <tr><td>On M3 (excluded)</td><td class="td neg">0</td><td class="td pos">3’000</td></tr></table>
-         <p>Spreading by claims gives the same answer either way, at the level the loss component is actually tracked: the group.</p>`,
+         <p>Weighting by claims gives one answer for the group, whichever fleet the claims hit.</p>`,
         ['B119E','47–48']);
       whyed=true;P.why=1;save();
       if(fresh&&count()<3)setObjective('Objective: work out the share <b>'+count()+'/3</b>');
