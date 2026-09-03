@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 07:19Z";
+const BUILD="2026-09-03 07:22Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2743,7 +2743,7 @@ async function stationShortyear(){
       if(g.classList.contains('done'))return;
       await talk(sc,[
         {w:'cuo',n:'D. Meier · a year later',t:'“The claims came in on your numbers, almost to the franc. Please note that somewhere, given whose numbers the pricing used.”'},
-        {w:'you',n:'You',t:'“Noted. Now watch the two balances go down together. Half the cover was given in 2026, half in 2027. Each time, the recovery follows the loss. It has no schedule of its own.”'},
+        {w:'you',n:'You',t:'“Noted. Now watch the two balances go down together. The loss runs off evenly over the two years, half in 2026 and half in 2027. The recovery follows the loss run-off.”'},
       ]);
       await quiz({kicker:'The two closes',pts:QUESTION_PTS,
         ctx:'<div class="memo"><strong>At signing:</strong> <b>loss component</b> of <b>'+fmt(NA.lc)+'</b> on the contracts Limmat issued, <b>loss-recovery component</b> of <b>'+fmt(A_LORC)+'</b> on the treaty it holds. Cover runs 2026 to 2027, half each year, no interest, claims as expected. The two belong to different contracts, so they are reported on separate lines and never netted.</div>',
