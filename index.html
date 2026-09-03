@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 07:09Z";
+const BUILD="2026-09-03 07:12Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2629,7 +2629,7 @@ async function stationDesk(){
         ctx:'<div class="memo"><strong>The desk at 75%:</strong> recovery <b>'+fmt(NA.quote(.75).lorc)+'</b>, day-one net <b>−'+fmt(Math.abs(NA.quote(.75).net))+'</b>, cost of cover <b>'+fmt(NA.quote(.75).cost)+'</b>, and the gross loss unchanged at <b>−'+fmt(NA.lc)+'</b>.</div>',
         q:'Can a bigger cession make the loss disappear?',
         options:[
-          {t:'No. The gross loss stands on its own line at every cession; the recovery is capped at the ceded share of it; and each step of recovery costs more margin',ok:true,why:'The '+fmt(NA.lc)+' loss is recognized in full and shows up in <strong>insurance service expenses</strong>, whatever percentage is ceded. It is never netted against the recovery.'},
+          {t:'No. The full loss is always shown in the income statement, whatever percentage is ceded. The recovery can never be more than the ceded share of it, and every extra 25% ceded costs more margin',ok:true,why:'The '+fmt(NA.lc)+' loss is recognized in full and shows up in <strong>insurance service expenses</strong>, whatever percentage is ceded. It is never netted against the recovery.'},
           {t:'Yes: at 75% the day-one net is small enough to round away',why:'−'+fmt(Math.abs(NA.quote(.75).net))+' is smaller, not gone, and it costs '+fmt(NA.quote(.75).cost)+' of margin to get there. The board should see that price before it decides.'},
           {t:'Yes: cede 100% and both lines net to zero',why:'Both lines still show: the full loss and the full recovery. They net to zero, but the cost of cover rises to '+fmt(NA.marginPer)+'. You would pay '+fmt(NA.marginPer)+' to make a '+fmt(NA.lc)+' loss look like zero, while both figures stay on the page.'}],
         cite:['47–48','86']},fresh);
