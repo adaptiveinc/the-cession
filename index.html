@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 09:14Z";
+const BUILD="2026-09-03 09:18Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -724,7 +724,7 @@ const GAME={
   wherePrefix:'The Cession · ',
   /* which house a meeting belongs to, for the phone nameplate */
   roomHouse:id=>ACT_A.includes(id)?'Limmat Assurance':'Clearbook Assurance',
-  backLabel:'← The case files',
+  backLabel:'← Back to the map',
   restartCopy:'Both cases reset: every meeting, the books and the audit file. Your theme choice stays.',
   /* the books open the moment the first loss is on a file */
   ledgerOpen:()=>!(L.alc===0&&L.alorc===0&&L.csm===0&&L.lc===0&&L.lorc===0&&!S.done.slip),
@@ -2339,7 +2339,7 @@ function renderMap(){
   const p=ST_POS[tokenAt];
   const wrap=el('div','fadein');
   const sc=el('div','scene');
-  sc.innerHTML=`<div class="scenewrap"><svg viewBox="0 0 ${LINE_W} ${LINE_H}" role="img" aria-label="The Cession: two case files, ten meetings">
+  sc.innerHTML=`<div class="scenewrap"><svg viewBox="0 0 ${LINE_W} ${LINE_H}" role="img" aria-label="The Cession: the map of two cases, ten meetings">
     <rect width="${LINE_W}" height="${LINE_H}" fill="#111926"/>
     <circle cx="1146" cy="26" r="17" fill="#f2e9c8" opacity=".3"/>
     <circle cx="1146" cy="26" r="11" fill="#f2e9c8" opacity=".9"/>
@@ -3719,7 +3719,7 @@ async function stationAudit(){
     const mk=id=>{const g=[...sc.querySelectorAll('.hs')].find(h=>h.dataset.hs===id);if(g)g.classList.add('done');};
     if(weighed){mk('weigh');level();} if(placed)mk('where'); if(meant)mk('meaning');
     if(count()&&count()<3)setObjective('Objective: close the case <b>'+count()+'/3</b>');
-  } else {level();doorOut(sc,'Back to the case file →');}
+  } else {level();doorOut(sc,'Back to the map →');}
 }
 /* ================= end ================= */
 function endOverlay(){
@@ -3730,7 +3730,7 @@ function endOverlay(){
     card.append(el('div','grade','Last thing: the offer on the renewal desk.'));
     card.insertAdjacentHTML('beforeend','<p>You took both cases through all ten meetings, and both lifetime schedules add up to zero. One last challenge: in year five Odermatt offers a cheap stop-loss, a treaty <strong>the mirror was never built for</strong>. One call, worth 16 mastery points, closes the case.</p>');
     const f=el('div','mfoot');
-    const later=el('button','cta ghost','Back to the case file');later.onclick=()=>{closeModal();renderMap();};
+    const later=el('button','cta ghost','Back to the map');later.onclick=()=>{closeModal();renderMap();};
     const go=el('button','cta big','Hear the offer');go.onclick=()=>{closeModal();runCapstones();};
     f.append(later,go);card.append(f);
     openModal(card,true);save();return;
@@ -3750,7 +3750,7 @@ function endOverlay(){
   const f=el('div','mfoot');
   const again=el('button','cta ghost','Play again');
   again.onclick=()=>{S=freshState();ledgerFromState();renderChips();setAudit();save();tokenAt='slip';closeModal();renderMap();};
-  const map=el('button','cta'+(R.length?'':' big'),'Back to the case file');
+  const map=el('button','cta'+(R.length?'':' big'),'Back to the map');
   map.onclick=()=>{closeModal();renderMap();};
   f.append(again,map);
   if(R.length){const rt=el('button','cta big','Retake what you missed');rt.onclick=()=>{closeModal();runRetake(R);};f.append(rt);}
