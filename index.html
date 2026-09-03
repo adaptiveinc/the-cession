@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 09:09Z";
+const BUILD="2026-09-03 09:13Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -3342,35 +3342,27 @@ async function stationPosting(){
         <text x="${x}" y="366" text-anchor="middle" font-family="var(--mono)" font-size="10" letter-spacing="1.4" fill="${col}">${i?'BALANCE SHEET':'P&amp;L'}</text>
         <text x="${x}" y="386" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="#5d6b7e">${i?'Loss-recovery component':'Recovery of losses on'}</text>
         <text x="${x}" y="400" text-anchor="middle" font-family="var(--mono)" font-size="9" fill="#5d6b7e">${i?'of the reinsurance asset':'contracts turning onerous'}</text></g>`;}).join('')}
-    ${rail('TREATY CSM \u00b7 WHERE THE 2027 REVIEW WENT',`
-      <rect x="${FR.RAIL.x+40}" y="${FR.RAIL.y+58}" width="120" height="200" rx="6" fill="#141d2e" stroke="#2c394a" stroke-width="2"/>
-      <rect id="ccsmfill" x="${FR.RAIL.x+45}" y="${FR.RAIL.y+63}" width="110" height="190" rx="4" fill="#72b7cc" opacity=".7"/>
-      <text id="ccsmval" x="${FR.RAIL.x+100}" y="${FR.RAIL.y+288}" text-anchor="middle" font-family="var(--mono)" font-size="20" font-weight="700" fill="#e7ecf3">${fmt(CEDED_CSM_END)}</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+96}" font-family="var(--mono)" font-size="11" fill="#8b98aa">at inception</text>
-      <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+96}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#c9d3df">${fmt(N.cededCsm0)}</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+130}" font-family="var(--mono)" font-size="11" fill="#8b98aa">absorbed part</text>
-      <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+130}" text-anchor="end" font-family="var(--mono)" font-size="12" fill="#63b380">+${fmt(CEDED_CSM_ADJ)}</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+148}" font-family="var(--mono)" font-size="9.5" fill="#5d6b7e">${fmt(CSM_2027)} \u00d7 ${N.share.toFixed(2)}</text>
-      <line x1="${FR.RAIL.x+230}" y1="${FR.RAIL.y+166}" x2="${FR.RAIL.x+380}" y2="${FR.RAIL.y+166}" stroke="#2c394a"/>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+188}" font-family="var(--mono)" font-size="11" fill="#8b98aa">treaty CSM now</text>
-      <text x="${FR.RAIL.x+380}" y="${FR.RAIL.y+188}" text-anchor="end" font-family="var(--mono)" font-size="13" font-weight="700" fill="#c9d3df">${fmt(CEDED_CSM_END)}</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+224}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">the other ${fmt(RECOVERY)} of that</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+241}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">same change is excluded</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+258}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">from here. It is the two</text>
-      <text x="${FR.RAIL.x+230}" y="${FR.RAIL.y+275}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">entries on the left</text>`)}
+    ${rail('THE TWO ENTRIES \u00b7 ONE AMOUNT',`
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+64}" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#5d6b7e">P&amp;L</text>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+88}" font-family="var(--mono)" font-size="11" fill="#c9d3df">recovery of losses on</text>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+106}" font-family="var(--mono)" font-size="11" fill="#c9d3df">contracts turning onerous</text>
+      <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+97}" text-anchor="end" font-family="var(--mono)" font-size="15" font-weight="700" fill="#63b380">+${fmt(RECOVERY)}</text>
+      <line x1="${FR.RAIL.x+20}" y1="${FR.RAIL.y+126}" x2="${FR.RAIL.x+392}" y2="${FR.RAIL.y+126}" stroke="#2c394a"/>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+152}" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#5d6b7e">BALANCE SHEET</text>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+176}" font-family="var(--mono)" font-size="11" fill="#c9d3df">loss-recovery component</text>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+194}" font-family="var(--mono)" font-size="11" fill="#c9d3df">of the reinsurance asset</text>
+      <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+185}" text-anchor="end" font-family="var(--mono)" font-size="15" font-weight="700" fill="#72b7cc">+${fmt(RECOVERY)}</text>
+      <line x1="${FR.RAIL.x+20}" y1="${FR.RAIL.y+214}" x2="${FR.RAIL.x+392}" y2="${FR.RAIL.y+214}" stroke="#2c394a"/>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+240}" font-family="var(--mono)" font-size="9" letter-spacing="1.4" fill="#5d6b7e">TREATY CSM</text>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+264}" font-family="var(--mono)" font-size="11" fill="#c9d3df">${fmt(CEDED_CSM_END)}, unchanged</text>
+      <text x="${FR.RAIL.x+392}" y="${FR.RAIL.y+264}" text-anchor="end" font-family="var(--mono)" font-size="13" fill="#8b98aa">0</text>
+      <text x="${FR.RAIL.x+20}" y="${FR.RAIL.y+290}" font-family="var(--mono)" font-size="10" fill="#5d6b7e">these two entries never touch the reinsurance CSM</text>`)}
     ${CAST.aud(620)}${CAST.you(688)}
     ${hotspot(196,448,'!','stamp','','FIRST ENTRY')}
     ${hotspot(524,448,'!','stamp2','','SECOND ENTRY')}
     ${hotspot(790,430,'?','adjust','q','THE 2028 INCREASE')}
     <circle cx="688" cy="421" r="2.5" fill="#8b98aa"/><circle cx="688" cy="412" r="3.5" fill="#8b98aa"/>${hotspot(688,376,'?','runoffrule','q','ASK THE AUDITOR')}
   </svg>`);
-  const ccsmfill=sc.querySelector('#ccsmfill'), ccsmval=sc.querySelector('#ccsmval');
-  function setCcsm(v){
-    const f=Math.max(0,v)/CEDED_CSM_END;
-    ccsmfill.style.transition='height .9s ease, y .9s ease';
-    ccsmfill.setAttribute('height',190*f);ccsmfill.setAttribute('y',FR.RAIL.y+63+190*(1-f));
-    ccsmval.textContent=fmt(v);
-  }
   /* the voucher is blank until the entry posts: the amount is the reveal */
   const lift=(id)=>{const e=sc.querySelector(id);if(!e)return;
     e.style.transition='opacity .6s';e.style.opacity=1;
@@ -3420,7 +3412,7 @@ async function stationPosting(){
       await punch('#die2'); lift('#copy2');
       if(fresh){applyDeltas({lorc:RECOVERY,pnl:RECOVERY});}
       await talk(sc,[
-        {w:'sys',t:'The second entry posts to the balance sheet. The treaty CSM does not move: <b>'+fmt(N.cededCsm0)+'</b> before, <b>'+fmt(N.cededCsm0)+'</b> after.'},
+        {w:'sys',t:'The second entry posts to the balance sheet. The treaty CSM does not move.'},
         {w:'aud',n:'Auditor',t:'“And that is the entry people get wrong. They go to the CSM because it feels like the income has to come out of something. It does not. It was never in the CSM.”'},
       ]);
       maybeEnd();},
