@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-03 08:36Z";
+const BUILD="2026-09-03 08:37Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -2961,8 +2961,8 @@ async function stationRenewal(){
   if(fresh&&step===0&&!P.act2){
     await teach('Act Two · Across town at Clearbook Assurance',
       `<p><strong>Limmat’s case is closed.</strong> The premiums were too low, so those contracts lost money from the day they were signed. You put the loss on the books immediately and booked back the half the treaty covers.</p>
-       <p><strong>Odermatt sends you across town to Clearbook Assurance</strong>, a motor insurer that wants the same outside review of its reinsurance accounting. The books to review are incepted from January 2026. New people: <strong>V. Torres</strong>, the chief actuary, and <strong>M. Brandt</strong>, the CFO. Your role is the same: the consultant who advises on reinsurance coverage. Odermatt brokers this account, and Turicum Re is the reinsurer.</p>
-       <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money. Two years later a claims shock hits it anyway. Act Two asks: what does a treaty do for a loss that was not a pricing mistake? That recovery is reported on the other line, <strong>recovery of losses on contracts turning onerous</strong>.</p>`,
+       <p><strong>Odermatt sends you across town to Clearbook Assurance</strong>, a motor insurer that wants the same outside review of its reinsurance accounting. The books to review are incepted from January 2026. New people: V. Torres, the chief actuary, and M. Brandt, the CFO. Your role is the same: the consultant who advises on reinsurance coverage. Odermatt brokers this account, and Turicum Re is the reinsurer.</p>
+       <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money. Two years later a claims shock hits it anyway. <strong>Act Two asks: what does a treaty do for a loss that was not a pricing mistake?</strong></p>`,
       ['47–48','B119C']);
     P.act2=1;save();
   }
