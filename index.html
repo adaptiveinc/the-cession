@@ -688,7 +688,7 @@
 <div id="modal-root"><div class="mback"></div><div class="mwrap" id="mwrap"></div></div>
 
 <script>
-const BUILD="2026-09-02 21:11Z";
+const BUILD="2026-09-03 06:54Z";
 'use strict';
 /* ================= what this game is =================
    THE CESSION. Two companies, two ways a loss starts, one standard.
@@ -1343,11 +1343,11 @@ function actOneRecap(){
 function showDirectory(){
   return teach('Case card: the paragraphs behind each meeting',
     `<p><strong>ACT ONE · LIMMAT ASSURANCE</strong><br>
-     <strong>1 · The Pricing Slip</strong>: a group onerous at initial recognition books its loss at once (paragraph 47), in its own group so no profitable business can absorb it (paragraphs 16, 22).<br>
+     <strong>1 · The Pricing Slip</strong>: a group onerous at initial recognition books its loss immediately (paragraph 47), in its own group so no profitable business can absorb it (paragraphs 16, 22).<br>
      <strong>2 · The Cession Desk</strong>: the recovery ratio (B119D) with an allocation of 1.00, the cap on the recovery (B119F), and the net cost of cover, spread over the coverage period in net expense from reinsurance held (paragraph 86).<br>
      <strong>3 · The Short Book</strong>: the recovery runs off with the loss, and the two recovery lines split by how the loss came about: priced at a loss from the start, or turned loss-making later.</p>
      <p><strong>ACT TWO · CLEARBOOK ASSURANCE</strong><br>
-     <strong>4 · The Renewal</strong>: the group is the unit. A group turns onerous when its CSM runs out, and the excess is a loss recognized at once with a loss component (paragraphs 47 to 48), in the order interest, changes, release (paragraphs 44 to 45).<br>
+     <strong>4 · The Renewal</strong>: the group is the unit. A group turns onerous when its CSM runs out, and the excess is a loss recognized immediately with a loss component (paragraphs 47 to 48), in the order interest, changes, release (paragraphs 44 to 45).<br>
      <strong>5 · The Booking Check</strong>: income on reinsurance held when a loss is recognized on the underlying (paragraph 66A–66B), and the timing condition that the cover was entered into on or before the underlying was recognized (B119C).<br>
      <strong>6 · The Allocation</strong>: the recovery ratio (B119D) and the allocation share by claims (B119E).<br>
      <strong>7 · The Mirror Run</strong>: the income is the loss times the share (B119D); the cap on the loss-recovery component holds by construction (B119F).<br>
@@ -2467,7 +2467,7 @@ async function stationSlip(){
         ctx:'<div class="memo"><strong>Cohort PA-2026 signs today.</strong> Premiums <b>'+fmt(NA.prem)+'</b>, fulfilment cash flows <b>'+fmt(NA.fcf)+'</b>. The premiums cannot be raised: the distribution deal locks them.</div>',
         q:'What goes in the accounts on the day the cohort is recognized?',
         options:[
-          {t:'A loss of '+fmt(NA.lc)+' in P&L today, recorded by a loss component. No CSM exists',ok:true,why:'A group that is onerous at initial recognition books its loss <strong>at once</strong> (paragraph 47). The fulfilment cash flows exceed the premiums by '+fmt(NA.lc)+'. That amount goes to P&amp;L on day one, and a loss component of the same amount is set up in the liability for remaining coverage.'},
+          {t:'A loss of '+fmt(NA.lc)+' in P&L today, recorded by a loss component. No CSM exists',ok:true,why:'A group that is onerous at initial recognition books its loss <strong>immediately</strong> (paragraph 47). The fulfilment cash flows exceed the premiums by '+fmt(NA.lc)+'. That amount goes to P&amp;L on day one, and a loss component of the same amount is set up in the liability for remaining coverage.'},
           {t:'A negative CSM of −'+fmt(NA.lc)+', released over the two coverage years',why:'The CSM cannot go below zero (paragraphs 38 and 47). A negative CSM would spread a loss you already know about over future years. The standard does not allow that.'},
           {t:'Nothing yet: the loss is recognized as the claims actually arrive',why:'The loss is measured on expected cash flows, not on cash paid. Those cash flows are already short today. The loss is recognized when it is identified, not when claims are paid (paragraph 47).'}],
         cite:['47','16']},fresh);
@@ -2931,7 +2931,7 @@ async function stationRenewal(){
           ctx:'<div class="memo"><strong>2027:</strong> group CSM after interest <b>'+fmt(CSM_2027)+'</b>. Deterioration in future claims <b>'+fmt(N.det2027)+'</b>. The CSM cannot go below zero.</div>',
           q:fmt(CSM_2027)+' of CSM against a deterioration of '+fmt(N.det2027)+'. What goes on the file?',
           options:[
-            {t:'CSM to zero, and a loss component of '+fmt(FLIP_LC)+' recognized in P&L now',ok:true,why:'The CSM absorbs <strong>'+fmt(CSM_2027)+'</strong> and stops at zero. The excess, <strong>'+fmt(N.det2027)+' − '+fmt(CSM_2027)+' = '+fmt(FLIP_LC)+'</strong>, is a loss recognized at once in the service result (paragraphs 47 to 48), recorded by a loss component in the liability for remaining coverage. The rest of the case is about that number. Note there is <em>no</em> release this year: the adjustment came first and left nothing.'},
+            {t:'CSM to zero, and a loss component of '+fmt(FLIP_LC)+' recognized in P&L now',ok:true,why:'The CSM absorbs <strong>'+fmt(CSM_2027)+'</strong> and stops at zero. The excess, <strong>'+fmt(N.det2027)+' − '+fmt(CSM_2027)+' = '+fmt(FLIP_LC)+'</strong>, is a loss recognized immediately in the service result (paragraphs 47 to 48), recorded by a loss component in the liability for remaining coverage. The rest of the case is about that number. Note there is <em>no</em> release this year: the adjustment came first and left nothing.'},
             {t:'CSM at −'+fmt(r2(N.det2027-CSM_2027))+', recovering in later years',why:'A negative CSM would carry a known <em>loss</em> as if it were future profit. Paragraph 48 stops the CSM at zero and puts the excess through P&L now.'},
             {t:'Spread the '+fmt(FLIP_LC)+' over the remaining coverage period',why:'IFRS 17 does not spread losses. A loss is recognized when it is identified (paragraphs 47 to 48).'}],
           cite:['47–48','48']},fresh);
@@ -2960,7 +2960,7 @@ async function stationRenewal(){
   /* the hand-over between the acts: new company, new cast, the clock rewound */
   if(fresh&&step===0&&!P.act2){
     await teach('Act Two · Across town at Clearbook Assurance',
-      `<p><strong>Limmat’s case is closed.</strong> The premiums were too low, so those contracts lost money from the day they were signed. You put the loss on the books at once, booked back the half the treaty covers, kept the price of the cover on its own line, and ran both down to zero.</p>
+      `<p><strong>Limmat’s case is closed.</strong> The premiums were too low, so those contracts lost money from the day they were signed. You put the loss on the books immediately, booked back the half the treaty covers, kept the price of the cover on its own line, and ran both down to zero.</p>
        <p><strong>Odermatt sends you across town to Clearbook Assurance</strong>, a motor insurer that wants the same outside review of its reinsurance accounting. Both cases started in January 2026. New people: <strong>V. Torres</strong>, the chief actuary, and <strong>M. Brandt</strong>, the CFO, who pays for the cover. Your role is the same: the consultant who gets the cover into the books. Odermatt brokers both accounts, and Turicum Re is the reinsurer on both.</p>
        <p><strong>This book is the opposite of Limmat’s.</strong> It is priced properly and expected to make money. Two years later a claims shock hits it anyway. Act Two asks: what does a treaty do for a loss that was not a pricing mistake? That recovery is reported on the other line, <strong>recovery of losses on contracts turning onerous</strong>.</p>`,
       ['47–48','B119C']);
